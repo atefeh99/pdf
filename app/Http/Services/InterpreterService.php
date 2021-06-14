@@ -8,7 +8,9 @@ class InterpreterService
 {
     public static function index()
     {
-        return Interpreter::index();
+        $data['data'] = Interpreter::index();
+        $data['count'] = count($data['data']);
+        return $data;
 
     }
 

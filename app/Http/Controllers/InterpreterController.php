@@ -46,8 +46,7 @@ class InterpreterController extends ApiController
     }
     public function remove(Request $request,$id)
     {
-        $data = self::checkRules($request, __FUNCTION__, 1003);
-        InterpreterService::remove($data);
+        InterpreterService::remove($id);
         return $this->respondSuccessDelete($id);
     }
 }
