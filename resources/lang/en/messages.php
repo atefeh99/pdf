@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'custom'               => [
+    'custom' => [
         '201' => 'successfully created',
         '400' => 'the given data is invalid',
         '401' => 'your api key is unauthorized',

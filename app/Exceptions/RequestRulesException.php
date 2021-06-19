@@ -17,7 +17,7 @@ class RequestRulesException extends Exception
         $this->fields = $fields;
         $this->error_code = $error_code;
         self::setCode(Response::HTTP_BAD_REQUEST);
-        self::setMessage(trans('messages.custom.'.Response::HTTP_BAD_REQUEST));
+        self::setMessage(trans('messages.custom.' . Response::HTTP_BAD_REQUEST));
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\MessageBag;
@@ -27,7 +28,7 @@ class ApiController extends Controller
     public function respondSuccessCreate($returnData, $message = '')
     {
         if (!$message) {
-            $message = trans('messages.custom.'.Response::HTTP_CREATED);
+            $message = trans('messages.custom.' . Response::HTTP_CREATED);
         }
 
         return $this
@@ -43,7 +44,7 @@ class ApiController extends Controller
      */
     public function respondSuccessDelete($id, $message = '')
     {
-        if(!$message)
+        if (!$message)
             $message = trans('messages.custom.delete');
         return $this
             ->setStatusCode(Response::HTTP_OK)
@@ -52,14 +53,13 @@ class ApiController extends Controller
     }
 
 
-
     /**
      * @param $code int
      * @param $fields MessageBag
      * @param string $message
      * @return mixed
      */
-    public  function respondInvalidParams($code, $fields, $message = '')
+    public function respondInvalidParams($code, $fields, $message = '')
     {
         if (!$message) {
             $message = trans('messages.custom.' . Response::HTTP_BAD_REQUEST);
@@ -77,7 +77,7 @@ class ApiController extends Controller
      * @param $count
      * @return mixed
      */
-    public  function respondArrayResult($data ,$count)
+    public function respondArrayResult($data, $count)
     {
         return $this
             ->setStatusCode(Response::HTTP_OK)
@@ -92,7 +92,7 @@ class ApiController extends Controller
      * @param $code
      * @return mixed
      */
-    public  function respondNoFound($message,$code)
+    public function respondNoFound($message, $code)
     {
         return $this
             ->setStatusCode(Response::HTTP_NOT_FOUND)
@@ -100,6 +100,7 @@ class ApiController extends Controller
             ->setCode($code)
             ->respondWithError();
     }
+
     /**
      * @return mixed
      */
@@ -111,6 +112,7 @@ class ApiController extends Controller
             'code' => $this->getCode()
         ]);
     }
+
     /**
      * @param $returnObject
      * @return mixed
@@ -157,7 +159,7 @@ class ApiController extends Controller
      * @param $fields
      * @return mixed
      */
-    private  function respondWithParamsError($fields)
+    private function respondWithParamsError($fields)
     {
 
         return $this->respond([
@@ -186,7 +188,7 @@ class ApiController extends Controller
      * @param $code
      * @return $this
      */
-    private  function setCode($code)
+    private function setCode($code)
     {
         $this->code = $code;
         return $this;
@@ -196,16 +198,17 @@ class ApiController extends Controller
      * @param $message
      * @return $this
      */
-    private  function setMessage($message)
+    private function setMessage($message)
     {
         $this->message = $message;
         return $this;
     }
+
     /**
      * @param $status_code
      * @return $this
      */
-    private  function setStatusCode($status_code)
+    private function setStatusCode($status_code)
     {
         $this->status_code = $status_code;
         return $this;
@@ -235,12 +238,13 @@ class ApiController extends Controller
     {
         return $this->message;
     }
+
     /**
      * @param $data
      * @param array $headers
      * @return mixed
      */
-    public  function respond($data, $headers = [])
+    public function respond($data, $headers = [])
     {
         return response()->json($data, $this->getStatusCode(), $headers);
     }

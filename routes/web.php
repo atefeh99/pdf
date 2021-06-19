@@ -17,7 +17,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->post('pdf/{tour_no}', 'PdfMakerController@getPdf');
+$router->post('/pdf/{identifier}', 'PdfMakerController@daftarche');
+
 
 $router->group(['prefix' => 'interpreters'], function () use ($router) {
     $router->post('', 'InterpreterController@store');

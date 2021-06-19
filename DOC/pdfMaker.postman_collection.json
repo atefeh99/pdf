@@ -1,137 +1,137 @@
 {
-	"info": {
-		"_postman_id": "375a426e-7195-4c0b-9976-4986c7077407",
-		"name": "pdfMaker",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "interpreter",
-			"item": [
-				{
-					"name": "store",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{   \"identifier\" : \"first\", \n    \"description\": \"this is the first image\",\n    \"html\":\"<html><head><style>body{direction:rtl;font-family:mitra}.header{text-align:center}.table1{border-collapse:collapse;display:inline-block}.tabled1{border:1px solid black;padding-left:10px;padding-right:10px;text-align:center;width:10%}.tabled2{border:1px solid black;padding-left:10px;padding-right:10px;text-align:center;width:140px}.info td{width:150px}</style></head><body><div><h3 class=\\\"header\\\"><b>شرکت ملی پست جمهوری اسلامی ایران</b></h3><h4 class=\\\"header\\\"><b>اداره کل جغرافیایی و اطلاعات مکانی کشور</b></h4><p class=\\\"header\\\">فهرست مکان های مسکونی و کسب</P></div><center style=\\\"margin:0 auto;display: block;width: 50%;\\\"><table class=\\\"table1\\\"><tr><td class=\\\"tabled1\\\">شماره گشت نامه رسانی</td><td class=\\\"tabled1\\\">{{ $tour_no }}</td><td class=\\\"tabled1\\\" style=\\\"border:none\\\"></td><td class=\\\"tabled1\\\">کد جزء</td><td class=\\\"tabled1\\\">{{ $code_joze }}</td></tr></table></center><table class=\\\"info\\\"><tr><td>استان:</td><td colspan=\\\"2\\\" style=\\\"text-align: right;\\\">{{ $province }}-{{ $region }}</td><td>شهرستان:</td><td>{{ $county }}</td><td> بخش:</td><td> {{ $district }}</td></tr><tr ><td></td><td></td><td></td><td></td><td>محدوه پستی:</td><td>{{ $postal_region }}</td></tr></table><table style=\\\"float:right\\\"><tr><td>تعداد بلوک</td><td class=\\\"tabled2\\\">{{ $blocks_count }}</td></tr><tr><td>تعداد ساختمان</td><td class=\\\"tabled2\\\">{{ $buildings }}</td></tr><tr><td>تعداد کد شناسایی</td><td class=\\\"tabled2\\\">{{ $recog_count }}</td></tr><tr><td>تعداد رکورد</td><td class=\\\"tabled2\\\">{{ $records_counts }}</td></tr></table><table style=\\\"margin-right: 60%\\\"><tr><td><br></td></tr><tr><td><br></td></tr><tr><td>تاریخ چاپ گزارش:</td><td>{{ $date }}</td></tr><tr></tr><tr><td>تعداد صفحات گزارش:</td><td>{{ $pages }}</td></tr></table></body></html>\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8000/interpreters",
-							"host": [
-								"localhost"
-							],
-							"port": "8000",
-							"path": [
-								"interpreters"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "show",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8002/interpreters/13",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"interpreters",
-								"13"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "index",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8002/interpreters",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"interpreters"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:8002/interpreters/23",
-							"host": [
-								"localhost"
-							],
-							"port": "8002",
-							"path": [
-								"interpreters",
-								"23"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "getPdf",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n \"data\" : \n {\n     \"sh_gasht\": 90,\n     \"code_gasht\": 900,\n     \"province\":\"تهران\",\n     \"region\":\"تهران\",\n     \"county\":\"تهران\",\n     \"district\":\"تهران\",\n     \"postal_region\":\"تهران\",\n     \"blocks\" : 5,\n     \"buildings\" : 8,\n     \"id_counts\" : 6,\n     \"records_counts\" : 4,\n     \"date\" : \"20/10/76\",\n     \"pages\" : 3,\n     \"name\":\"تهران\"\n\n }}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8000/pdf/56819",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"pdf",
-						"56819"
-					]
-				}
-			},
-			"response": []
-		}
-	]
+    "info": {
+        "_postman_id": "375a426e-7195-4c0b-9976-4986c7077407",
+        "name": "pdfMaker",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "interpreter",
+            "item": [
+                {
+                    "name": "store",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{   \"identifier\" : \"first\", \n    \"description\": \"this is the first image\",\n    \"html\":\"<html><head><style>body{direction:rtl;font-family:mitra}.header{text-align:center}.table1{border-collapse:collapse;display:inline-block}.tabled1{border:1px solid black;padding-left:10px;padding-right:10px;text-align:center;width:10%}.tabled2{border:1px solid black;padding-left:10px;padding-right:10px;text-align:center;width:140px}.info td{width:150px}</style></head><body><div><h3 class=\\\"header\\\"><b>شرکت ملی پست جمهوری اسلامی ایران</b></h3><h4 class=\\\"header\\\"><b>اداره کل جغرافیایی و اطلاعات مکانی کشور</b></h4><p class=\\\"header\\\">فهرست مکان های مسکونی و کسب</P></div><center style=\\\"margin:0 auto;display: block;width: 50%;\\\"><table class=\\\"table1\\\"><tr><td class=\\\"tabled1\\\">شماره گشت نامه رسانی</td><td class=\\\"tabled1\\\">{{ $tour_no }}</td><td class=\\\"tabled1\\\" style=\\\"border:none\\\"></td><td class=\\\"tabled1\\\">کد جزء</td><td class=\\\"tabled1\\\">{{ $code_joze }}</td></tr></table></center><table class=\\\"info\\\"><tr><td>استان:</td><td colspan=\\\"2\\\" style=\\\"text-align: right;\\\">{{ $province }}-{{ $region }}</td><td>شهرستان:</td><td>{{ $county }}</td><td> بخش:</td><td> {{ $district }}</td></tr><tr ><td></td><td></td><td></td><td></td><td>محدوه پستی:</td><td>{{ $postal_region }}</td></tr></table><table style=\\\"float:right\\\"><tr><td>تعداد بلوک</td><td class=\\\"tabled2\\\">{{ $blocks_count }}</td></tr><tr><td>تعداد ساختمان</td><td class=\\\"tabled2\\\">{{ $buildings }}</td></tr><tr><td>تعداد کد شناسایی</td><td class=\\\"tabled2\\\">{{ $recog_count }}</td></tr><tr><td>تعداد رکورد</td><td class=\\\"tabled2\\\">{{ $records_counts }}</td></tr></table><table style=\\\"margin-right: 60%\\\"><tr><td><br></td></tr><tr><td><br></td></tr><tr><td>تاریخ چاپ گزارش:</td><td>{{ $date }}</td></tr><tr></tr><tr><td>تعداد صفحات گزارش:</td><td>{{ $pages }}</td></tr></table></body></html>\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "localhost:8000/interpreters",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8000",
+                            "path": [
+                                "interpreters"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "show",
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "localhost:8002/interpreters/13",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8002",
+                            "path": [
+                                "interpreters",
+                                "13"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "index",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "localhost:8002/interpreters",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8002",
+                            "path": [
+                                "interpreters"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "delete",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "localhost:8002/interpreters/23",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "8002",
+                            "path": [
+                                "interpreters",
+                                "23"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "getPdf",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n \"data\" : \n {\n     \"sh_gasht\": 90,\n     \"code_gasht\": 900,\n     \"province\":\"تهران\",\n     \"region\":\"تهران\",\n     \"county\":\"تهران\",\n     \"district\":\"تهران\",\n     \"postal_region\":\"تهران\",\n     \"blocks\" : 5,\n     \"buildings\" : 8,\n     \"id_counts\" : 6,\n     \"records_counts\" : 4,\n     \"date\" : \"20/10/76\",\n     \"pages\" : 3,\n     \"name\":\"تهران\"\n\n }}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "localhost:8000/pdf/56819",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000",
+                    "path": [
+                        "pdf",
+                        "56819"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
 }

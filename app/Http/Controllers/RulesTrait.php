@@ -31,8 +31,21 @@ trait RulesTrait
                 'remove' => [
                     'id' => 'integer',
                 ]
+            ],
+            PdfMakerController::class => [
+                'daftarche' => [
+                    'first' => 'required',
+                    'second' => 'required',
+                    'third' => 'required',
+                    'second.data' => 'array|required',
+
+                ],
+                'gavahi' => [
+                    'postalcode' => 'array|required|max:6',
+                    'postalcode.*' => 'required|integer|max:10'
+                ]
             ]
-            ];
+        ];
     }
 
     public static function checkRules($data, $function, $code)
@@ -51,7 +64,7 @@ trait RulesTrait
             );
         }
         if ($validation->fails()) {
-            $validation->errors();
+            dd($validation->errors());
             throw new RequestRulesException($validation->errors()->getMessages(), $code);
         }
         return $validation->validated();

@@ -6,9 +6,8 @@ use Mpdf\Mpdf;
 
 class MakePdf
 {
-    public static function createPdf($html1, $html2, $html3)
+    public static function createPdf($id, $pages)
     {
-
 
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
@@ -22,12 +21,13 @@ class MakePdf
         ]);
         $mpdf->SetFont('mitra');
 
-        $mpdf->WriteHTML($html1);
-        $mpdf->AddPage();
-        $mpdf->WriteHTML($html2);
-        $mpdf->AddPage();
-        $mpdf->WriteHTML($html3);
-        $mpdf->Output("/home/shiri/home/lumen/interpreter/post.pdf", 'F');
+        foreach ($pages as $index => $page) {
+            $mpdf->WriteHTML($page);
+            if ($index != count($pages) - 1) {
+                $mpdf->AddPage();
+            }
+        }
+        $mpdf->Output(base_path() . "/public/" . $id . ".pdf", 'F');
     }
 
 }

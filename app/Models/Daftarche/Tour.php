@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Daftarche;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,6 +23,6 @@ class Tour extends Model
 
     public function scopeId($query, $tour_no)
     {
-        return $query->where('tour_no', $tour_no);
+        return $query->where('name', $tour_no);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Modules\MakePdf;
 use App\Helpers\Date;
 use Carbon\Carbon;
-use App\Models\{Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
+use App\Models\Daftarche\ {Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
 
 
 class PdfMakerService
@@ -43,15 +43,13 @@ class PdfMakerService
         $records = 0;
         $datetime = explode(' ', Date::convertCarbonToJalali(Carbon::now()));
         $date = $datetime[0];
-        $tour_id = Tour::getId($tour_no);
-        $d['parts'] = Part::index($tour_id);
+        $d['parts'] = Part::index(Tour::getId($tour_no));
         $parts_count = count($d['parts']);
         for ($i = 0; $i < $parts_count; $i++) {
 
             $d['parts'][$i]['blocks'] = Block::index($d['parts'][$i]['id']);
             $blocks_count = count($d['parts'][$i]['blocks']);
             $blocks_c += $blocks_count;
-
             for ($j = 0; $j < $blocks_count; $j++) {
 
                 $d['parts'][$i]['blocks'][$j]['buildings'] =
@@ -93,9 +91,9 @@ class PdfMakerService
             }
 
         }
-        if ($identifier === 'first') {
+        if ($identifier === 'notebook_1') {
             $province_name = Province::getName(Tour::getProvinceId($tour_no));
-
+            //req body tourno,
             $params = [
                 "tour_no" => $tour_no,
                 "code_joze" => 5,
@@ -112,7 +110,7 @@ class PdfMakerService
                 "date" => $date,
 
             ];
-        } elseif ($identifier === 'second') {
+        } elseif ($identifier === 'notebook_2') {
             $params = [
                 "tour_no" => $tour_no,
                 "code_joze" => 5,
@@ -120,7 +118,7 @@ class PdfMakerService
                 "date" => $date,
                 "data" => $d,
             ];
-        } elseif ($identifier === 'third') {
+        } elseif ($identifier === 'notebook_3') {
             $params = [
                 "tour_no" => $tour_no,
                 "date" => $date,
@@ -134,19 +132,22 @@ class PdfMakerService
         return $params;
     }
 
-    public static function getPdf($tour_no)
+    public static function daftarche($identifier, $data = null)
     {
-        $indexes = Interpreter::index();
-        $params = [];
+
+        $indexes = Interpreter::getBy('identifier', 'notebook%');
+        $pages = [];
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);
-            $params[$value['identifier']] = self::setParams($value['identifier'], $tour_no);
-
+//            $params[$value['identifier']] =
+//                (!$data)
+//                    ? self::setParams($value['identifier'], $tour_no)
+//                    : $data[$value['identifier']];
+            $params = self::setParams($value['identifier'], $identifier);
+            $pages[$key] = view($value['identifier'], $params)->toHtml();
         }
-        $html1 = view('first', $params['first'])->toHtml();
-        $html2 = view('second', $params['second'])->toHtml();
-        $html3 = view('third', $params['third'])->toHtml();
-        MakePdf::createPdf($html1, $html2, $html3);
+
+        MakePdf::createPdf(__FUNCTION__, $pages);
         return true;
     }
 

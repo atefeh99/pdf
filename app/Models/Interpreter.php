@@ -12,19 +12,33 @@ class Interpreter extends Model
         'description',
         'html'
     ];
-    protected $connection = 'pgsql1';
+    protected $connection = 'pgsql';
     protected $table = 'interpreters';
 
-    public static function index()
+    public static function getBy($by, $value)
     {
-        $items = self::all()->toArray();
-        if (empty($items)) throw new ModelNotFoundException();
+        $items = self::where($by, 'like', $value)->get();
+        if ($items->count() > 0) {
+            $items->toArray();
+        } else {
+            throw new ModelNotFoundException();
+        }
         return $items;
     }
+//    public static function gavahi()
+//    {
+//        $items = self::whereIn('identifier',['notebook_1','notebook_2','notebook_3'])->get();
+//        if ($items->count() > 0) {
+//            $items->toArray();
+//        } else {
+//            throw new ModelNotFoundException();
+//        }
+//        return $items;
+//    }
 
     public static function show($id)
     {
-        $item = self::where('id',$id)->firstOrFail();
+        $item = self::where('id', $id)->firstOrFail();
         return $item->toArray();
     }
 
@@ -42,7 +56,7 @@ class Interpreter extends Model
 
     public static function remove($id)
     {
-        $item = self::where('id',$id)->firstOrFail();
+        $item = self::where('id', $id)->firstOrFail();
         $item->delete();
         return $item;
     }

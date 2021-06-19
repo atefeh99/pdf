@@ -4,16 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\PdfMakerService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\RulesTrait;
 
 class PdfMakerController extends ApiController
 {
-    public function getPdf(Request $request, $tour_no)
+    use RulesTrait;
+
+    public function daftarche(Request $request, $identifier)
     {
-        $result = PdfMakerService::getPdf($tour_no);
-//        if ($result) {
-//            return view('first',$result['first']);
-//        }
-        if ($result) return $this->respondSuccessCreate($tour_no);
+        $data = self::checkRules(
+            array_merge($request->all(), array('$identifier' => $identifier)),
+            __FUNCTION__,
+            1000
+        );
+        $result = PdfMakerService::daftarche($identifier, $data);
+        if ($result) return
+            $this->respondSuccessCreate($identifier);
+
+    }
+
+    public function gavahi()
+    {
+        $result = PdfMakerService::gavahi();
+        if ($result) return $this->respondSuccessCreate();
 
     }
 
