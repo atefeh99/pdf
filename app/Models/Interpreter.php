@@ -19,11 +19,10 @@ class Interpreter extends Model
     {
         $items = self::where($by, 'like', $value)->get();
         if ($items->count() > 0) {
-            $items->toArray();
+          return $items->toArray();
         } else {
             throw new ModelNotFoundException();
         }
-        return $items;
     }
 //    public static function gavahi()
 //    {
@@ -51,6 +50,7 @@ class Interpreter extends Model
 
     public static function store($data)
     {
+
         return self::create($data);
     }
 

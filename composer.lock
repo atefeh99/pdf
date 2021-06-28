@@ -4,8 +4,72 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f6b61c063a36111b388bedc2e30c1057",
+    "content-hash": "f104b56ccf247e52899f1c307e3f04f3",
     "packages": [
+        {
+            "name": "armancodes/laravel-download-link",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/armancodes/laravel-download-link.git",
+                "reference": "84ce40b631b1f8210cb26bfd54043c81f49f7027"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/armancodes/laravel-download-link/zipball/84ce40b631b1f8210cb26bfd54043c81f49f7027",
+                "reference": "84ce40b631b1f8210cb26bfd54043c81f49f7027",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "orchestra/testbench": "^5.0",
+                "phpunit/phpunit": "^9.3",
+                "psalm/plugin-laravel": "^1.2",
+                "vimeo/psalm": "^3.11"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Armancodes\\DownloadLink\\DownloadLinkServiceProvider"
+                    ],
+                    "aliases": {
+                        "DownloadLink": "Armancodes\\DownloadLink\\Facades\\DownloadLinkGenerator"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Armancodes\\DownloadLink\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arman Ahmadi",
+                    "email": "me@armancodes.com",
+                    "homepage": "https://github.com/armancodes",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple Laravel package for generating download links with options such as expire time, IP restrictions, etc.",
+            "homepage": "https://github.com/armancodes/laravel-download-link",
+            "keywords": [
+                "armancodes",
+                "laravel-download-link"
+            ],
+            "support": {
+                "issues": "https://github.com/armancodes/laravel-download-link/issues",
+                "source": "https://github.com/armancodes/laravel-download-link/tree/v1.1.0"
+            },
+            "time": "2021-02-25T06:34:44+00:00"
+        },
         {
             "name": "beberlei/assert",
             "version": "v3.3.1",

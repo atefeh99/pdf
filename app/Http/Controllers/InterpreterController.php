@@ -34,6 +34,7 @@ class InterpreterController extends ApiController
             $data = self::checkRules(
                 array_merge($request->all(), array('id' => $id)),
                 __FUNCTION__,
+                null,
                 1004
             );
         $interpreters_updated = InterpreterService::update($id, $data);
@@ -43,7 +44,7 @@ class InterpreterController extends ApiController
 
     public function store(Request $request)
     {
-        $data = self::checkRules($request, __FUNCTION__, 1003);
+        $data = self::checkRules($request, __FUNCTION__, null, 1003);
         $interpreter_creation = InterpreterService::store($data);
         return $this->respondSuccessCreate($interpreter_creation);
     }

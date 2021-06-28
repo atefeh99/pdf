@@ -64,6 +64,7 @@ $app->configure('filesystems');
 $app->configure('database');
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware

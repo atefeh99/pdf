@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Province extends Model
 {
-    protected $connection = 'pgsql2';
+    protected $connection = 'gnaf';
     protected $table = 'province';
 
     public static function getName($id)

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Neighbourhood extends Model
 {
-    protected $connection = 'pgsql2';
+    protected $connection = 'gnaf';
     protected $table = 'neighbourhood';
 
     public static function getName($neighbourhood_id)

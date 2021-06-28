@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Way extends Model
 {
-    protected $connection = 'pgsql2';
+    protected $connection = 'gnaf';
     protected $table = 'way';
 
 
