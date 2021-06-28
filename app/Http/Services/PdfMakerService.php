@@ -181,6 +181,7 @@ class PdfMakerService
             //print_r($value['identifier']);
         }
 
+//        return $params;
         MakePdf::createPdf($identifier, $pages);
 
         return true;
