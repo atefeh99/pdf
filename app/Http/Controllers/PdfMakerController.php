@@ -25,7 +25,7 @@ class PdfMakerController extends ApiController
             1000
         );
         $result = PdfMakerService::getPdf($identifier, $data);
-        $link = URL::asset('public/'.$identifier.'.pdf');
+        $link = URL::asset(env('API_PREFIX').'/'.$identifier.'.pdf');
 
 
         if ($result) return
