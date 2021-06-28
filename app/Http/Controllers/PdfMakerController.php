@@ -2,32 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\OdataQueryParser;
 use App\Http\Services\PdfMakerService;
+use Armancodes\DownloadLink\Models\DownloadLink;
 use Illuminate\Http\Request;
 use App\Http\Controllers\RulesTrait;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+
 
 class PdfMakerController extends ApiController
 {
     use RulesTrait;
 
-    public function daftarche(Request $request, $identifier)
+
+    public function getPdf(Request $request, $identifier)
     {
         $data = self::checkRules(
-            array_merge($request->all(), array('$identifier' => $identifier)),
+            $request->all(),
             __FUNCTION__,
+            $identifier,
             1000
         );
-        $result = PdfMakerService::daftarche($identifier, $data);
+        $result = PdfMakerService::getPdf($identifier, $data);
+        $link = URL::asset('public/'.$identifier.'.pdf');
+
+
         if ($result) return
-            $this->respondSuccessCreate($identifier);
-
-    }
-
-    public function gavahi()
-    {
-        $result = PdfMakerService::gavahi();
-        if ($result) return $this->respondSuccessCreate();
+            $this->respondItemResult($link);
 
     }
 
 }
+
+
