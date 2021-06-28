@@ -10,7 +10,7 @@ class MakePdf
     {
 
         $mpdf = new Mpdf([
-            'mode' => 'utf-8',
+//            'mode' => 'utf-8',
             'orientation' => 'P',
             'margin_left' => '10',
             'margin_right' => '5',
@@ -19,7 +19,12 @@ class MakePdf
             'margin_header' => '0',
             'margin_footer' => '3'
         ]);
-        $mpdf->SetFont('mitra');
+
+        if ($id == 'gavahi') {
+            $mpdf->showImageErrors = true;
+            $mpdf->imageVars['logo'] = file_get_contents('images/logo.png');
+            $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
+        }
 
         foreach ($pages as $index => $page) {
             $mpdf->WriteHTML($page);
@@ -27,7 +32,7 @@ class MakePdf
                 $mpdf->AddPage();
             }
         }
+
         $mpdf->Output(base_path() . "/public/" . $id . ".pdf", 'F');
     }
-
 }

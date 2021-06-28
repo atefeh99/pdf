@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Unit extends Model
 {
-    protected $connection = 'pgsql2';
+    protected $connection = 'gnaf';
     protected $table = 'unit';
 
 
@@ -15,6 +15,7 @@ class Unit extends Model
         $query = self::id($entrance_id)
             ->whereNotNull('recog_code')
             ->get(['id', 'floor_no', 'recog_code', 'unit_no', 'row_no', 'name', 'isic_id', 'location_type_id']);
+
         return $query->toArray();
     }
 

@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Entrance extends Model
 {
-    protected $connection = 'pgsql2';
+    protected $connection = 'gnaf';
     protected $table = 'entrance';
 
     public static function index($address_id)
     {
-        $query = self::id($address_id)->get(['id']);
+        $query = self::id($address_id)->get(['id', 'plate_no']);
         return $query->toArray();
     }
 //    public static function getId($address_id)

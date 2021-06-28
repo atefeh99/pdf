@@ -14,9 +14,9 @@ class CreateInterpretersTable extends Migration
     public function up()
     {
         Schema::create('interpreters', function (Blueprint $table) {
-            $table->string('identifier');
-            $table->text('description');
-            $table->text('html');
+            $table->string('identifier')->nullable();
+            $table->text('description')->nullable();
+            $table->text('html')->nullable();
             $table->id();
             $table->timestamps();
         });

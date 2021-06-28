@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Building extends Model
 {
-    protected $connection = 'pgsql2';
+    protected $connection = 'gnaf';
     protected $table = 'building';
 
 //    public static function count($block_id)
