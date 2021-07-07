@@ -17,8 +17,6 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->post('/{identifier}', 'PdfMakerController@getPdf');
-
 
 $router->group(['prefix' => 'interpreters'], function () use ($router) {
     $router->post('', 'InterpreterController@store');
@@ -27,3 +25,5 @@ $router->group(['prefix' => 'interpreters'], function () use ($router) {
     $router->delete('/{id}', 'InterpreterController@remove');
 
 });
+
+$router->post('/{identifier}', 'PdfMakerController@getPdf');
