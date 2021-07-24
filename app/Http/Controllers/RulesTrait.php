@@ -39,7 +39,7 @@ trait RulesTrait
 //                        'notebook_2' => 'required',
 //                        'notebook_3' => 'required',
                         //  'second.data' => 'array|required',
-                        'tour_no' => 'integer|required'
+                        'tour_id' => 'integer|required'
                     ],
                     'gavahi' => [
                         'postalcode.*' => 'required|size:10'
