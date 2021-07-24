@@ -9,20 +9,20 @@ class Tour extends Model
     protected $connection = 'gnaf';
     protected $table = 'tour';
 
-    public static function getId($tour_no)
+    public static function getNo($tour_id)
     {
-        $item = self::id($tour_no)->first();
-        return $item->id;
+        $item = self::id($tour_id)->first();
+        return $item->tour_no;
     }
 
-    public static function getProvinceId($tour_no)
+    public static function getProvinceId($tour_id)
     {
-        $item = self::id($tour_no)->first();
+        $item = self::id($tour_id)->first();
         return $item->province_id;
     }
 
-    public function scopeId($query, $tour_no)
+    public function scopeId($query, $tour_id)
     {
-        return $query->where('name', $tour_no);
+        return $query->where('id', $tour_id);
     }
 }

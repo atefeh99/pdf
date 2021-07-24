@@ -48,7 +48,8 @@ class PdfMakerService
             $all_buildings = 0;
             $unique_recog_code_count = 0;
             $records = 0;
-            $d['parts'] = Part::index(Tour::getId($data['tour_no']));
+            // $d['parts'] = Part::index(Tour::getId($data['tour_no']));
+            $d['parts'] = Part::index($data['tour_id']);
             $parts_count = count($d['parts']);
             for ($i = 0; $i < $parts_count; $i++) {
 
@@ -98,11 +99,13 @@ class PdfMakerService
                 }
 
             }
+            $tour_no = Tour::getNo($data['tour_id']),
             if ($identifier == 'notebook_1') {
-                $province_name = Province::getName(Tour::getProvinceId($data['tour_no']));
+                $province_name = Province::getName(Tour::getProvinceId($data['tour_id']));
+
                 //req body tourno,
                 $params = [
-                    "tour_no" => $data['tour_no'],
+                    "tour_no" => $tour_no
                     "code_joze" => 5,
                     "province" => $province_name,
                     "region" => 'منطقه۹',
@@ -119,7 +122,7 @@ class PdfMakerService
                 ];
             } elseif ($identifier == 'notebook_2') {
                 $params = [
-                    "tour_no" => $data['tour_no'],
+                    "tour_no" => $tour_no,
                     "code_joze" => 5,
                     "page" => 1,
                     "date" => $date,
@@ -129,7 +132,7 @@ class PdfMakerService
 
             } elseif ($identifier == 'notebook_3') {
                 $params = [
-                    "tour_no" => $data['tour_no'],
+                    "tour_no" => $tour_no,
                     "date" => $date,
                     "code_joze" => 5,
                     "way_type" => 'خیابان',
