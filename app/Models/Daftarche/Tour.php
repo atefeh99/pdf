@@ -9,10 +9,10 @@ class Tour extends Model
     protected $connection = 'gnaf';
     protected $table = 'tour';
 
-    public static function getNo($tour_id)
+    public static function getName($tour_id)
     {
         $item = self::id($tour_id)->first();
-        return $item->tour_no;
+        return $item->name;
     }
 
     public static function getProvinceId($tour_id)
