@@ -99,13 +99,13 @@ class PdfMakerService
                 }
 
             }
-            $tour_no = Tour::getNo($data['tour_id']),
+            $tour_no = Tour::getNo($data['tour_id']);
             if ($identifier == 'notebook_1') {
                 $province_name = Province::getName(Tour::getProvinceId($data['tour_id']));
 
                 //req body tourno,
                 $params = [
-                    "tour_no" => $tour_no
+                    "tour_no" => $tour_no,
                     "code_joze" => 5,
                     "province" => $province_name,
                     "region" => 'منطقه۹',
