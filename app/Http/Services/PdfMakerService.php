@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Modules\MakePdf;
 use App\Helpers\Date;
 use Carbon\Carbon;
-use App\Models\Daftarche\ {Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
+use App\Models\Notebook\ {Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
 use App\Models\Gavahi\PostData;
 use function PHPUnit\Framework\returnArgument;
 
@@ -215,7 +215,7 @@ class PdfMakerService
         $pages = [];
         $indexes = [];
 
-        if ($identifier == 'daftarche') {
+        if ($identifier == 'notebook') {
             $indexes = Interpreter::getBy('identifier', 'notebook%');
         } elseif ($identifier == 'gavahi') {
             $indexes = Interpreter::getBy('identifier', 'gavahi%');

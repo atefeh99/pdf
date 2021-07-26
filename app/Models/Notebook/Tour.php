@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Daftarche;
+namespace App\Models\Notebook;
 
 use Illuminate\Database\Eloquent\Model;
 
