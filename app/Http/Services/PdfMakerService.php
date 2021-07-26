@@ -3,11 +3,12 @@
 namespace App\Http\Services;
 
 use App\Models\Interpreter;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Modules\MakePdf;
 use App\Helpers\Date;
 use Carbon\Carbon;
-use App\Models\Daftarche\ {Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
+use App\Models\Notebook\ {Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
 use App\Models\Gavahi\PostData;
 use function PHPUnit\Framework\returnArgument;
 
@@ -48,8 +49,13 @@ class PdfMakerService
             $all_buildings = 0;
             $unique_recog_code_count = 0;
             $records = 0;
-            // $d['parts'] = Part::index(Tour::getId($data['tour_no']));
-            $d['parts'] = Part::index($data['tour_id']);
+            if (isset($data['block_id'])) {
+                $tour_id = Block::getTourId($data['block_id']);
+            } else {
+                $tour_id = $data['tour_id'];
+            }
+            $tour_name = Tour::getName($tour_id);
+            $d['parts'] = Part::index($tour_id);
             $parts_count = count($d['parts']);
 
             for ($i = 0; $i < $parts_count; $i++) {
@@ -66,6 +72,7 @@ class PdfMakerService
 
                     $buildings_count = count($d['parts'][$i]['blocks'][$j]['buildings']);
                     $all_buildings += $buildings_count;
+
                     for ($k = 0; $k < $buildings_count; $k++) {
 
                         $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'] =
@@ -100,9 +107,51 @@ class PdfMakerService
                 }
 
             }
-            $tour_name = Tour::getName($data['tour_id']);
+            if (isset($data['block_id'])) {
+                $blocks = [];
+                $parts = [];
+                for ($i = 0; $i < $parts_count; $i++) {
+                    for ($j = 0; $j < count($d['parts'][$i]['blocks']); $j++) {
+                        if ($d['parts'][$i]['blocks'][$j]['id'] == $data['block_id']) {
+//                            dd(var_dump($d['parts'][$i]['blocks']));
+                            $blocks = $d['parts'][$i]['blocks'][$j];
+                            $parts = $d['parts'][$i];
+//                            unset($d['parts'][$i]['blocks']);
+//                            unset($d['parts']);
+//                            $d['parts'][$i]['blocks'][0] = $blocks;
+//                            $d['parts'] = $parts;
+                            $all_buildings = count($blocks['buildings']);
+                            for ($k = 0; $k < $all_buildings; $k++) {
+
+                                $addresses_count = count($blocks['buildings'][$k]['addresses']);
+                                if ($addresses_count != 0) {
+                                    for ($l = 0; $l < $addresses_count; $l++) {
+                                        $entrances_count = count($blocks['buildings'][$k]['addresses'][$l]['entrances']);
+                                        if ($entrances_count != 0) {
+                                            for ($m = 0; $m < $entrances_count; $m++) {
+                                                $units_count = count($blocks['buildings'][$k]['addresses'][$l]['entrances'][$m]['units']);
+                                                $unique_recog_code_count += count(array_unique(array_column($blocks['buildings'][$k]['addresses'][$l]['entrances'][$m]['units'], 'recog_code')));
+                                                $records += $units_count;
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+                $d['parts'][0] = $parts;
+                $d['parts'][0]['blocks'][0] = $blocks;
+
+            }
+
             if ($identifier == 'notebook_1') {
-                $province_name = Province::getName(Tour::getProvinceId($data['tour_id']));
+                $province_name = Province::getName(Tour::getProvinceId($tour_id));
+                if (isset($data['block_id'])) {
+                    $blocks_c = 1;
+                }
 
                 //req body tourno,
                 $params = [
@@ -132,6 +181,9 @@ class PdfMakerService
 
 
             } elseif ($identifier == 'notebook_3') {
+                if (isset($data['block_id'])) {
+                    $parts_count = 1;
+                }
                 $params = [
                     "tour_no" => $tour_name,
                     "date" => $date,
@@ -159,10 +211,11 @@ class PdfMakerService
 
     public static function getPdf($identifier, $data = null)
     {
+
         $pages = [];
         $indexes = [];
 
-        if ($identifier == 'daftarche') {
+        if ($identifier == 'notebook') {
             $indexes = Interpreter::getBy('identifier', 'notebook%');
         } elseif ($identifier == 'gavahi') {
             $indexes = Interpreter::getBy('identifier', 'gavahi%');
@@ -181,6 +234,12 @@ class PdfMakerService
 //                    ? self::setParams($value['identifier'], $tour_no)
 //                    : $data[$value['identifier']];
             $params[$value['identifier']] = self::setParams($value['identifier'], $data);
+            $view = view($value['identifier'], $params[$value['identifier']]);
+            try {
+                $view->render();
+            } catch (\Exception $exception) {
+                Log::error($exception->getMessage());
+            }
             $pages[$key] = view($value['identifier'], $params[$value['identifier']])->toHtml();
             //print_r($value['identifier']);
         }
