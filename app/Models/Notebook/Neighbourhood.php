@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Daftarche;
+namespace App\Models\Notebook;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,8 +11,13 @@ class Neighbourhood extends Model
 
     public static function getName($neighbourhood_id)
     {
-        $query = self::id($neighbourhood_id)->first();
-        return $query->name;
+        if ($neighbourhood_id) {
+            $query = self::id($neighbourhood_id)->first();
+            return $query->name;
+        } else {
+            return '';
+        }
+
     }
 
     public function scopeId($query, $neighbourhood_id)
