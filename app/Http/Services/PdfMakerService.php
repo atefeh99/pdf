@@ -48,7 +48,7 @@ class PdfMakerService
             $all_buildings = 0;
             $unique_recog_code_count = 0;
             $records = 0;
-            if ($data['block_id']) {
+            if (isset($data['block_id'])) {
                 $tour_id = Block::getTourId($data['block_id']);
             } else {
                 $tour_id = $data['tour_id'];
@@ -106,7 +106,7 @@ class PdfMakerService
                 }
 
             }
-            if ($data['block_id']) {
+            if (isset($data['block_id'])) {
                 $blocks = [];
                 $parts = [];
                 for ($i = 0; $i < $parts_count; $i++) {
@@ -148,7 +148,7 @@ class PdfMakerService
 
             if ($identifier == 'notebook_1') {
                 $province_name = Province::getName(Tour::getProvinceId($tour_id));
-                if ($data['block_id']) {
+                if (isset($data['block_id'])) {
                     $blocks_c = 1;
                 }
 
@@ -180,7 +180,7 @@ class PdfMakerService
 
 
             } elseif ($identifier == 'notebook_3') {
-                if ($data['block_id']) {
+                if (isset($data['block_id'])) {
                     $parts_count = 1;
                 }
                 $params = [
