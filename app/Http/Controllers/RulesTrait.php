@@ -34,7 +34,7 @@ trait RulesTrait
             ],
             PdfMakerController::class => [
                 'getPdf' => [
-                    'daftarche' => [
+                    'notebook' => [
 //                        'notebook_1' => 'required',
 //                        'notebook_2' => 'required',
 //                        'notebook_3' => 'required',
