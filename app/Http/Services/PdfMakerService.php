@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Interpreter;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Modules\MakePdf;
 use App\Helpers\Date;
@@ -233,6 +234,12 @@ class PdfMakerService
 //                    ? self::setParams($value['identifier'], $tour_no)
 //                    : $data[$value['identifier']];
             $params[$value['identifier']] = self::setParams($value['identifier'], $data);
+            $view = view($value['identifier'], $params[$value['identifier']]);
+            try {
+                $view->render();
+            } catch (\Exception $exception) {
+                Log::error($exception->getMessage());
+            }
             $pages[$key] = view($value['identifier'], $params[$value['identifier']])->toHtml();
             //print_r($value['identifier']);
         }
