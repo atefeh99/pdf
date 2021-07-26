@@ -14,6 +14,11 @@ class Block extends Model
         $query = self::id($part_id)->get(['id']);
         return $query->toArray();
     }
+    public static function getTourId($block_id)
+    {
+        $item = self::where('id',$block_id)->first();
+        return $item->tour_id;
+    }
 //    public static function count($part_id)
 //    {
 //       $blocks = self::id($part_id)->get();

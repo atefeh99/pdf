@@ -39,7 +39,8 @@ trait RulesTrait
 //                        'notebook_2' => 'required',
 //                        'notebook_3' => 'required',
                         //  'second.data' => 'array|required',
-                        'tour_id' => 'integer|required'
+                        'tour_id' => 'integer|required_if: block_id,null',
+                        'block_id' => 'integer|required_if: tour_id,null'
                     ],
                     'gavahi' => [
                         'postalcode.*' => 'required|size:10'
@@ -81,7 +82,6 @@ trait RulesTrait
 
         }
         if ($validation->fails()) {
-            dd($validation->errors());;
             throw new RequestRulesException($validation->errors()->getMessages(), $code);
         }
         return $validation->validated();
