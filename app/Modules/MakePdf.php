@@ -26,9 +26,11 @@ class MakePdf
             $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
         }
 
+
         foreach ($pages as $index => $page) {
             $mpdf->WriteHTML($page);
-            if ($index != count($pages) - 1) {
+
+            if ($index != count($pages)-1 ) {
                 $mpdf->AddPage();
             }
         }
