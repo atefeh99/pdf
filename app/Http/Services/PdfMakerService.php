@@ -166,7 +166,6 @@ class PdfMakerService
                     "buildings" => $all_buildings,
                     "recog_count" => $unique_recog_code_count,
                     "records_counts" => $records,
-                    "pages" => 5,
                     "date" => $date,
 
                 ];
@@ -174,7 +173,6 @@ class PdfMakerService
                 $params = [
                     "tour_no" => $tour_name,
                     "code_joze" => 5,
-                    "page" => 1,
                     "date" => $date,
                     "data" => $d,
                 ];
@@ -197,7 +195,9 @@ class PdfMakerService
             }
         } elseif (strpos($identifier, 'gavahi') !== false) {
             $gavahi_data = [];
+
             foreach ($data['postalcode'] as $key => $postalcode) {
+              //  dd(var_dump($postalcode));
                 $gavahi_data[$key] = PostData::getInfo($postalcode);
             }
 
