@@ -16,7 +16,8 @@ class Building extends Model
 //    }
     public static function index($block_id)
     {
-        $query = self::id($block_id)->get(['id', 'flour_count', 'building_no', 'neighbourhood_id']);
+        $query = self::id($block_id)->get(['id', 'floor_count', 'building_no', 'neighbourhood_id']);
+       // dd($query->toArray());
         return $query->toArray();
     }
 //    public static function getId($block_id)
