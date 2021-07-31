@@ -25,11 +25,13 @@ class PdfMakerController extends ApiController
             1000
         );
         $result = PdfMakerService::getPdf($identifier, $data);
-        $link = URL::asset(env('API_PREFIX').'/'.$identifier.'.pdf');
+        $link = URL::asset(env('API_PREFIX') . '/' . $identifier . '.pdf');
 //        dd($result);
 //        return view('gavahi_1', $result['gavahi_1']);
-        if ($result) return
-            $this->respondItemResult($link);
+        if ($result)
+            return $this->respondItemResult($link);
+        else
+            return $this->respondNoFound(trans('messages.custom.404'), 1000);
 
     }
 
