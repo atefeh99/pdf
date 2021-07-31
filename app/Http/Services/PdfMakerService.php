@@ -241,8 +241,8 @@ class PdfMakerService
             try {
                 $view->render();
             } catch (\Exception $exception) {
-               // Log::error($exception->getMessage());
-                dd($exception->getMessage());
+                Log::error($exception->getMessage());
+//                dd($exception->getMessage());
             }
             $pages[$key] = view($value['identifier'], $params[$value['identifier']])->toHtml();
             //print_r($value['identifier']);
