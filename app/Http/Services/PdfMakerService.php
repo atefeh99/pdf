@@ -204,6 +204,8 @@ class PdfMakerService
             $params = [
                 "date" => $date,
                 "data" => $gavahi_data,
+                "x" => 1,
+                "length" => count($gavahi_data)
             ];
         }
         return $params;
