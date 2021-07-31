@@ -237,14 +237,17 @@ class PdfMakerService
 //                    : $data[$value['identifier']];
             $params[$value['identifier']] = self::setParams($value['identifier'], $data);
             $view = view($value['identifier'], $params[$value['identifier']]);
+
             try {
                 $view->render();
             } catch (\Exception $exception) {
-                Log::error($exception->getMessage());
+               // Log::error($exception->getMessage());
+                dd($exception->getMessage());
             }
             $pages[$key] = view($value['identifier'], $params[$value['identifier']])->toHtml();
             //print_r($value['identifier']);
         }
+
 
 //        return $params;
         MakePdf::createPdf($identifier, $pages);
