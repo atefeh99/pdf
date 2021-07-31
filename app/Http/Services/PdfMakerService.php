@@ -204,6 +204,8 @@ class PdfMakerService
             $params = [
                 "date" => $date,
                 "data" => $gavahi_data,
+                "x" => 1,
+                "length" => count($gavahi_data)
             ];
         }
         return $params;
@@ -228,7 +230,7 @@ class PdfMakerService
 
         foreach ($indexes as $key => $value) {
 
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);
+           // Storage::put($value['identifier'] . '.blade.php', $value['html']);
 //            $params[$value['identifier']] =
 //                (!$data)
 //                    ? self::setParams($value['identifier'], $tour_no)
