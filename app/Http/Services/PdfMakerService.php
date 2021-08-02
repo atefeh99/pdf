@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Interpreter;
+use App\Modules\GetMap\GetMap;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Modules\MakePdf;
@@ -198,17 +199,29 @@ class PdfMakerService
             }
         } elseif (strpos($identifier, 'gavahi') !== false) {
             $gavahi_data = [];
-
             foreach ($data['postalcode'] as $key => $postalcode) {
-                //  dd(var_dump($postalcode));
+
                 $gavahi_data[$key] = PostData::getInfo($postalcode);
+
+                if ($data['geo'] == 1) {
+                    $image = GetMap::vectorMap($postalcode);
+                    if(!$image){
+                        $gavahi_data[$key]['image_exists'] = false;
+                    } else {
+                        $gavahi_data[$key]['image_exists'] = true;
+                        $name = $postalcode . '.png';
+                        Storage::disk('images')->put($name, $image);
+                    }
+                } else {
+                    $gavahi_data[$key]['image_exists'] = false;
+                }
             }
 
             $params = [
                 "date" => $date,
                 "data" => $gavahi_data,
                 "x" => 1,
-                "length" => count($gavahi_data)
+                "length" => count($gavahi_data),
             ];
         }
         return $params;
@@ -219,7 +232,6 @@ class PdfMakerService
 
         $pages = [];
         $indexes = [];
-
         if ($identifier == 'notebook') {
             $indexes = Interpreter::getBy('identifier', 'notebook%');
         } elseif ($identifier == 'gavahi') {
@@ -239,7 +251,7 @@ class PdfMakerService
 //                    ? self::setParams($value['identifier'], $tour_no)
 //                    : $data[$value['identifier']];
             $params[$value['identifier']] = self::setParams($value['identifier'], $data);
-            if($params[$value['identifier']]) {
+            if ($params[$value['identifier']]) {
                 $view = view($value['identifier'], $params[$value['identifier']]);
                 try {
                     $view->render();
@@ -255,10 +267,11 @@ class PdfMakerService
 
 
 //        return $params;
-        if($pages) {
-            MakePdf::createPdf($identifier, $pages);
+        if ($pages) {
+            MakePdf::createPdf($identifier, $pages, $params[$value['identifier']]);
+
             return true;
-        } else{
+        } else {
             return false;
         }
     }

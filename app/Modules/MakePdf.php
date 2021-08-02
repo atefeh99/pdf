@@ -3,10 +3,11 @@
 namespace App\Modules;
 
 use Mpdf\Mpdf;
+use mysql_xdevapi\Exception;
 
 class MakePdf
 {
-    public static function createPdf($id, $pages)
+    public static function createPdf($id, $pages, $params )
     {
 
         $mpdf = new Mpdf([
@@ -19,16 +20,22 @@ class MakePdf
             'margin_header' => '0',
             'margin_footer' => '3'
         ]);
-
         if ($id == 'gavahi') {
             $mpdf->showImageErrors = true;
             $mpdf->imageVars['logo'] = file_get_contents('images/logo.png');
             $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
+            foreach ($params['data'] as $value){
+                if($value['image_exists']){
+                    $mpdf->imageVars[$value['postalcode']] = file_get_contents('images/'.$value['postalcode'].'.png');
+
+                }
+            }
+//            $mpdf->imageVars['3711655194'] = file_get_contents('images/3711655194.png');
         }
 
 
         foreach ($pages as $index => $page) {
-            $mpdf->WriteHTML($page);
+                $mpdf->WriteHTML($page);
 
             if ($index != count($pages)-1 ) {
                 $mpdf->AddPage();

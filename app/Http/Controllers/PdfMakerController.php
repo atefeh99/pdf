@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\RulesTrait;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use function App\Helpers\asset;
+use function App\Helpers\public_path;
 
 
 class PdfMakerController extends ApiController
@@ -18,12 +20,15 @@ class PdfMakerController extends ApiController
 
     public function getPdf(Request $request, $identifier)
     {
+
+
         $data = self::checkRules(
             $request->all(),
             __FUNCTION__,
             $identifier,
             1000
         );
+
         $result = PdfMakerService::getPdf($identifier, $data);
         $link = URL::asset(env('API_PREFIX') . '/' . $identifier . '.pdf');
 //        dd($result);

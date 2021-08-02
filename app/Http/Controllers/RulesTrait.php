@@ -43,7 +43,8 @@ trait RulesTrait
                         'block_id' => 'integer|required_if: tour_id,null'
                     ],
                     'gavahi' => [
-                        'postalcode.*' => 'required|size:10'
+                        'postalcode.*' => 'required|size:10',
+                        'geo' => 'required|boolean'
                     ]
                 ]
 
