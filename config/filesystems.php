@@ -47,8 +47,13 @@ return [
             'driver' => 'local',
             'root' => storage_path('../resources/views')
         ],
+        'images' => [
+            'driver' => 'local',
+            'root'   => storage_path('../public/images'),
+        ],
 
         'public' => [
+            'path'=> storage_path('../public'),
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'url' => env('APP_URL') . '/storage',
@@ -66,5 +71,8 @@ return [
         ],
 
     ],
+//    'links'=>[
+//        public_path('images') => storage_path('app/public/images')
+//    ]
 
 ];

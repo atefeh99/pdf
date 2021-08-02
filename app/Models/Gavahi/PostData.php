@@ -16,12 +16,21 @@ class PostData extends Model
     protected $connection = 'postalcode';
     protected $table = 'post_data_integrated';
     protected static $_table = 'post_data_integrated';
+//    protected $postgisFields = [
+//        'geom'
+//    ];
+//    protected $postgisTypes = [
+//        'geom' => [
+//            'geomtype' => 'geometry',
+//            'srid' => 4326
+//        ]
+//    ];
 
     protected $appends = [
         'address'
     ];
     protected $fillable = [
-        'postalcode',
+
         'statename',
         'townname',
         'zonename',
@@ -38,16 +47,18 @@ class PostData extends Model
         'tour',
         'preaventypename',
         'avenuetypename',
-        'unit'
+        'unit',
+        'geom',
+        'postalcode',
     ];
 
     public static function getInfo($postalcode)
     {
 
 
-        try {
+//        try {
             $item = self::where('postalcode', '=', $postalcode)->get([
-                'postalcode',
+
                 'statename',
                 'townname',
                 'zonename',
@@ -64,12 +75,13 @@ class PostData extends Model
                 'tour',
                 'preaventypename',
                 'avenuetypename',
-                'unit'
+                'unit',
+                'postalcode'
 
             ]);
-        } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
-        }
+//        } catch (\Exception $exception) {
+//            Log::error($exception->getMessage());
+//        }
 
         if ($item->count() > 0) {
             $item = $item->toArray()[0];
@@ -81,6 +93,14 @@ class PostData extends Model
             throw new ModelNotFoundException();
         }
     }
+    public static function getGeom($postalcode){
+        $item = self::where('postalcode', '=', $postalcode)->get([
+            DB::raw('ST_X (ST_Transform (geom, 4326)) AS lon,
+                           ST_Y (ST_Transform (geom, 4326)) AS lat')
+        ]);
+
+        return  $item->toArray()[0];
+}
 
 
 }
