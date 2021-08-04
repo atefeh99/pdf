@@ -44,7 +44,7 @@ trait RulesTrait
                     ],
                     'gavahi' => [
                         'postalcode.*' => 'required|size:10',
-                        'geo' => 'required|boolean'
+                        'geo' => 'boolean'
                     ]
                 ]
 

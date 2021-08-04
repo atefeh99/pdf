@@ -15,8 +15,12 @@
         "laravel/lumen-framework": "^8.0",
         "laravelista/lumen-vendor-publish": "^8.0",
         "league/flysystem": " ~1.0",
-        "morilog/jalali": "3.*",
-        "setasign/fpdi": "^2.3"
+        "morilog/jalali": "^3.2",
+        "mpdf/qrcode": "^1.1",
+        "ph-7/qrcode-generator-php-class": "^2.2",
+        "sebastian/resource-operations": "^3.0",
+        "setasign/fpdi": "^2.3",
+        "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

@@ -35,7 +35,12 @@ class MakePdf
 
 
         foreach ($pages as $index => $page) {
+            try {
+
                 $mpdf->WriteHTML($page);
+            }catch(\Mpdf\MpdfException $e){
+                log::error($e->getMessage());
+            }
 
             if ($index != count($pages)-1 ) {
                 $mpdf->AddPage();
