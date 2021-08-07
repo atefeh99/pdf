@@ -220,7 +220,7 @@ class PdfMakerService
 
                 if ($data['geo'] == 1) {
                     $image = GetMap::vectorMap($postalcode);
-                    if (!$image) {
+                    if (!$image ) {
                         $gavahi_data[$key]['image_exists'] = false;
                     } else {
                         $gavahi_data[$key]['image_exists'] = true;
@@ -295,6 +295,7 @@ class PdfMakerService
                 'barcodes' => $result['barcodes']
             ];
             File::store($data);
+
 
             return true;
         } else {
