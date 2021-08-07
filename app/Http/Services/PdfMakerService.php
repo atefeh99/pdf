@@ -287,7 +287,7 @@ class PdfMakerService
 
 //        return $params;
         if ($pages) {
-            MakePdf::createPdf($identifier, $pages, $params[$value['identifier']]);
+            MakePdf::createPdf($identifier, $pages, $params[$value['identifier']],$uuid);
 
             $data = [
                 'user_id' => $user_id,
