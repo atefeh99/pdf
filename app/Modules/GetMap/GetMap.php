@@ -16,15 +16,22 @@ class GetMap
         if (!$lon or !$lat) {
             return null;
         }
+        try {
 
-        return Http::get(env('GEO_URL'), [
-            'width' => 1400,
-            'height' => 800,
-            'zoom_level' => 14,
-            'style' => 'light',
-            'type' => 'vector',
-            'markers' => 'color:red|label:a|' . $lon . ',' . $lat
+            $response = Http::get(env('GEO_URL'), [
+                'width' => 1400,
+                'height' => 800,
+                'zoom_level' => 14,
+                'style' => 'light',
+                'type' => 'vector',
+                'markers' => 'color:red|label:a|' . $lon . ',' . $lat
 
-        ]);
+            ]);
+        } catch (\Exception $e) {
+
+            $response = null;
+        }
+
+        return $response;
     }
 }
