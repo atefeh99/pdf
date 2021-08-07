@@ -7,7 +7,7 @@ use mysql_xdevapi\Exception;
 
 class MakePdf
 {
-    public static function createPdf($id, $pages, $params )
+    public static function createPdf($id, $pages, $params, $uuid)
     {
 
         $mpdf = new Mpdf([
@@ -47,6 +47,6 @@ class MakePdf
             }
         }
 
-        $mpdf->Output(base_path() . "/public/" . $id . ".pdf", 'F');
+        $mpdf->Output(base_path() . "/public/" . $uuid . ".pdf", 'F');
     }
 }
