@@ -18,7 +18,7 @@ use function PHPUnit\Framework\returnArgument;
 
 class PdfMakerService
 {
-    public static function setParams($identifier, $data = null)
+    public static function setParams($identifier, $link, $data = null)
     {
 
 
@@ -236,13 +236,14 @@ class PdfMakerService
                 "date" => $date,
                 "data" => $gavahi_data,
                 "x" => 1,
-                "length" => count($gavahi_data)
+                "length" => count($gavahi_data),
+                "QRCode" => $link
             ];
         }
         return ['params' => $params, 'barcodes' => $barcodes];
     }
 
-    public static function setNumPersian($result)
+    public static function setNumPersian($result, $id)
     {
         $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
         $num = range(0, 9);
@@ -250,23 +251,78 @@ class PdfMakerService
         if ($result['date']) {
             $result['date'] = str_replace($num, $persian, $result['date']);
         }
-        foreach ($result['data'] as $index => $value) {
-            foreach ($value as $field => $v) {
-                if ($field != 'barcode') {
-                    $result['data'][$index][$field] = str_replace($num, $persian, $v);
-                    if ($field == 'postalcode') {
-                        $result['data'][$index][$field] = mb_str_split($result['data'][$index][$field], $length = 1);
+        if ($id == 'gavahi_1') {
+            foreach ($result['data'] as $index => $value) {
+                foreach ($value as $field => $v) {
+                    if ($field != 'barcode') {
+                        $result['data'][$index][$field] = str_replace($num, $persian, $v);
+                        if ($field == 'postalcode') {
+                            $result['data'][$index][$field] = mb_str_split($result['data'][$index][$field], $length = 1);
 
+                        }
                     }
                 }
             }
+        } elseif ($id == 'notebook_1') {
+            foreach ($result as $index => $value) {
+                $result[$index] = str_replace($num, $persian, $value);
+            }
+
+        } elseif ($id == 'notebook_2') {
+            if ($result['tour_no']) {
+                $result['tour_no'] = str_replace($num, $persian, $result['tour_no']);
+            }
+            if ($result['code_joze']) {
+                $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
+            }
+            foreach ($result['data']['parts'] as $key => $part) {
+                foreach ($part['blocks'] as $k => $block) {
+                    $result['data']['parts'][$key]['blocks'][$k]['id'] = str_replace($num, $persian, $block['id']);
+                    foreach ($block['buildings'] as $b => $building) {
+                        $result['data']['parts'][$key]['blocks'][$k]['buildings'][$b]['building_no'] =
+                            str_replace($num, $persian, $building['building_no']);
+                        $result['data']['parts'][$key]['blocks'][$k]['buildings'][$b]['floor_count'] =
+                            str_replace($num, $persian, $building['floor_count']);
+                        foreach ($building['addresses'] as $a => $add) {
+                            foreach ($add['entrances'] as $e => $ent) {
+                                foreach ($ent['units'] as $u => $unit) {
+
+                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["row_no"] =
+                                        str_replace($num, $persian, $unit['row_no']);
+                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["plate_no"] =
+                                        str_replace($num, $persian, $ent["plate_no"]);
+                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["floor_no"] =
+                                        str_replace($num, $persian, $unit["floor_no"]);
+                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["unit_no"] =
+                                        str_replace($num, $persian, $unit["unit_no"]);
+                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
+                                        str_replace($num, $persian, $unit["location_type_id"]);
+                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
+                                        str_replace($num, $persian, $unit["location_type_id"]);
+                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["recog_code"] =
+                                        str_replace($num, $persian, $unit["recog_code"]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }elseif ($id=='notebook_3'){
+            if ($result['tour_no']) {
+                $result['tour_no'] = str_replace($num, $persian, $result['tour_no']);
+            }
+            if ($result['code_joze']) {
+                $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
+            }
         }
+
 
 //        dd($result);
         return $result;
     }
 
-    public static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
+    public
+    static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
     {
 
         $pages = [];
@@ -283,17 +339,15 @@ class PdfMakerService
         $params = [];
 
         foreach ($indexes as $key => $value) {
-
-            // Storage::put($value['identifier'] . '.blade.php', $value['html']);
+            Storage::put($value['identifier'] . '.blade.php', $value['html']);
 //            $params[$value['identifier']] =
 //                (!$data)
 //                    ? self::setParams($value['identifier'], $tour_no)
 //                    : $data[$value['identifier']];
-            $result = self::setParams($value['identifier'], $data);
-
+            $result = self::setParams($value['identifier'], $link, $data);
 //            $params[$value['identifier']] = $result['params'];
             if ($result['params']) {
-                $result['params'] = self::setNumPersian($result['params']);
+                $result['params'] = self::setNumPersian($result['params'], $value['identifier']);
                 $view = view($value['identifier'], $result['params']);
                 try {
                     $view->render();
@@ -303,52 +357,28 @@ class PdfMakerService
 //                dd($exception->getMessage());
                 }
                 $html = $view->toHtml();
-//                $en = array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
-//                $fa = array("۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹");
-//                if ($value['identifier'] == 'gavahi_1') {
-//                    $html = preg_replace('/<barcode.*type="QR".*\/\>/', '@', $html);
-//                    preg_match_all('/<barcode.*type="C128C".*\/\>/', $html, $matches);
-//
-//                    $code = '';
-//                    $barcodes = [];
-//                    foreach ($matches[0] as $val) {
-//                        array_push($barcodes, [$code .= '#' => $val]);
-//                    }
-//                    foreach ($barcodes as $v) {
-//                        $html = str_replace(array_values($v)[0], array_keys($v)[0], $html);
-//                    }
-//                    $html = str_replace($en, $fa, $html);
-//                    foreach ($barcodes as $va) {
-//                        foreach ($va as $a=>$b){
-//                            $pattern = '/'.$a.'/';
-//                            $html = preg_replace($pattern, $b, $html);
-//
-//                        }
-//                    }
-//                    dd($html);
-//                    $html = preg_replace('/@/', '<barcode code=' . $link . ' type="QR" class="barcode" size="1" error="M" height="2" disableborder="1"/>', $html);
-//
-//                }
-                $pages[$key] = $html;
 
-//        return $params;
-                if ($pages) {
-                    MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
-                    $data = [
-                        'user_id' => $user_id,
-                        'filename' => $uuid,
-                        'barcodes' => $result['barcodes']
-                    ];
-                    File::store($data);
-                    return true;
-                } else {
-                    return false;
-                }
+                $pages[$key] = $html;
             } else {
                 return false;
             }
-
         }
+
+//        return $params;
+        if ($pages) {
+            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
+            $data = [
+                'user_id' => $user_id,
+                'filename' => $uuid,
+                'barcodes' => $result['barcodes']
+            ];
+            File::store($data);
+            return true;
+        } else {
+            return false;
+        }
+
+
     }
 }
 
