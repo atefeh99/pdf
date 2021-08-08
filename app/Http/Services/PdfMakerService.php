@@ -18,7 +18,7 @@ use function PHPUnit\Framework\returnArgument;
 
 class PdfMakerService
 {
-    public static function setParams($identifier, $link, $data = null)
+    public static function setParams($identifier, $data = null)
     {
 
 
@@ -209,9 +209,9 @@ class PdfMakerService
 
                 $barcode = '';
                 $barcode_unique = false;
-                while( !$barcode_unique){
+                while (!$barcode_unique) {
                     $barcode = Random::randomNumber(20);
-                    if (File::isUniqueBarcode($barcode)){
+                    if (File::isUniqueBarcode($barcode)) {
                         $barcode_unique = true;
                     }
                 }
@@ -220,7 +220,7 @@ class PdfMakerService
 
                 if ($data['geo'] == 1) {
                     $image = GetMap::vectorMap($postalcode);
-                    if (!$image ) {
+                    if (!$image) {
                         $gavahi_data[$key]['image_exists'] = false;
                     } else {
                         $gavahi_data[$key]['image_exists'] = true;
@@ -236,11 +236,34 @@ class PdfMakerService
                 "date" => $date,
                 "data" => $gavahi_data,
                 "x" => 1,
-                "length" => count($gavahi_data),
-                "QRCode" => $link
+                "length" => count($gavahi_data)
             ];
         }
         return ['params' => $params, 'barcodes' => $barcodes];
+    }
+
+    public static function setNumPersian($result)
+    {
+        $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        $num = range(0, 9);
+
+        if ($result['date']) {
+            $result['date'] = str_replace($num, $persian, $result['date']);
+        }
+        foreach ($result['data'] as $index => $value) {
+            foreach ($value as $field => $v) {
+                if ($field != 'barcode') {
+                    $result['data'][$index][$field] = str_replace($num, $persian, $v);
+                    if ($field == 'postalcode') {
+                        $result['data'][$index][$field] = mb_str_split($result['data'][$index][$field], $length = 1);
+
+                    }
+                }
+            }
+        }
+
+//        dd($result);
+        return $result;
     }
 
     public static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
@@ -248,7 +271,6 @@ class PdfMakerService
 
         $pages = [];
         $indexes = [];
-        $result = [];
         if ($identifier == 'notebook') {
             $indexes = Interpreter::getBy('identifier', 'notebook%');
         } elseif ($identifier == 'gavahi') {
@@ -262,16 +284,17 @@ class PdfMakerService
 
         foreach ($indexes as $key => $value) {
 
-             Storage::put($value['identifier'] . '.blade.php', $value['html']);
+            // Storage::put($value['identifier'] . '.blade.php', $value['html']);
 //            $params[$value['identifier']] =
 //                (!$data)
 //                    ? self::setParams($value['identifier'], $tour_no)
 //                    : $data[$value['identifier']];
-            $result = self::setParams($value['identifier'], $link, $data);
+            $result = self::setParams($value['identifier'], $data);
 
-            $params[$value['identifier']] = $result['params'];
-            if ($params[$value['identifier']]) {
-                $view = view($value['identifier'], $params[$value['identifier']]);
+//            $params[$value['identifier']] = $result['params'];
+            if ($result['params']) {
+                $result['params'] = self::setNumPersian($result['params']);
+                $view = view($value['identifier'], $result['params']);
                 try {
                     $view->render();
 
@@ -279,28 +302,53 @@ class PdfMakerService
                     Log::error($exception->getMessage());
 //                dd($exception->getMessage());
                 }
-                $pages[$key] = view($value['identifier'], $params[$value['identifier']])->toHtml();
-                //print_r($value['identifier']);
-            }
-        }
-
+                $html = $view->toHtml();
+//                $en = array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+//                $fa = array("۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹");
+//                if ($value['identifier'] == 'gavahi_1') {
+//                    $html = preg_replace('/<barcode.*type="QR".*\/\>/', '@', $html);
+//                    preg_match_all('/<barcode.*type="C128C".*\/\>/', $html, $matches);
+//
+//                    $code = '';
+//                    $barcodes = [];
+//                    foreach ($matches[0] as $val) {
+//                        array_push($barcodes, [$code .= '#' => $val]);
+//                    }
+//                    foreach ($barcodes as $v) {
+//                        $html = str_replace(array_values($v)[0], array_keys($v)[0], $html);
+//                    }
+//                    $html = str_replace($en, $fa, $html);
+//                    foreach ($barcodes as $va) {
+//                        foreach ($va as $a=>$b){
+//                            $pattern = '/'.$a.'/';
+//                            $html = preg_replace($pattern, $b, $html);
+//
+//                        }
+//                    }
+//                    dd($html);
+//                    $html = preg_replace('/@/', '<barcode code=' . $link . ' type="QR" class="barcode" size="1" error="M" height="2" disableborder="1"/>', $html);
+//
+//                }
+                $pages[$key] = $html;
 
 //        return $params;
-        if ($pages) {
-            MakePdf::createPdf($identifier, $pages, $params[$value['identifier']],$uuid);
+                if ($pages) {
+                    MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
+                    $data = [
+                        'user_id' => $user_id,
+                        'filename' => $uuid,
+                        'barcodes' => $result['barcodes']
+                    ];
+                    File::store($data);
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
 
-            $data = [
-                'user_id' => $user_id,
-                'filename' => $uuid,
-                'barcodes' => $result['barcodes']
-            ];
-            File::store($data);
-
-
-            return true;
-        } else {
-            return false;
         }
     }
-
 }
+

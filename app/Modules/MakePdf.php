@@ -2,6 +2,7 @@
 
 namespace App\Modules;
 
+use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use mysql_xdevapi\Exception;
 
