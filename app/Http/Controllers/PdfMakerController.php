@@ -35,7 +35,8 @@ class PdfMakerController extends ApiController
         }
         $user_id = $request->header('x-user-id');
         $uuid = Uuid::uuid4();
-        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
+//        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
+        $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
 
         $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
 //        dd($result);
