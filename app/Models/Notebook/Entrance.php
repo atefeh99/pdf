@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Entrance extends Model
 {
     protected $connection = 'gnaf';
-    protected $table = 'entrance';
+    protected $table = 'plate';
+
+    protected $with = [
+        'units'
+    ];
 
     public static function index($address_id)
     {
@@ -26,5 +30,10 @@ class Entrance extends Model
     public function scopeId($query, $address_id)
     {
         return $query->where('address_id', $address_id);
+    }
+
+    public function units()
+    {
+        return $this->hasMany(Unit::class, 'plate_id', 'id');
     }
 }

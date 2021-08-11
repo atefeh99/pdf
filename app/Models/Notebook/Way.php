@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Way extends Model
 {
     protected $connection = 'gnaf';
-    protected $table = 'way';
+    protected $table = 'road';
 
 
     public static function getName($way_id)
@@ -25,4 +25,5 @@ class Way extends Model
     {
         return $query->where('id', $way_id);
     }
+
 }

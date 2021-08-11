@@ -9,14 +9,19 @@ class Block extends Model
     protected $connection = 'gnaf';
     protected $table = 'block';
 
+    protected $with = [
+        'buildings'
+    ];
+
     public static function index($part_id)
     {
         $query = self::id($part_id)->get(['id']);
         return $query->toArray();
     }
+
     public static function getTourId($block_id)
     {
-        $item = self::where('id',$block_id)->first();
+        $item = self::where('id', $block_id)->first();
         return $item->tour_id;
     }
 //    public static function count($part_id)
@@ -37,5 +42,10 @@ class Block extends Model
     public function scopeId($query, $part_id)
     {
         return $query->where('part_id', $part_id);
+    }
+
+    public function buildings()
+    {
+        return $this->hasMany(Building::class,'block_id','id');
     }
 }

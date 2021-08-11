@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Neighbourhood extends Model
 {
     protected $connection = 'gnaf';
-    protected $table = 'neighbourhood';
+    protected $table = 'parish';
+
 
     public static function getName($neighbourhood_id)
     {
@@ -24,4 +25,5 @@ class Neighbourhood extends Model
     {
         return $query->where('id', $neighbourhood_id);
     }
+
 }
