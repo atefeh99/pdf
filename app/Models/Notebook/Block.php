@@ -10,42 +10,40 @@ class Block extends Model
     protected $table = 'block';
 
     protected $with = [
-        'buildings'
+        'buildings',
+        'tour',
+        'part',
+        'province',
+        'county',
+        'zone'
     ];
-
-    public static function index($part_id)
+    public static function getData($id)
     {
-        $query = self::id($part_id)->get(['id']);
-        return $query->toArray();
-    }
-
-    public static function getTourId($block_id)
-    {
-        $item = self::where('id', $block_id)->first();
-        return $item->tour_id;
-    }
-//    public static function count($part_id)
-//    {
-//       $blocks = self::id($part_id)->get();
-//       return $blocks->count();
-//    }
-//    public static function getId($part_id)
-//    {
-//        $ids = array();
-//        $query = self::id($part_id)->get(['id']);
-//        foreach ($query as $q) {
-//            array_push($ids,$q->id);
-//        }
-//        return $ids;
-//    }
-
-    public function scopeId($query, $part_id)
-    {
-        return $query->where('part_id', $part_id);
+        return self::find($id);
     }
 
     public function buildings()
     {
         return $this->hasMany(Building::class,'block_id','id');
+    }
+    public function tour()
+    {
+        return $this->hasOne(Tour::class,'id','tour_id');
+    }
+    public function part()
+    {
+        return $this->hasOne(Part::class,'id','part_id');
+    }
+    public function province()
+    {
+        return $this->hasOne(Province::class,'id','province_id');
+    }
+    public function county()
+    {
+        return $this->hasOne(County::class,'id','county_id');
+    }
+    public function zone()
+    {
+        return $this->hasOne(Zone::class,'id','zone_id');
     }
 }

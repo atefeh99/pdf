@@ -21,26 +21,6 @@ class Building extends Model
         'neighbourhood'
     ];
 
-    public static function index($block_id)
-    {
-        $query = self::id($block_id)->get();
-        // dd($query->toArray());
-//        ['id', 'floor_count', 'building_no', 'neighbourhood_id']
-        return $query->toArray();
-    }
-//    public static function getId($block_id)
-//    {
-//        $ids = array();
-//        $query = self::id($block_id)->get(['id']);
-//        foreach ($query as $q) {
-//            array_push($ids,$q->id);
-//        }
-//        return $ids;
-//    }
-    public function scopeId($query, $block_id)
-    {
-        return $query->where('block_id', $block_id);
-    }
 
     /*
      * accessors

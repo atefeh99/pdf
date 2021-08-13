@@ -14,19 +14,13 @@ class Address extends Model
 
     ];
     protected $with=[
-        'entrances'
+        'entrances',
+        'street',
+        'secondary_street'
     ];
-    public static function index($building_id)
-    {
-        $query = self::id($building_id)->get();
-//        ['id', 'way_id', 'secondary_way_id']
-        return $query->toArray();
-    }
+   
 
-    public function scopeId($query, $building_id)
-    {
-        return $query->where('building_id', $building_id);
-    }
+   
     public function getWayIdAttribute()
     {
         return $this->attributes['street_id'];
@@ -38,5 +32,15 @@ class Address extends Model
     public function entrances()
     {
         return $this->hasMany(Entrance::class,'address_id','id');
+    }
+    public function street()
+    {
+        return $this->hasOne(Way::class, 'id', 'street_id');
+
+    }
+    public function secondary_street()
+    {
+        return $this->hasOne(Way::class, 'id', 'secondary_street_id');
+
     }
 }
