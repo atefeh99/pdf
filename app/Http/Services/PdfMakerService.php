@@ -251,48 +251,7 @@ class PdfMakerService
 
                 ]
             ];
-            /*
-            if ($identifier == 'notebook_1') {
 
-                //req body tourno,
-                $params = [
-                    "tour_no" => $tour_name,
-                    "code_joze" => $code_joze,
-                    "province" => $province,
-                    "region" => $region,
-                    "county" => $county,
-                    "district" => $district,
-                    "postal_region" => $zone,
-                    "blocks_count" => $blocks_c,
-                    "buildings" => $all_buildings,
-                    "recog_count" => $unique_recog_code_count,
-                    "records_counts" => $records,
-                    "date" => $date,
-
-                ];
-            } elseif ($identifier == 'notebook_2') {
-                $params = [
-                    "tour_no" => $tour_name,
-                    "code_joze" => $code_joze,
-                    "date" => $date,
-                    "data" => $d,
-                ];
-
-
-            } elseif ($identifier == 'notebook_3') {
-
-                $params = [
-                    "tour_no" => $tour_name,
-                    "date" => $date,
-                    "code_joze" => $code_joze,
-                    "roads" => $ways,
-                    "neighbourhoods" => $neighbourhoods,
-                    "parts_count" => $parts_count,
-
-                ];
-
-            }
-    */
         } elseif (strpos($identifier, 'gavahi') !== false) {
             $gavahi_data = [];
             foreach ($data['postalcode'] as $key => $postalcode) {
@@ -325,11 +284,13 @@ class PdfMakerService
             }
 
             $params = [
+                "gavahi_1" => [
                 "date" => $date,
                 "data" => $gavahi_data,
                 "x" => 1,
                 "length" => count($gavahi_data),
                 "QRCode" => $link
+                    ]
             ];
         }
         return ['params' => $params, 'barcodes' => $barcodes];
