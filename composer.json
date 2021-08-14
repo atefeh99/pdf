@@ -16,7 +16,6 @@
         "laravelista/lumen-vendor-publish": "^8.0",
         "league/flysystem": " ~1.0",
         "morilog/jalali": "^3.2",
-        "mpdf/qrcode": "^1.1",
         "ph-7/qrcode-generator-php-class": "^2.2",
         "sebastian/resource-operations": "^3.0",
         "setasign/fpdi": "^2.3",
@@ -33,7 +32,10 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
             "Mpdf\\": "app/Modules/mpdf/src"
-        }
+        },
+        "files": [
+            "app\/Helpers\/ToPersianNum.php"
+        ]
     },
     "autoload-dev": {
         "classmap": [

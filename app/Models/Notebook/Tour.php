@@ -23,7 +23,7 @@ class Tour extends Model
             'parts.blocks.buildings.neighbourhood','parts.blocks.buildings.addresses',
             'parts.blocks.buildings.addresses.entrances', 'parts.blocks.buildings.addresses.street',
             'parts.blocks.buildings.addresses.secondary_street',
-            'parts.blocks.buildings.addresses.entrances.units', 'parts.blocks.buildings.addresses.street.road_type',
+            'parts.blocks.buildings.addresses.entrances.units', 'parts.blocks.buildings.addresses.street.road_type','parts.blocks.buildings.addresses.secondary_street.road_type',
         ])->find($id);
     }
 

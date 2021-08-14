@@ -23,7 +23,7 @@ class Block extends Model
                 'buildings', 'province', 'county', 'zone',
                 'buildings.neighbourhood','buildings.addresses',
                 'buildings.addresses.entrances', 'buildings.addresses.street','buildings.addresses.secondary_street',
-                'buildings.addresses.entrances.units', 'buildings.addresses.street.road_type',
+                'buildings.addresses.entrances.units', 'buildings.addresses.street.road_type','buildings.addresses.secondary_street.road_type',
             ])->find($id);
     }
 

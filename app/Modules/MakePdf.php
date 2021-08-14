@@ -13,14 +13,18 @@ class MakePdf
 
         $mpdf = new Mpdf([
 //            'mode' => 'utf-8',
+//            'defaultPageNumStyle' => 'arabic-indic',
             'orientation' => 'P',
             'margin_left' => '10',
             'margin_right' => '5',
             'margin_top' => '3',
             'margin_bottom' => '0',
             'margin_header' => '0',
-            'margin_footer' => '3'
+            'margin_footer' => '3',
+
         ]);
+        $mpdf->useSubstitutions = false;
+
         // ini_set("pcre.backtrack_limit", "10000000");
 
         if ($id == 'gavahi') {
@@ -39,12 +43,15 @@ class MakePdf
 
         foreach ($pages as $index => $page) {
             try {
+
                 // $chunks = explode("class=table6 tab",$page);
                 // dd($chunks[1]);
                 // foreach($chunks as $chunk){
                     $mpdf->WriteHTML($page);
+
+
                 // }
-                
+
             }catch(\Mpdf\MpdfException $e){
 //                log::error($e->getMessage());
                 dd($e->getMessage());
