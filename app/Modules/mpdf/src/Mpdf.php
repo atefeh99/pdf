@@ -16,6 +16,7 @@ use Mpdf\Utils\NumericString;
 use Mpdf\Utils\UtfString;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use function App\Helpers\convertToPersianNumber;
 
 /**
  * mPDF, PHP library generating PDF files from UTF-8 encoded HTML
@@ -3302,7 +3303,8 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 	 */
 	function PageNo()
 	{
-		return $this->page;
+		return convertToPersianNumber($this->page);
+//		return $this->page;
 	}
 
 	function AddSpotColorsFromFile($file)
@@ -27372,9 +27374,12 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		$html = str_replace($this->aliasNbPg, $NbPg, $html); // {nb}
 
 		// Replaces for the body
-		$html = str_replace(mb_convert_encoding('{PAGENO}', 'UTF-16BE', 'UTF-8'), mb_convert_encoding($PAGENO, 'UTF-16BE', 'UTF-8'), $html);
-		$html = str_replace(mb_convert_encoding($this->aliasNbPgGp, 'UTF-16BE', 'UTF-8'), mb_convert_encoding($NbPgGp, 'UTF-16BE', 'UTF-8'), $html); // {nbpg}
-		$html = str_replace(mb_convert_encoding($this->aliasNbPg, 'UTF-16BE', 'UTF-8'), mb_convert_encoding($NbPg, 'UTF-16BE', 'UTF-8'), $html); // {nb}
+		$html = str_replace(mb_convert_encoding('{PAGENO}', 'UTF-16BE', 'UTF-8'),
+            mb_convert_encoding(convertToPersianNumber($PAGENO), 'UTF-16BE', 'UTF-8'), $html);
+		$html = str_replace(mb_convert_encoding($this->aliasNbPgGp, 'UTF-16BE', 'UTF-8'),
+            mb_convert_encoding(convertToPersianNumber($NbPgGp), 'UTF-16BE', 'UTF-8'), $html); // {nbpg}
+		$html = str_replace(mb_convert_encoding($this->aliasNbPg, 'UTF-16BE', 'UTF-8'),
+            mb_convert_encoding(convertToPersianNumber($NbPg), 'UTF-16BE', 'UTF-8'), $html); // {nb}
 
 		// Date replace
 		$html = preg_replace_callback('/\{DATE\s+(.*?)\}/', [$this, 'date_callback'], $html); // mPDF 5.7

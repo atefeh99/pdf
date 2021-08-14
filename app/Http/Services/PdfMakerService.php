@@ -73,13 +73,21 @@ class PdfMakerService
                 $neighbourhoods = [];
                 $ways = [];
                 $blocks_c = count($block->toArray());
-                $d['parts'] = Part::get($block->part_id);
+                $d['parts'][0] = Part::get($block->part_id);
                 $parts_count = count($d['parts']);
                 $d['parts'][0]['blocks'][0] = $block->toArray();
 //                $d['parts'][0]['blocks'][0]['buildings'] = $block->buildings->toArray();
 
                 $all_buildings = count($block->buildings ?? []);
                 Log::info("#count buildings " . (round(microtime(true) * 1000) - $time) . " milisec long");
+                $records = $block->buildings->sum(function ($building) {
+                    return $building->addresses->sum(function ($address) {
+                        return $address->entrances->sum(function ($entrance) {
+                            return count($entrance->units);
+                        });
+                    });
+                });
+//                    $unique_recog_code_count
 
                 /*
 
@@ -123,11 +131,22 @@ class PdfMakerService
                     return count($part->blocks ?? []);
                 });
                 $all_buildings = $tour->parts->sum(function ($part) {
-                    $count = $part->blocks->sum(function ($block) {
+                    return $part->blocks->sum(function ($block) {
                         return count($block->buildings ?? []);
                     });
-                    return $count;
                 });
+                $records = $tour->parts->sum(function ($part) {
+                    return $part->blocks->sum(function ($block) {
+                        return $block->buildings->sum(function ($building) {
+                            return $building->addresses->sum(function ($address) {
+                                return $address->entrances->sum(function ($entrance) {
+                                    return count($entrance->units);
+                                });
+                            });
+                        });
+                    });
+                });
+
                 Log::info("#count buildings " . (round(microtime(true) * 1000) - $time) . " milisec long");
 //                dd($blocks_c);
                 /*
@@ -173,7 +192,33 @@ class PdfMakerService
                 }
                 */
             }
-
+            foreach ($d['parts'] as $part) {
+                foreach ($part['blocks'] as $block) {
+                    foreach ($block['buildings'] as $building) {
+                        $neighbourhoods[] = $building['neighbourhood']['name'];
+                        foreach ($building['addresses'] as $address) {
+                            $ways[] = [
+                                'name' => $address['street']['name'],
+                                'type' => $address['street']['road_type']['name'],
+                            ];
+                            $ways[] = [
+                                'name' => $address['secondary_street']['name'],
+                                'type' => $address['secondary_street']['road_type']['name'],
+                            ];
+                            foreach ($address['entrances'] as $entrance) {
+                                foreach ($entrance['units'] as $unit) {
+                                    if ($unit['unit_identifier'] !== null) {
+                                        $unique_recog_code_count++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+//            $ways = array_unique($ways);
+            $neighbourhoods = array_unique($neighbourhoods);
+            $ways = array_map("unserialize", array_unique(array_map("serialize", $ways)));
             $params = [
                 'notebook_1' => [
                     "tour_no" => $tour_name,
@@ -200,7 +245,7 @@ class PdfMakerService
                     "tour_no" => $tour_name,
                     "date" => $date,
                     "code_joze" => $code_joze,
-                    "roads" => $ways,
+                    "ways" => $ways,
                     "neighbourhoods" => $neighbourhoods,
                     "parts_count" => $parts_count,
 
@@ -386,7 +431,7 @@ class PdfMakerService
         $params = [];
         $result = self::setParams($identifier, $link, $data);
         foreach ($indexes as $key => $value) {
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);
+            //   Storage::put($value['identifier'] . '.blade.php', $value['html']);
 
 //            $params[$value['identifier']] =
 //                (!$data)
@@ -395,7 +440,8 @@ class PdfMakerService
 
 //            $params[$value['identifier']] = $result['params'];
             if ($result['params'][$value['identifier']]) {
-                //$result['params'] = self::setNumPersian($result['params'], $value['identifier']);
+                $result['params'][$value['identifier']]
+                    = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
                 $view = view($value['identifier'], $result['params'][$value['identifier']]);
                 try {
                     $view->render();
