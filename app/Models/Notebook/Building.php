@@ -9,28 +9,38 @@ class Building extends Model
     protected $connection = 'gnaf';
     protected $table = 'building';
 
-//    public static function count($block_id)
-//    {
-//        $blocks = self::id($block_id)->get();
-//        return $blocks->count();
-//    }
-    public static function index($block_id)
+    protected $appends = [
+        'building_no',
+        'neighbourhood_id'
+    ];
+    protected $fillable = [
+        'building_no'
+    ];
+//    protected $with = [
+//        'addresses',
+//        'neighbourhood'
+//    ];
+
+
+    /*
+     * accessors
+     */
+    public function getBuildingNoAttribute()
     {
-        $query = self::id($block_id)->get(['id', 'floor_count', 'building_no', 'neighbourhood_id']);
-       // dd($query->toArray());
-        return $query->toArray();
+        return $this->attributes['building_number'];
     }
-//    public static function getId($block_id)
-//    {
-//        $ids = array();
-//        $query = self::id($block_id)->get(['id']);
-//        foreach ($query as $q) {
-//            array_push($ids,$q->id);
-//        }
-//        return $ids;
-//    }
-    public function scopeId($query, $block_id)
+
+    public function getNeighbourhoodIdAttribute()
     {
-        return $query->where('block_id', $block_id);
+        return $this->attributes['parish_id'];
+    }
+
+    public function addresses()
+    {
+    return $this->hasMany(Address::class,'building_id','id');
+    }
+    public function neighbourhood()
+    {
+        return $this->hasOne(Neighbourhood::class,'id','neighbourhood_id');
     }
 }

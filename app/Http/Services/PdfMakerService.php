@@ -21,7 +21,6 @@ class PdfMakerService
     public static function setParams($identifier, $link, $data = null)
     {
 
-
         $params = [];
         $datetime = explode(' ', Date::convertCarbonToJalali(Carbon::now()));
         $date = $datetime[0];
@@ -53,154 +52,202 @@ class PdfMakerService
             $all_buildings = 0;
             $unique_recog_code_count = 0;
             $records = 0;
+            $tour_name = '';
+            $code_joze = '';
+            $province = '';
+            $region = '';
+            $county = '';
+            $district = '';
+            $zone = '';
+
+            $time = round(microtime(true) * 1000);
             if (isset($data['block_id'])) {
-                $tour_id = Block::getTourId($data['block_id']);
+                $block = Block::getData($data['block_id']) ?? [];
+                $tour_name = $block->tour->name ?? '';
+                $code_joze = $block->part->name ?? '';
+                $province = $block->province->name ?? '';
+                $county = $block->county->name ?? '';
+                $zone = $block->zone->name ?? '';
+                Log::info("#get zone " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
+                $neighbourhoods = [];
+                $ways = [];
+                $blocks_c = count($block->toArray());
+                $d['parts'] = Part::get($block->part_id);
+                $parts_count = count($d['parts']);
+                $d['parts'][0]['blocks'][0] = $block->toArray();
+//                $d['parts'][0]['blocks'][0]['buildings'] = $block->buildings->toArray();
+
+                $all_buildings = count($block->buildings ?? []);
+                Log::info("#count buildings " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
+                /*
+
+                for ($i = 0; $i < $all_buildings; $i++) {
+
+                    array_push($neighbourhoods, $block->buildings[$i]->neighbourhood->name);
+
+
+                    $addresses_count = count($block->buildings[$i]->addresses);
+
+                    for ($j = 0; $j < $addresses_count; $j++) {
+
+                        $d['parts'][0]['blocks'][0]['buildings'][$i]['addresses'][$j] = $block->buildings[$i]->addresses[$j]->entrances;
+                        array_push($ways, $block->buildings[$i]->addresses[$j]->street, $block->buildings[$i]->addresses[$j]->secondary_street);
+
+                        $entrances_count = count($block->buildings[$i]->addresses[$j]->entrances);
+
+                        for ($k = 0; $k < $entrances_count; $k++) {
+
+                            $d['parts'][0]['blocks'][0]['buildings'][$i]['addresses'][$j]['entrances'][$k]['units'] = $block->buildings[$i]->addresses[$j]->entrances[$k]->units;
+
+                            $units_count = count($block->buildings[$i]->addresses[$j]->entrances[$k]->units);
+                            $unique_recog_code_count += count(array_unique(array_column($block->buildings[$i]->addresses[$j]->entrances[$k]->units->toArray(), 'unit_identifier')));
+                            $records += $units_count;
+
+                        }
+
+                    }
+                }*/
+
             } else {
-                $tour_id = $data['tour_id'];
-            }
-            $tour_name = Tour::getName($tour_id);
-            $d['parts'] = Part::index($tour_id);
-            $parts_count = count($d['parts']);
-            if ($parts_count != 0) {
 
+                $tour = Tour::getData($data['tour_id']);
+                $tour_name = $tour->name;
+                $province = $tour->province->name;
+                $neighbourhoods = [];
+                $ways = [];
+                $d = $tour->toArray();
+                $parts_count = count($tour['parts']);
+                $blocks_c = $tour->parts->sum(function ($part) {
+                    return count($part->blocks ?? []);
+                });
+                $all_buildings = $tour->parts->sum(function ($part) {
+                    $count = $part->blocks->sum(function ($block) {
+                        return count($block->buildings ?? []);
+                    });
+                    return $count;
+                });
+                Log::info("#count buildings " . (round(microtime(true) * 1000) - $time) . " milisec long");
+//                dd($blocks_c);
+                /*
+                if ($parts_count != 0) {
 
-                for ($i = 0; $i < $parts_count; $i++) {
-
-                    $d['parts'][$i]['blocks'] = Block::index($d['parts'][$i]['id']);
-                    $blocks_count = count($d['parts'][$i]['blocks']);
-                    $blocks_c += $blocks_count;
-
-
-                    for ($j = 0; $j < $blocks_count; $j++) {
-
-                        $d['parts'][$i]['blocks'][$j]['buildings'] =
-                            Building::index($d['parts'][$i]['blocks'][$j]['id']);
-
-                        $buildings_count = count($d['parts'][$i]['blocks'][$j]['buildings']);
-                        $all_buildings += $buildings_count;
-
-                        for ($k = 0; $k < $buildings_count; $k++) {
-
-                            $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'] =
-                                Address::index($d['parts'][$i]['blocks'][$j]['buildings'][$k]['id']);
-
-                            $neighbourhood_id = $d['parts'][$i]['blocks'][$j]['buildings'][$k]['neighbourhood_id'];
-                            $d['parts'][$i]['blocks'][$j]['buildings'][$k]['neighbourhood'] = Neighbourhood::getName($neighbourhood_id);
-
-                            $addresses_count = count($d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses']);
-
-                            for ($l = 0; $l < $addresses_count; $l++) {
-                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'] =
-                                    Entrance::index($d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['id']);
-                                $s_way_id = $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['secondary_way_id'];
-                                $way_id = $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['way_id'];
-
-                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['way_name'] = Way::getName($way_id);
-                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['s_way_name'] = Way::getName($s_way_id);
-                                $entrances_count = count($d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances']);
-
-
-                                for ($m = 0; $m < $entrances_count; $m++) {
-                                    $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'][$m]['units'] =
-                                        Unit::index($d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'][$m]['id']);
-                                    $units_count = count($d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'][$m]['units']);
-                                    $unique_recog_code_count += count(array_unique(array_column($d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'][$m]['units'], 'recog_code')));
-                                    $records += $units_count;
-
-                                }
-                            }
-                        }
-                    }
-
-                }
-                if (isset($data['block_id'])) {
-                    $blocks = [];
-                    $parts = [];
                     for ($i = 0; $i < $parts_count; $i++) {
-                        for ($j = 0; $j < count($d['parts'][$i]['blocks']); $j++) {
-                            if ($d['parts'][$i]['blocks'][$j]['id'] == $data['block_id']) {
-//                            dd(var_dump($d['parts'][$i]['blocks']));
-                                $blocks = $d['parts'][$i]['blocks'][$j];
-                                $parts = $d['parts'][$i];
-//                            unset($d['parts'][$i]['blocks']);
-//                            unset($d['parts']);
-//                            $d['parts'][$i]['blocks'][0] = $blocks;
-//                            $d['parts'] = $parts;
-                                $all_buildings = count($blocks['buildings']);
-                                for ($k = 0; $k < $all_buildings; $k++) {
 
-                                    $addresses_count = count($blocks['buildings'][$k]['addresses']);
-                                    if ($addresses_count != 0) {
-                                        for ($l = 0; $l < $addresses_count; $l++) {
-                                            $entrances_count = count($blocks['buildings'][$k]['addresses'][$l]['entrances']);
-                                            if ($entrances_count != 0) {
-                                                for ($m = 0; $m < $entrances_count; $m++) {
-                                                    $units_count = count($blocks['buildings'][$k]['addresses'][$l]['entrances'][$m]['units']);
-                                                    $unique_recog_code_count += count(array_unique(array_column($blocks['buildings'][$k]['addresses'][$l]['entrances'][$m]['units'], 'recog_code')));
-                                                    $records += $units_count;
-                                                }
-                                            }
-                                        }
+//                        $blocks_count = count($tour['parts'[$i]['blocks']);
+//                        $blocks_c += $blocks_count;
+
+                        for ($j = 0; $j < $blocks_count; $j++) {
+
+//                            $buildings_count = count($tour['parts'][$i]['blocks'][$j]['buildings']);
+//                            $all_buildings += $buildings_count;
+
+                            for ($k = 0; $k < $buildings_count; $k++) {
+//                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'] = $tour['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'];
+//                                dd( $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name);
+//                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['neighbourhood'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name;
+                                array_push($neighbourhoods, $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name ?? '');
+                                $addresses_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses ?? []);
+
+
+                                for ($l = 0; $l < $addresses_count; $l++) {
+
+                                    $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->entrances;
+                                    array_push($ways, $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->street, $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->secondary_street);
+                                    $entrances_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses[$l]->entrances);
+
+                                    for ($m = 0; $m < $entrances_count; $m++) {
+
+                                        $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'][$m]['units'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->entrances[$m]->units;
+                                        $units_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses[$l]->entrances[$m]->units);
+                                        $unique_recog_code_count += count(array_unique(array_column($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses[$l]->entrances[$m]->units->toArray(), 'unit_identifier')));
+                                        $records += $units_count;
+
                                     }
-
                                 }
-
                             }
                         }
-                    }
-                    $d['parts'][0] = $parts;
-                    $d['parts'][0]['blocks'][0] = $blocks;
 
+                    }
                 }
-
-                if ($identifier == 'notebook_1') {
-                    $province_name = Province::getName(Tour::getProvinceId($tour_id));
-                    if (isset($data['block_id'])) {
-                        $blocks_c = 1;
-                    }
-
-                    //req body tourno,
-                    $params = [
-                        "tour_no" => $tour_name,
-                        "code_joze" => 5,
-                        "province" => $province_name,
-                        "region" => 'منطقه۹',
-                        "county" => '',
-                        "district" => '',
-                        "postal_region" => '',
-                        "blocks_count" => $blocks_c,
-                        "buildings" => $all_buildings,
-                        "recog_count" => $unique_recog_code_count,
-                        "records_counts" => $records,
-                        "date" => $date,
-
-                    ];
-                } elseif ($identifier == 'notebook_2') {
-                    $params = [
-                        "tour_no" => $tour_name,
-                        "code_joze" => 5,
-                        "date" => $date,
-                        "data" => $d,
-                    ];
-
-
-                } elseif ($identifier == 'notebook_3') {
-                    if (isset($data['block_id'])) {
-                        $parts_count = 1;
-                    }
-                    $params = [
-                        "tour_no" => $tour_name,
-                        "date" => $date,
-                        "code_joze" => 5,
-                        "way_type" => 'خیابان',
-                        "way_name" => 'بهشتی',
-                        "neighbourhood_name" => 'عباس آباد',
-                        "parts_count" => $parts_count,
-
-                    ];
-
-                }
+                */
             }
+
+            $params = [
+                'notebook_1' => [
+                    "tour_no" => $tour_name,
+                    "code_joze" => $code_joze,
+                    "province" => $province,
+                    "region" => $region,
+                    "county" => $county,
+                    "district" => $district,
+                    "postal_region" => $zone,
+                    "blocks_count" => $blocks_c,
+                    "buildings" => $all_buildings,
+                    "recog_count" => $unique_recog_code_count,
+                    "records_counts" => $records,
+                    "date" => $date,
+
+                ],
+                'notebook_2' => [
+                    "tour_no" => $tour_name,
+                    "code_joze" => $code_joze,
+                    "date" => $date,
+                    "data" => $d,
+                ],
+                'notebook_3' => [
+                    "tour_no" => $tour_name,
+                    "date" => $date,
+                    "code_joze" => $code_joze,
+                    "roads" => $ways,
+                    "neighbourhoods" => $neighbourhoods,
+                    "parts_count" => $parts_count,
+
+                ]
+            ];
+            /*
+            if ($identifier == 'notebook_1') {
+
+                //req body tourno,
+                $params = [
+                    "tour_no" => $tour_name,
+                    "code_joze" => $code_joze,
+                    "province" => $province,
+                    "region" => $region,
+                    "county" => $county,
+                    "district" => $district,
+                    "postal_region" => $zone,
+                    "blocks_count" => $blocks_c,
+                    "buildings" => $all_buildings,
+                    "recog_count" => $unique_recog_code_count,
+                    "records_counts" => $records,
+                    "date" => $date,
+
+                ];
+            } elseif ($identifier == 'notebook_2') {
+                $params = [
+                    "tour_no" => $tour_name,
+                    "code_joze" => $code_joze,
+                    "date" => $date,
+                    "data" => $d,
+                ];
+
+
+            } elseif ($identifier == 'notebook_3') {
+
+                $params = [
+                    "tour_no" => $tour_name,
+                    "date" => $date,
+                    "code_joze" => $code_joze,
+                    "roads" => $ways,
+                    "neighbourhoods" => $neighbourhoods,
+                    "parts_count" => $parts_count,
+
+                ];
+
+            }
+    */
         } elseif (strpos($identifier, 'gavahi') !== false) {
             $gavahi_data = [];
             foreach ($data['postalcode'] as $key => $postalcode) {
@@ -243,7 +290,8 @@ class PdfMakerService
         return ['params' => $params, 'barcodes' => $barcodes];
     }
 
-    public static function setNumPersian($result, $id)
+    public
+    static function setNumPersian($result, $id)
     {
         $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
         $num = range(0, 9);
@@ -307,7 +355,7 @@ class PdfMakerService
                     }
                 }
             }
-        }elseif ($id=='notebook_3'){
+        } elseif ($id == 'notebook_3') {
             if ($result['tour_no']) {
                 $result['tour_no'] = str_replace($num, $persian, $result['tour_no']);
             }
@@ -324,7 +372,6 @@ class PdfMakerService
     public
     static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
     {
-
         $pages = [];
         $indexes = [];
         if ($identifier == 'notebook') {
@@ -337,24 +384,25 @@ class PdfMakerService
         });
 
         $params = [];
-
+        $result = self::setParams($identifier, $link, $data);
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);
+
 //            $params[$value['identifier']] =
 //                (!$data)
 //                    ? self::setParams($value['identifier'], $tour_no)
 //                    : $data[$value['identifier']];
-            $result = self::setParams($value['identifier'], $link, $data);
+
 //            $params[$value['identifier']] = $result['params'];
-            if ($result['params']) {
-                $result['params'] = self::setNumPersian($result['params'], $value['identifier']);
-                $view = view($value['identifier'], $result['params']);
+            if ($result['params'][$value['identifier']]) {
+                //$result['params'] = self::setNumPersian($result['params'], $value['identifier']);
+                $view = view($value['identifier'], $result['params'][$value['identifier']]);
                 try {
                     $view->render();
 
                 } catch (\Exception $exception) {
-                    Log::error($exception->getMessage());
-//                dd($exception->getMessage());
+//                    Log::error($exception->getMessage());
+                    dd($exception->getMessage());
                 }
                 $html = $view->toHtml();
 

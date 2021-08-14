@@ -9,15 +9,16 @@ class Part extends Model
     protected $connection = 'gnaf';
     protected $table = 'part';
 
-    public static function index($tour_id)
+//    protected $with = [
+////        'blocks'
+//    ];
+    public static function get($id)
     {
-        $query = self::id($tour_id)->get(['id', 'tour_id']);
-        return $query->toArray();
+        return self::find($id)->toArray();
     }
 
-
-    public function scopeId($query, $tour_id)
+    public function blocks()
     {
-        return $query->where('tour_id', $tour_id);
+        return $this->hasMany(Block::class,'part_id','id');
     }
 }

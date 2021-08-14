@@ -21,6 +21,8 @@ class MakePdf
             'margin_header' => '0',
             'margin_footer' => '3'
         ]);
+        // ini_set("pcre.backtrack_limit", "10000000");
+
         if ($id == 'gavahi') {
             $mpdf->showImageErrors = true;
             $mpdf->imageVars['logo'] = file_get_contents('images/logo.png');
@@ -37,10 +39,15 @@ class MakePdf
 
         foreach ($pages as $index => $page) {
             try {
-
-                $mpdf->WriteHTML($page);
+                // $chunks = explode("class=table6 tab",$page);
+                // dd($chunks[1]);
+                // foreach($chunks as $chunk){
+                    $mpdf->WriteHTML($page);
+                // }
+                
             }catch(\Mpdf\MpdfException $e){
-                log::error($e->getMessage());
+//                log::error($e->getMessage());
+                dd($e->getMessage());
             }
 
             if ($index != count($pages)-1 ) {
