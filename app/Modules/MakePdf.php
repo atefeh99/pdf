@@ -31,7 +31,7 @@ class MakePdf
             $mpdf->showImageErrors = true;
             $mpdf->imageVars['logo'] = file_get_contents('images/logo.png');
             $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
-            foreach ($params['data'] as $value){
+            foreach ($params['gavahi_1']['data'] as $value){
                 if($value['image_exists']){
                     $mpdf->imageVars[$value['postalcode']] = file_get_contents('images/'.$value['postalcode'].'.png');
 
