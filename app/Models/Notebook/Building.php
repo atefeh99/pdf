@@ -16,10 +16,10 @@ class Building extends Model
     protected $fillable = [
         'building_no'
     ];
-    protected $with = [
-        'addresses',
-        'neighbourhood'
-    ];
+//    protected $with = [
+//        'addresses',
+//        'neighbourhood'
+//    ];
 
 
     /*

@@ -9,14 +9,22 @@ class Tour extends Model
     protected $connection = 'gnaf';
     protected $table = 'tour';
 
-    protected $with = [
-        'parts',
-        'province'
-    ];
+//    protected $with = [
+//        'parts',
+//        'province'
+//    ];
 
-   
+
     public static function getData($id){
-        return self::find($id);
+        return self::with([
+            'parts', 'province',
+            'parts.blocks',
+            'parts.blocks.buildings',
+            'parts.blocks.buildings.neighbourhood','parts.blocks.buildings.addresses',
+            'parts.blocks.buildings.addresses.entrances', 'parts.blocks.buildings.addresses.street',
+            'parts.blocks.buildings.addresses.secondary_street',
+            'parts.blocks.buildings.addresses.entrances.units', 'parts.blocks.buildings.addresses.street.road_type',
+        ])->find($id);
     }
 
     public function parts()

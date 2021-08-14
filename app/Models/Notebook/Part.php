@@ -9,9 +9,13 @@ class Part extends Model
     protected $connection = 'gnaf';
     protected $table = 'part';
 
-    protected $with = [
-        'blocks'
-    ];
+//    protected $with = [
+////        'blocks'
+//    ];
+    public static function get($id)
+    {
+        return self::find($id)->toArray();
+    }
 
     public function blocks()
     {

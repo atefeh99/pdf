@@ -7,7 +7,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 ))->bootstrap();
 
 date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
-ini_set("pcre.backtrack_limit", "3000000");
+ini_set("pcre.backtrack_limit", "30000000");
+ini_set("max_execution_time", "300");
 /*
 |--------------------------------------------------------------------------
 | Create The Application

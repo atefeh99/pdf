@@ -54,32 +54,37 @@ class PdfMakerService
             $records = 0;
             $tour_name = '';
             $code_joze = '';
-            $province_name = '';
+            $province = '';
             $region = '';
             $county = '';
-            $districe = '';
+            $district = '';
             $zone = '';
+
             $time = round(microtime(true) * 1000);
             if (isset($data['block_id'])) {
-                $block = Block::getData($data['block_id']);
-                $tour_no = $block->tour->name;
-                $code_joze = $block->part->name;
-                $province = $block->province->name;
-                $county = $block->county->name;
-                $zone = $block->zone->name;
-                $neighbourhoods = [];
-                $ways=[];
-                $blocks_c = 1;
-                $parts_count = 1;
-                $d['parts'] = $block->part;
-                $d['parts'][0]['blocks'][0] = $block;
-                $d['parts'][0]['blocks'][0]['buildings'] = $block->buildings;
+                $block = Block::getData($data['block_id']) ?? [];
+                $tour_name = $block->tour->name ?? '';
+                $code_joze = $block->part->name ?? '';
+                $province = $block->province->name ?? '';
+                $county = $block->county->name ?? '';
+                $zone = $block->zone->name ?? '';
+                Log::info("#get zone " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
-                $all_buildings = count($block->buildings);
+                $neighbourhoods = [];
+                $ways = [];
+                $blocks_c = count($block->toArray());
+                $d['parts'] = Part::get($block->part_id);
+                $parts_count = count($d['parts']);
+                $d['parts'][0]['blocks'][0] = $block->toArray();
+//                $d['parts'][0]['blocks'][0]['buildings'] = $block->buildings->toArray();
+
+                $all_buildings = count($block->buildings ?? []);
+                Log::info("#count buildings " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
+                /*
+
                 for ($i = 0; $i < $all_buildings; $i++) {
 
-                    $d['parts'][0]['blocks'][0]['buildings'][$i]['addresses'] = $block->buildings[$i]->addresses;
-                    $d['parts'][0]['blocks'][0]['buildings'][$i]['neighbourhood'] = $block->buildings[$i]->neighbourhood->name;
                     array_push($neighbourhoods, $block->buildings[$i]->neighbourhood->name);
 
 
@@ -88,7 +93,7 @@ class PdfMakerService
                     for ($j = 0; $j < $addresses_count; $j++) {
 
                         $d['parts'][0]['blocks'][0]['buildings'][$i]['addresses'][$j] = $block->buildings[$i]->addresses[$j]->entrances;
-                        array_push($ways, $block->buildings[$i]->addresses[$j]->street,$block->buildings[$i]->addresses[$j]->secondary_street);
+                        array_push($ways, $block->buildings[$i]->addresses[$j]->street, $block->buildings[$i]->addresses[$j]->secondary_street);
 
                         $entrances_count = count($block->buildings[$i]->addresses[$j]->entrances);
 
@@ -96,51 +101,60 @@ class PdfMakerService
 
                             $d['parts'][0]['blocks'][0]['buildings'][$i]['addresses'][$j]['entrances'][$k]['units'] = $block->buildings[$i]->addresses[$j]->entrances[$k]->units;
 
-                            $units_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses[$l]->entrances[$m]->units);
+                            $units_count = count($block->buildings[$i]->addresses[$j]->entrances[$k]->units);
                             $unique_recog_code_count += count(array_unique(array_column($block->buildings[$i]->addresses[$j]->entrances[$k]->units->toArray(), 'unit_identifier')));
                             $records += $units_count;
 
                         }
 
                     }
-                }
+                }*/
 
             } else {
 
-
                 $tour = Tour::getData($data['tour_id']);
                 $tour_name = $tour->name;
-                $province_name = $tour->province->name;
-                $d['parts'] = $tour->parts;
+                $province = $tour->province->name;
                 $neighbourhoods = [];
-                $ways=[];
-                $parts_count = count($tour->parts);
+                $ways = [];
+                $d = $tour->toArray();
+                $parts_count = count($tour['parts']);
+                $blocks_c = $tour->parts->sum(function ($part) {
+                    return count($part->blocks ?? []);
+                });
+                $all_buildings = $tour->parts->sum(function ($part) {
+                    $count = $part->blocks->sum(function ($block) {
+                        return count($block->buildings ?? []);
+                    });
+                    return $count;
+                });
+                Log::info("#count buildings " . (round(microtime(true) * 1000) - $time) . " milisec long");
+//                dd($blocks_c);
+                /*
                 if ($parts_count != 0) {
 
                     for ($i = 0; $i < $parts_count; $i++) {
 
-                        $d['parts'][$i]['blocks'] = $tour->parts[$i]->blocks;
-                        $blocks_count = count($tour->parts[$i]->blocks);
-                        $blocks_c += $blocks_count;
+//                        $blocks_count = count($tour['parts'[$i]['blocks']);
+//                        $blocks_c += $blocks_count;
 
                         for ($j = 0; $j < $blocks_count; $j++) {
 
-                            $d['parts'][$i]['blocks'][$j]['buildings'] = $tour->parts[$i]->blocks[$j]->buildings;
-                            $buildings_count = count($tour->parts[$i]->blocks[$j]->buildings);
-                            $all_buildings += $buildings_count;
+//                            $buildings_count = count($tour['parts'][$i]['blocks'][$j]['buildings']);
+//                            $all_buildings += $buildings_count;
 
                             for ($k = 0; $k < $buildings_count; $k++) {
-
-                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses;
-                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['neighbourhood'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name;
-                                array_push($neighbourhoods, $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name);
-                                $addresses_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses);
+//                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'] = $tour['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'];
+//                                dd( $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name);
+//                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['neighbourhood'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name;
+                                array_push($neighbourhoods, $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name ?? '');
+                                $addresses_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses ?? []);
 
 
                                 for ($l = 0; $l < $addresses_count; $l++) {
 
                                     $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->entrances;
-                                    array_push($ways, $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->street,$tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->secondary_street);
+                                    array_push($ways, $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->street, $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->secondary_street);
                                     $entrances_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses[$l]->entrances);
 
                                     for ($m = 0; $m < $entrances_count; $m++) {
@@ -157,48 +171,83 @@ class PdfMakerService
 
                     }
                 }
-
-                if ($identifier == 'notebook_1') {
-
-                    //req body tourno,
-                    $params = [
-                        "tour_no" => $tour_name,
-                        "code_joze" => $code_joze,
-                        "province" => $province_name,
-                        "region" => $region,
-                        "county" => $county,
-                        "district" => $district,
-                        "postal_region" => $zone,
-                        "blocks_count" => $blocks_c,
-                        "buildings" => $all_buildings,
-                        "recog_count" => $unique_recog_code_count,
-                        "records_counts" => $records,
-                        "date" => $date,
-
-                    ];
-                } elseif ($identifier == 'notebook_2') {
-                    $params = [
-                        "tour_no" => $tour_name,
-                        "code_joze" => $code_joze,
-                        "date" => $date,
-                        "data" => $d,
-                    ];
-
-
-                } elseif ($identifier == 'notebook_3') {
-                    
-                    $params = [
-                        "tour_no" => $tour_name,
-                        "date" => $date,
-                        "code_joze" => $code_joze,
-                        "roads" => $ways,
-                        "neighbourhoods" => $neighbourhoods,
-                        "parts_count" => $parts_count,
-
-                    ];
-
-                }
+                */
             }
+
+            $params = [
+                'notebook_1' => [
+                    "tour_no" => $tour_name,
+                    "code_joze" => $code_joze,
+                    "province" => $province,
+                    "region" => $region,
+                    "county" => $county,
+                    "district" => $district,
+                    "postal_region" => $zone,
+                    "blocks_count" => $blocks_c,
+                    "buildings" => $all_buildings,
+                    "recog_count" => $unique_recog_code_count,
+                    "records_counts" => $records,
+                    "date" => $date,
+
+                ],
+                'notebook_2' => [
+                    "tour_no" => $tour_name,
+                    "code_joze" => $code_joze,
+                    "date" => $date,
+                    "data" => $d,
+                ],
+                'notebook_3' => [
+                    "tour_no" => $tour_name,
+                    "date" => $date,
+                    "code_joze" => $code_joze,
+                    "roads" => $ways,
+                    "neighbourhoods" => $neighbourhoods,
+                    "parts_count" => $parts_count,
+
+                ]
+            ];
+            /*
+            if ($identifier == 'notebook_1') {
+
+                //req body tourno,
+                $params = [
+                    "tour_no" => $tour_name,
+                    "code_joze" => $code_joze,
+                    "province" => $province,
+                    "region" => $region,
+                    "county" => $county,
+                    "district" => $district,
+                    "postal_region" => $zone,
+                    "blocks_count" => $blocks_c,
+                    "buildings" => $all_buildings,
+                    "recog_count" => $unique_recog_code_count,
+                    "records_counts" => $records,
+                    "date" => $date,
+
+                ];
+            } elseif ($identifier == 'notebook_2') {
+                $params = [
+                    "tour_no" => $tour_name,
+                    "code_joze" => $code_joze,
+                    "date" => $date,
+                    "data" => $d,
+                ];
+
+
+            } elseif ($identifier == 'notebook_3') {
+
+                $params = [
+                    "tour_no" => $tour_name,
+                    "date" => $date,
+                    "code_joze" => $code_joze,
+                    "roads" => $ways,
+                    "neighbourhoods" => $neighbourhoods,
+                    "parts_count" => $parts_count,
+
+                ];
+
+            }
+    */
         } elseif (strpos($identifier, 'gavahi') !== false) {
             $gavahi_data = [];
             foreach ($data['postalcode'] as $key => $postalcode) {
@@ -241,7 +290,8 @@ class PdfMakerService
         return ['params' => $params, 'barcodes' => $barcodes];
     }
 
-    public static function setNumPersian($result, $id)
+    public
+    static function setNumPersian($result, $id)
     {
         $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
         $num = range(0, 9);
@@ -319,7 +369,8 @@ class PdfMakerService
         return $result;
     }
 
-    public static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
+    public
+    static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
     {
         $pages = [];
         $indexes = [];
@@ -333,17 +384,19 @@ class PdfMakerService
         });
 
         $params = [];
+        $result = self::setParams($identifier, $link, $data);
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);
+
 //            $params[$value['identifier']] =
 //                (!$data)
 //                    ? self::setParams($value['identifier'], $tour_no)
 //                    : $data[$value['identifier']];
-            $result = self::setParams($value['identifier'], $link, $data);
+
 //            $params[$value['identifier']] = $result['params'];
-            if ($result['params']) {
+            if ($result['params'][$value['identifier']]) {
                 //$result['params'] = self::setNumPersian($result['params'], $value['identifier']);
-                $view = view($value['identifier'], $result['params']);
+                $view = view($value['identifier'], $result['params'][$value['identifier']]);
                 try {
                     $view->render();
 

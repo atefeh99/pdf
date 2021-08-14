@@ -13,14 +13,14 @@ class Address extends Model
         'secondary_way_id'
 
     ];
-    protected $with=[
-        'entrances',
-        'street',
-        'secondary_street'
-    ];
-   
+//    protected $with=[
+//        'entrances',
+//        'street',
+////        'secondary_street'
+//    ];
 
-   
+
+
     public function getWayIdAttribute()
     {
         return $this->attributes['street_id'];

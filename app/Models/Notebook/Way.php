@@ -9,9 +9,9 @@ class Way extends Model
     protected $connection = 'gnaf';
     protected $table = 'road';
 
-    protected $with = [
-        'road_type'
-    ];
+//    protected $with = [
+//        'road_type'
+//    ];
 
 
     // public static function getName($way_id)

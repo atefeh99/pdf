@@ -9,9 +9,9 @@ class Entrance extends Model
     protected $connection = 'gnaf';
     protected $table = 'plate';
 
-    protected $with = [
-        'units'
-    ];
+//    protected $with = [
+//        'units'
+//    ];
 
     public function units()
     {

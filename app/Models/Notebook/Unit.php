@@ -15,7 +15,6 @@ class Unit extends Model
         'isic_id',
         'location_type_id',
         'name'
-
     ];
 
 

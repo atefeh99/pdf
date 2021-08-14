@@ -9,17 +9,22 @@ class Block extends Model
     protected $connection = 'gnaf';
     protected $table = 'block';
 
-    protected $with = [
-        'buildings',
-        'tour',
-        'part',
-        'province',
-        'county',
-        'zone'
-    ];
+//    protected $with = [
+//        'buildings',
+////        'tour',
+////        'part',
+//        'province',
+//        'county',
+//        'zone'
+//    ];
     public static function getData($id)
     {
-        return self::find($id);
+        return self::with([
+                'buildings', 'province', 'county', 'zone',
+                'buildings.neighbourhood','buildings.addresses',
+                'buildings.addresses.entrances', 'buildings.addresses.street','buildings.addresses.secondary_street',
+                'buildings.addresses.entrances.units', 'buildings.addresses.street.road_type',
+            ])->find($id);
     }
 
     public function buildings()
