@@ -431,7 +431,7 @@ class PdfMakerService
         $params = [];
         $result = self::setParams($identifier, $link, $data);
         foreach ($indexes as $key => $value) {
-            //   Storage::put($value['identifier'] . '.blade.php', $value['html']);
+               Storage::put($value['identifier'] . '.blade.php', $value['html']);
 
 //            $params[$value['identifier']] =
 //                (!$data)
