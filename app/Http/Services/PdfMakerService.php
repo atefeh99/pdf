@@ -23,7 +23,7 @@ class PdfMakerService
 
         $params = [];
         $datetime = explode(' ', Date::convertCarbonToJalali(Carbon::now()));
-        $date = $datetime[0];
+        $date = str_replace('-', '/', $datetime[0]);
         $barcodes = [];
 //        $params = [
 //            "tour_no"=> $tour_no,
@@ -76,7 +76,6 @@ class PdfMakerService
                 $d['parts'][0] = Part::get($block->part_id);
                 $parts_count = count($d['parts']);
                 $d['parts'][0]['blocks'][0] = $block->toArray();
-//                $d['parts'][0]['blocks'][0]['buildings'] = $block->buildings->toArray();
 
                 $all_buildings = count($block->buildings ?? []);
                 Log::info("#count buildings " . (round(microtime(true) * 1000) - $time) . " milisec long");
@@ -87,36 +86,7 @@ class PdfMakerService
                         });
                     });
                 });
-//                    $unique_recog_code_count
 
-                /*
-
-                for ($i = 0; $i < $all_buildings; $i++) {
-
-                    array_push($neighbourhoods, $block->buildings[$i]->neighbourhood->name);
-
-
-                    $addresses_count = count($block->buildings[$i]->addresses);
-
-                    for ($j = 0; $j < $addresses_count; $j++) {
-
-                        $d['parts'][0]['blocks'][0]['buildings'][$i]['addresses'][$j] = $block->buildings[$i]->addresses[$j]->entrances;
-                        array_push($ways, $block->buildings[$i]->addresses[$j]->street, $block->buildings[$i]->addresses[$j]->secondary_street);
-
-                        $entrances_count = count($block->buildings[$i]->addresses[$j]->entrances);
-
-                        for ($k = 0; $k < $entrances_count; $k++) {
-
-                            $d['parts'][0]['blocks'][0]['buildings'][$i]['addresses'][$j]['entrances'][$k]['units'] = $block->buildings[$i]->addresses[$j]->entrances[$k]->units;
-
-                            $units_count = count($block->buildings[$i]->addresses[$j]->entrances[$k]->units);
-                            $unique_recog_code_count += count(array_unique(array_column($block->buildings[$i]->addresses[$j]->entrances[$k]->units->toArray(), 'unit_identifier')));
-                            $records += $units_count;
-
-                        }
-
-                    }
-                }*/
 
             } else {
 
@@ -148,49 +118,7 @@ class PdfMakerService
                 });
 
                 Log::info("#count buildings " . (round(microtime(true) * 1000) - $time) . " milisec long");
-//                dd($blocks_c);
-                /*
-                if ($parts_count != 0) {
 
-                    for ($i = 0; $i < $parts_count; $i++) {
-
-//                        $blocks_count = count($tour['parts'[$i]['blocks']);
-//                        $blocks_c += $blocks_count;
-
-                        for ($j = 0; $j < $blocks_count; $j++) {
-
-//                            $buildings_count = count($tour['parts'][$i]['blocks'][$j]['buildings']);
-//                            $all_buildings += $buildings_count;
-
-                            for ($k = 0; $k < $buildings_count; $k++) {
-//                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'] = $tour['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'];
-//                                dd( $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name);
-//                                $d['parts'][$i]['blocks'][$j]['buildings'][$k]['neighbourhood'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name;
-                                array_push($neighbourhoods, $tour->parts[$i]->blocks[$j]->buildings[$k]->neighbourhood->name ?? '');
-                                $addresses_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses ?? []);
-
-
-                                for ($l = 0; $l < $addresses_count; $l++) {
-
-                                    $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->entrances;
-                                    array_push($ways, $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->street, $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->secondary_street);
-                                    $entrances_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses[$l]->entrances);
-
-                                    for ($m = 0; $m < $entrances_count; $m++) {
-
-                                        $d['parts'][$i]['blocks'][$j]['buildings'][$k]['addresses'][$l]['entrances'][$m]['units'] = $tour->parts[$i]->blocks[$j]->buildings[$k]->addreses[$l]->entrances[$m]->units;
-                                        $units_count = count($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses[$l]->entrances[$m]->units);
-                                        $unique_recog_code_count += count(array_unique(array_column($tour->parts[$i]->blocks[$j]->buildings[$k]->addresses[$l]->entrances[$m]->units->toArray(), 'unit_identifier')));
-                                        $records += $units_count;
-
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                }
-                */
             }
             foreach ($d['parts'] as $part) {
                 foreach ($part['blocks'] as $block) {
@@ -285,12 +213,12 @@ class PdfMakerService
 
             $params = [
                 "gavahi_1" => [
-                "date" => $date,
-                "data" => $gavahi_data,
-                "x" => 1,
-                "length" => count($gavahi_data),
-                "QRCode" => $link
-                    ]
+                    "date" => $date,
+                    "data" => $gavahi_data,
+                    "x" => 1,
+                    "length" => count($gavahi_data),
+                    "QRCode" => $link
+                ]
             ];
         }
         return ['params' => $params, 'barcodes' => $barcodes];
@@ -329,31 +257,33 @@ class PdfMakerService
             if ($result['code_joze']) {
                 $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
             }
-            foreach ($result['data']['parts'] as $key => $part) {
-                foreach ($part['blocks'] as $k => $block) {
-                    $result['data']['parts'][$key]['blocks'][$k]['id'] = str_replace($num, $persian, $block['id']);
-                    foreach ($block['buildings'] as $b => $building) {
-                        $result['data']['parts'][$key]['blocks'][$k]['buildings'][$b]['building_no'] =
+            foreach ($result['data']['parts'] as $p => $part) {
+                foreach ($part['blocks'] as $bl => $block) {
+                    $result['data']['parts'][$p]['blocks'][$bl]['id'] = str_replace($num, $persian, $block['id']);
+                    foreach ($block['buildings'] as $bu => $building) {
+                        $result['data']['parts'][$p]['blocks'][$bl]['buildings'][$bu]['building_no'] =
                             str_replace($num, $persian, $building['building_no']);
-                        $result['data']['parts'][$key]['blocks'][$k]['buildings'][$b]['floor_count'] =
+                        $result['data']['parts'][$p]['blocks'][$bl]['buildings'][$bu]['floor_count'] =
                             str_replace($num, $persian, $building['floor_count']);
                         foreach ($building['addresses'] as $a => $add) {
+                            $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]['street']['name'] = str_replace($num, $persian, $add['street']['name']);
+                            $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]['secondary_street']['name'] = str_replace($num, $persian, $add['secondary_street']['name']);
                             foreach ($add['entrances'] as $e => $ent) {
                                 foreach ($ent['units'] as $u => $unit) {
 
-                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["row_no"] =
+                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["row_no"] =
                                         str_replace($num, $persian, $unit['row_no']);
-                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["plate_no"] =
+                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["plate_no"] =
                                         str_replace($num, $persian, $ent["plate_no"]);
-                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["floor_no"] =
+                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["floor_no"] =
                                         str_replace($num, $persian, $unit["floor_no"]);
-                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["unit_no"] =
+                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["unit_no"] =
                                         str_replace($num, $persian, $unit["unit_no"]);
-                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
+                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
                                         str_replace($num, $persian, $unit["location_type_id"]);
-                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
+                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
                                         str_replace($num, $persian, $unit["location_type_id"]);
-                                    $result['data']["parts"][$key]["blocks"][$k]["buildings"][$b]["addresses"][$a]["entrances"][$e]["units"][$u]["recog_code"] =
+                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["recog_code"] =
                                         str_replace($num, $persian, $unit["recog_code"]);
                                 }
                             }
@@ -367,6 +297,11 @@ class PdfMakerService
             }
             if ($result['code_joze']) {
                 $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
+            }
+            if($result['ways']){
+                foreach ($result['ways'] as $w=>$way) {
+                    $result['ways'][$w]['name'] = str_replace($num, $persian, $way['name']);
+                }
             }
         }
 
@@ -408,8 +343,8 @@ class PdfMakerService
                     $view->render();
 
                 } catch (\Exception $exception) {
-//                    Log::error($exception->getMessage());
-                    dd($exception->getMessage());
+                    Log::error($exception->getMessage());
+//                    dd($exception->getMessage());
                 }
                 $html = $view->toHtml();
 
@@ -427,7 +362,7 @@ class PdfMakerService
                 'filename' => $uuid,
                 'barcodes' => $result['barcodes']
             ];
-            File::store($data);
+            // File::store($data);
             return true;
         } else {
             return false;
