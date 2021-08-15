@@ -53,8 +53,8 @@ class MakePdf
                 // }
 
             }catch(\Mpdf\MpdfException $e){
-//                log::error($e->getMessage());
-                dd($e->getMessage());
+                log::error($e->getMessage());
+//                dd($e->getMessage());
             }
 
             if ($index != count($pages)-1 ) {

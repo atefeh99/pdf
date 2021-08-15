@@ -22,7 +22,6 @@ class PdfMakerController extends ApiController
 
     public function getPdf(Request $request, $identifier)
     {
-
         $data = self::checkRules(
             $request->all(),
             __FUNCTION__,
