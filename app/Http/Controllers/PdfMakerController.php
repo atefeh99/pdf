@@ -26,7 +26,9 @@ class PdfMakerController extends ApiController
             $request->all(),
             __FUNCTION__,
             $identifier,
-            1000
+            1000,
+            $request->header()
+
         );
         if(!isset($data['geo'])){
             $data['geo'] = 0;

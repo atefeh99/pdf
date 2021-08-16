@@ -23,6 +23,10 @@ return [
         'rural_dataset' => 'dataset_name and rural_id are required',
         'matched' => 'village match complete',
         'db_id' => 'post_id, vk_id and amar_id are required',
+        'unauthorized_user' => 'x-user-id is required',
+        'both_filled' => "both tour_id and block_id can't be filled together",
+        'both_empty' => "both block_id or tour_id can't be empty",
+        'null_field' => "tour_id or block_id can't be null",
 
         'recordExists' => 'this record exists in the dataset',
         'delete' => 'record deleted successfully',

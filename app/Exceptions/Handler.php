@@ -82,6 +82,15 @@ class Handler extends ExceptionHandler
                     ],
                     'status' => Response::HTTP_UNAUTHORIZED
                 ];
+            } elseif ($e instanceof UnauthorizedUserException) {
+                $return_object = [
+                    'data' => [
+                        'status' => Response::HTTP_UNAUTHORIZED,
+                        'message' => $e->getMessage(),
+                        'code' => $e->getErrorCode()
+                    ],
+                    'status' => Response::HTTP_UNAUTHORIZED
+                ];
             } elseif ($e instanceof MethodNotAllowedHttpException) {
                 $return_object = [
                     'data' => [
