@@ -362,7 +362,7 @@ class PdfMakerService
                 'filename' => $uuid,
                 'barcodes' => $result['barcodes']
             ];
-            // File::store($data);
+             File::store($data);
             return true;
         } else {
             return false;
