@@ -14,8 +14,8 @@ class PostData extends Model
     use Common;
 
     protected $connection = 'postalcode';
-    protected $table = 'post_data_integrated';
-    protected static $_table = 'post_data_integrated';
+    protected $table = 'sina_units';
+    protected static $_table = 'sina_units';
 //    protected $postgisFields = [
 //        'geom'
 //    ];
@@ -40,7 +40,7 @@ class PostData extends Model
         'parish',
         'avenue',
         'preaven',
-        'pelak',
+        'plate_no',
         'blockno',
         'floorno',
         'building_type',
@@ -68,7 +68,7 @@ class PostData extends Model
                 'parish',
                 'avenue',
                 'preaven',
-                'pelak',
+                'plate_no',
                 'blockno',
                 'floorno',
                 'building_type',
