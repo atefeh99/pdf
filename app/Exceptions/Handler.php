@@ -4,7 +4,6 @@ namespace App\Exceptions;
 
 use App\Modules\Slack;
 use ErrorException;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -69,7 +68,7 @@ class Handler extends ExceptionHandler
                     'code' => 101
                 ],
                 'status' => [
-                    Response::HTTP_INTENAL_SERVER_ERROR
+                    Response::HTTP_INTERNAL_SERVER_ERROR
                 ]
             ];
 
@@ -107,15 +106,6 @@ class Handler extends ExceptionHandler
                         'message' => trans('messages.custom.' . Response::HTTP_BAD_REQUEST),
                         'fields' => $e->getFields(),
                         'code' => $e->getErrorCode()
-                    ],
-                    'status' => Response::HTTP_BAD_REQUEST
-                ];
-            } elseif ($e instanceof RequestException) {
-                $return_object = [
-                    'data' => [
-                        'status' => Response::HTTP_BAD_REQUEST,
-                        'message' => $e->getMessage(),
-                        'code' => 104
                     ],
                     'status' => Response::HTTP_BAD_REQUEST
                 ];
