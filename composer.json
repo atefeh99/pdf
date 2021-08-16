@@ -11,10 +11,11 @@
     "require": {
         "php": "^7.3|^8.0",
         "armancodes/laravel-download-link": "^1.1",
-        "guzzlehttp/guzzle": "^7.3",
+        "guzzlehttp/guzzle": "6.0",
         "laravel/lumen-framework": "^8.0",
         "laravelista/lumen-vendor-publish": "^8.0",
         "league/flysystem": " ~1.0",
+        "maknz/slack": "^1.7",
         "morilog/jalali": "^3.2",
         "mpdf/qrcode": "^1.1",
         "ph-7/qrcode-generator-php-class": "^2.2",
