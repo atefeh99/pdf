@@ -64,8 +64,8 @@ class Handler extends ExceptionHandler
         if (!$debug) {
             $return_object = [
                 'data' => [
-                    'status' => Response::HTTP_INTENAL_SERVER_ERROR,
-                    'message' => trans('messages.custom.' . Response::HTTP_INTENAL_SERVER_ERROR),
+                    'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                    'message' => trans('messages.custom.' . Response::HTTP_INTERNAL_SERVER_ERROR),
                     'code' => 101
                 ],
                 'status' => [
