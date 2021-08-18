@@ -72,8 +72,8 @@ class PdfMakerService
 
                 $neighbourhoods = [];
                 $ways = [];
-                $blocks_c = count($block->toArray());
-                $d['parts'][0] = Part::get($block->part_id);
+                $blocks_c = count($block->toArray()??[]);
+                $d['parts'][0] = Part::get($block->part_id ?? '');
                 $parts_count = count($d['parts']);
                 $d['parts'][0]['blocks'][0] = $block->toArray();
 
@@ -82,7 +82,7 @@ class PdfMakerService
                 $records = $block->buildings->sum(function ($building) {
                     return $building->addresses->sum(function ($address) {
                         return $address->entrances->sum(function ($entrance) {
-                            return count($entrance->units);
+                            return count($entrance->units ?? []);
                         });
                     });
                 });
@@ -91,12 +91,12 @@ class PdfMakerService
             } else {
 
                 $tour = Tour::getData($data['tour_id']);
-                $tour_name = $tour->name;
-                $province = $tour->province->name;
+                $tour_name = $tour->name ?? '';
+                $province = $tour->province->name ?? '';
                 $neighbourhoods = [];
                 $ways = [];
                 $d = $tour->toArray();
-                $parts_count = count($tour['parts']);
+                $parts_count = count($tour['parts'] ?? []);
                 $blocks_c = $tour->parts->sum(function ($part) {
                     return count($part->blocks ?? []);
                 });
@@ -110,7 +110,7 @@ class PdfMakerService
                         return $block->buildings->sum(function ($building) {
                             return $building->addresses->sum(function ($address) {
                                 return $address->entrances->sum(function ($entrance) {
-                                    return count($entrance->units);
+                                    return count($entrance->units ?? []);
                                 });
                             });
                         });
@@ -123,15 +123,15 @@ class PdfMakerService
             foreach ($d['parts'] as $part) {
                 foreach ($part['blocks'] as $block) {
                     foreach ($block['buildings'] as $building) {
-                        $neighbourhoods[] = $building['neighbourhood']['name'];
+                        $neighbourhoods[] = $building['neighbourhood']['name'] ?? '';
                         foreach ($building['addresses'] as $address) {
                             $ways[] = [
-                                'name' => $address['street']['name'],
-                                'type' => $address['street']['road_type']['name'],
+                                'name' => $address['street']['name'] ?? '',
+                                'type' => $address['street']['road_type']['name'] ?? '',
                             ];
                             $ways[] = [
-                                'name' => $address['secondary_street']['name'],
-                                'type' => $address['secondary_street']['road_type']['name'],
+                                'name' => $address['secondary_street']['name']??'',
+                                'type' => $address['secondary_street']['road_type']['name']??'',
                             ];
                             foreach ($address['entrances'] as $entrance) {
                                 foreach ($entrance['units'] as $unit) {
