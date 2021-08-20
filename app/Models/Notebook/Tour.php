@@ -9,20 +9,31 @@ class Tour extends Model
     protected $connection = 'gnaf';
     protected $table = 'tour';
 
-    public static function getName($tour_id)
-    {
-        $item = self::id($tour_id)->first();
-        return $item->name;
+//    protected $with = [
+//        'parts',
+//        'province'
+//    ];
+
+
+    public static function getData($id){
+        return self::with([
+            'parts', 'province',
+            'parts.blocks',
+            'parts.blocks.buildings',
+            'parts.blocks.buildings.neighbourhood','parts.blocks.buildings.addresses',
+            'parts.blocks.buildings.addresses.entrances', 'parts.blocks.buildings.addresses.street',
+            'parts.blocks.buildings.addresses.secondary_street',
+            'parts.blocks.buildings.addresses.entrances.units', 'parts.blocks.buildings.addresses.street.road_type','parts.blocks.buildings.addresses.secondary_street.road_type',
+        ])->find($id);
     }
 
-    public static function getProvinceId($tour_id)
+    public function parts()
     {
-        $item = self::id($tour_id)->first();
-        return $item->province_id;
+        return $this->hasMany(Part::class, 'tour_id', 'id');
+    }
+    public function province()
+    {
+        return $this->hasOne(Province::class,'id','province_id');
     }
 
-    public function scopeId($query, $tour_id)
-    {
-        return $query->where('id', $tour_id);
-    }
 }

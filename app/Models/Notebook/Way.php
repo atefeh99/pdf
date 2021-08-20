@@ -7,22 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 class Way extends Model
 {
     protected $connection = 'gnaf';
-    protected $table = 'way';
+    protected $table = 'road';
+
+//    protected $with = [
+//        'road_type'
+//    ];
 
 
-    public static function getName($way_id)
+    // public static function getName($way_id)
+    // {
+    //     if ($way_id) {
+    //         $query = self::id($way_id)->first();
+    //         return $query->name;
+    //     } else {
+    //         return '';
+    //     }
+
+    // }
+    public function road_type()
     {
-        if ($way_id) {
-            $query = self::id($way_id)->first();
-            return $query->name;
-        } else {
-            return '';
-        }
-
+        return $this->hasOne(RoadType::class,'id','road_type_id');
     }
 
-    public function scopeId($query, $way_id)
-    {
-        return $query->where('id', $way_id);
-    }
+
 }
