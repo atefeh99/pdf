@@ -3,15 +3,17 @@
 namespace App\Http\Services;
 
 use App\Helpers\Random;
+use App\Jobs\MakePdfJob;
+use App\Jobs\MyCustomJob;
 use App\Models\File;
 use App\Models\Interpreter;
 use App\Modules\GetMap\GetMap;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
-use App\Modules\MakePdf;
 use App\Helpers\Date;
 use Carbon\Carbon;
-use App\Models\Notebook\ {Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
+use App\Models\Notebook\{Entrance, PdfStatus, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
 use App\Models\Gavahi\PostData;
 use function PHPUnit\Framework\returnArgument;
 
@@ -72,7 +74,7 @@ class PdfMakerService
 
                 $neighbourhoods = [];
                 $ways = [];
-                $blocks_c = count($block->toArray()??[]);
+                $blocks_c = count($block->toArray() ?? []);
                 $d['parts'][0] = Part::get($block->part_id ?? '');
                 $parts_count = count($d['parts']);
                 $d['parts'][0]['blocks'][0] = $block->toArray();
@@ -91,6 +93,8 @@ class PdfMakerService
             } else {
 
                 $tour = Tour::getData($data['tour_id']);
+                Log::info("#tour get " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
                 $tour_name = $tour->name ?? '';
                 $province = $tour->province->name ?? '';
                 $neighbourhoods = [];
@@ -130,8 +134,8 @@ class PdfMakerService
                                 'type' => $address['street']['road_type']['name'] ?? '',
                             ];
                             $ways[] = [
-                                'name' => $address['secondary_street']['name']??'',
-                                'type' => $address['secondary_street']['road_type']['name']??'',
+                                'name' => $address['secondary_street']['name'] ?? '',
+                                'type' => $address['secondary_street']['road_type']['name'] ?? '',
                             ];
                             foreach ($address['entrances'] as $entrance) {
                                 foreach ($entrance['units'] as $unit) {
@@ -221,6 +225,8 @@ class PdfMakerService
                 ]
             ];
         }
+        Log::info("#params sent " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
         return ['params' => $params, 'barcodes' => $barcodes];
     }
 
@@ -298,8 +304,8 @@ class PdfMakerService
             if ($result['code_joze']) {
                 $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
             }
-            if($result['ways']){
-                foreach ($result['ways'] as $w=>$way) {
+            if ($result['ways']) {
+                foreach ($result['ways'] as $w => $way) {
                     $result['ways'][$w]['name'] = str_replace($num, $persian, $way['name']);
                 }
             }
@@ -310,8 +316,33 @@ class PdfMakerService
         return $result;
     }
 
-    public
-    static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
+    public static function asyncPdf($identifier, $link, $uuid, $user_id, $data)
+    {
+        $time = round(microtime(true) * 1000);
+        Log::info("#push " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
+        $job_id = Queue::push(new MakePdfJob($identifier, $link, $uuid, $user_id, $data));
+        Log::info("#job finished " . (round(microtime(true) * 1000) - $time) . " milisec long");
+        if ($job_id){
+
+            $data = [
+                'job_id'=>$job_id,
+                'link' => $link,
+                'user_id' => $user_id,
+
+                //    'barcodes' => $result['barcodes']
+            ];
+            PdfStatus::store();
+            return $job_id;
+        } else{
+            return false;
+        }
+
+
+
+    }
+
+    public static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
     {
         $pages = [];
         $indexes = [];
@@ -325,45 +356,45 @@ class PdfMakerService
         });
 
         $params = [];
-        $result = self::setParams($identifier, $link, $data);
-        foreach ($indexes as $key => $value) {
-               Storage::put($value['identifier'] . '.blade.php', $value['html']);
-
-//            $params[$value['identifier']] =
-//                (!$data)
-//                    ? self::setParams($value['identifier'], $tour_no)
-//                    : $data[$value['identifier']];
-
-//            $params[$value['identifier']] = $result['params'];
-            if ($result['params'][$value['identifier']]) {
-                $result['params'][$value['identifier']]
-                    = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
-                $view = view($value['identifier'], $result['params'][$value['identifier']]);
-                try {
-                    $view->render();
-
-                } catch (\Exception $exception) {
-                    Log::error($exception->getMessage());
-//                    dd($exception->getMessage());
-                }
-                $html = $view->toHtml();
-
-                $pages[$key] = $html;
-            } else {
-                return false;
-            }
-        }
+        //$result = self::setParams($identifier, $link, $data);
+//        foreach ($indexes as $key => $value) {
+//            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+//
+////            $params[$value['identifier']] =
+////                (!$data)
+////                    ? self::setParams($value['identifier'], $tour_no)
+////                    : $data[$value['identifier']];
+//
+////            $params[$value['identifier']] = $result['params'];
+//            if ($result['params'][$value['identifier']]) {
+//                $result['params'][$value['identifier']]
+//                    = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
+//                $view = view($value['identifier'], $result['params'][$value['identifier']]);
+//                try {
+//                    $view->render();
+//
+//                } catch (\Exception $exception) {
+//                    Log::error($exception->getMessage());
+////                    dd($exception->getMessage());
+//                }
+//                $html = $view->toHtml();
+//
+//                $pages[$key] = $html;
+//            } else {
+//                return false;
+//            }
+//        }
 
 //        return $params;
         if ($pages) {
-            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
+//            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
             $data = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
-                'barcodes' => $result['barcodes']
+            //    'barcodes' => $result['barcodes']
             ];
             // File::store($data);
-            return true;
+//            return true;
         } else {
             return false;
         }

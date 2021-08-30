@@ -22,6 +22,7 @@ class PdfMakerController extends ApiController
 
     public function getPdf(Request $request, $identifier)
     {
+
         $data = self::checkRules(
             $request->all(),
             __FUNCTION__,
@@ -38,7 +39,8 @@ class PdfMakerController extends ApiController
 //        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
         $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
 
-        $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
+//        $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
+        $result = PdfMakerService::asyncPdf($identifier,$link, $uuid, $user_id, $data);
 //        dd($result);
 //        return view('gavahi_1', $result['gavahi_1']);
         if ($result)
