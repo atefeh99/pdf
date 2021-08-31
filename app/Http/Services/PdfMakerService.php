@@ -323,21 +323,18 @@ class PdfMakerService
 
         $job_id = Queue::push(new MakePdfJob($identifier, $link, $uuid, $user_id, $data));
         Log::info("#job finished " . (round(microtime(true) * 1000) - $time) . " milisec long");
-        if ($job_id){
-
+        if ($job_id) {
             $data = [
-                'job_id'=>$job_id,
+                'job_id' => $job_id,
                 'link' => $link,
                 'user_id' => $user_id,
 
-                //    'barcodes' => $result['barcodes']
             ];
-            PdfStatus::store();
-            return $job_id;
-        } else{
+            PdfStatus::store($data);
+            return ['job_id' => $job_id];
+        } else {
             return false;
         }
-
 
 
     }
@@ -391,7 +388,7 @@ class PdfMakerService
             $data = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
-            //    'barcodes' => $result['barcodes']
+                //    'barcodes' => $result['barcodes']
             ];
             // File::store($data);
 //            return true;
@@ -399,6 +396,17 @@ class PdfMakerService
             return false;
         }
 
+
+    }
+
+    public static function pdfStatus($job_id, $user_id)
+    {
+        $item = PdfStatus::getStatus($job_id, $user_id);
+            return  $item ?? Null;
+    }
+    public static function pdfLink($job_id, $user_id)
+    {
+        return PdfStatus::show($job_id, $user_id);
 
     }
 }

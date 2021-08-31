@@ -27,3 +27,7 @@ $router->group(['prefix' => 'interpreters'], function () use ($router) {
 });
 
 $router->post('/{identifier}', 'PdfMakerController@getPdf');
+$router->get('/pdf-status/{job_id}', 'PdfMakerController@pdfStatus');
+$router->get('/pdf-link/{job_id}', 'PdfMakerController@pdfLink');
+
+

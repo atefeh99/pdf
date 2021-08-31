@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Http\Controllers\PdfMakerController;
 use App\Http\Services\PdfMakerService;
+use App\Models\Notebook\PdfStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
@@ -44,8 +45,9 @@ class MakePdfJob implements ShouldQueue
             $this->data);
 
         //success
+        PdfStatus::changeStatus($this->job->getJobId());
 
-        return "job_id:". $this->job->getJobId();
+//        return "job_id:". $this->job->getJobId();
 //        Log::info('job_id:  '.$this->job->getJobId());
     }
 
