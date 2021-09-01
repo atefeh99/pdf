@@ -12,13 +12,14 @@ class PdfStatus extends Model
     protected $fillable = [
         'job_id',
         'link',
-        'user_id'
+        'user_id',
+        'status'
     ];
 
-    public static function changeStatus($job_id)
+    public static function changeStatus($job_id,$status)
     {
         $item = self::where('job_id', $job_id)->firstOrFail();
-        $item->update(['status' => 'success']);
+        $item->update(['status' => $status]);
     }
 
     public static function store($data)
@@ -43,6 +44,7 @@ class PdfStatus extends Model
 
     public static function show($job_id, $user_id)
     {
+//        dd($job_id);
         $item = self::where([
             ['job_id', '=', $job_id],
             ['user_id', '=', $user_id],

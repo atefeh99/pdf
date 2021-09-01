@@ -34,7 +34,17 @@ trait RulesTrait
                 ]
             ],
             PdfMakerController::class => [
-                'getPdf' => [
+               'getPdf' => [
+                    'notebook' => [
+                        'tour_id' => 'numeric|nullable',
+                        'block_id' => 'numeric|nullable',
+                    ],
+                    'gavahi' => [
+                        'postalcode.*' => 'required|size:10',
+                        'geo' => 'boolean'
+                    ]
+                ],
+                'getAsyncPdf' => [
                     'notebook' => [
                         'tour_id' => 'numeric|nullable',
                         'block_id' => 'numeric|nullable',
@@ -76,6 +86,7 @@ trait RulesTrait
                     $data,
                     self::rules()[$controller][$function][$data['identifier']]
                 );
+
             } else {
                 $validation = Validator::make(
                     $data,

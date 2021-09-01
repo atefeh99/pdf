@@ -7,6 +7,7 @@ use App\Helpers\OdataQueryParser;
 use App\Http\Services\PdfMakerService;
 use Armancodes\DownloadLink\Models\DownloadLink;
 use BaconQrCode\Encoder\QrCode;
+use FastRoute\BadRouteException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\RulesTrait;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\URL;
 use function App\Helpers\asset;
 use function App\Helpers\public_path;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 
 class PdfMakerController extends ApiController
@@ -42,8 +45,40 @@ class PdfMakerController extends ApiController
         $uuid = Uuid::uuid4();
 //        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
         $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
+        $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
+//        dd($result);
+//        return view('gavahi_1', $result['gavahi_1']);
+        if ($result)
+            return $this->respondItemResult($link);
+        else
+            return $this->respondNoFound(trans('messages.custom.404'), 1002);
 
-//        $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
+    }
+    public function getAsyncPdf(Request $request, $identifier)
+    {
+        $user_id = $request->header('x-user-id');
+
+        if (!isset($user_id)) {
+            throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), 4001);
+        }
+        if($identifier != 'notebook' && $identifier != 'gavahi'){
+            throw new NotFoundHttpException(trans('messages.custom.error.route_not_found'));
+        }
+        $input = $request->all();
+        $input['identifier'] = $identifier;
+
+
+        $data = self::checkRules(
+            $input,
+            __FUNCTION__,
+            4000,
+        );
+        if (!isset($data['geo'])) {
+            $data['geo'] = 0;
+        }
+        $uuid = Uuid::uuid4();
+//        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
+        $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
         $result = PdfMakerService::asyncPdf($identifier, $link, $uuid, $user_id, $data);
 //        dd($result);
 //        return view('gavahi_1', $result['gavahi_1']);
@@ -94,7 +129,7 @@ class PdfMakerController extends ApiController
         if (!isset($link)) {
             return $this->respondNoFound(trans('messages.custom.404'), 2002);
         } elseif($link == 'not success') {
-            return $this->respondError(trans('messages.custom.notSuccess'),,2003);
+            return $this->respondError(trans('messages.custom.notSuccess'),422,2003);
         }else{
             return $this->respondItemResult($link);
         }
