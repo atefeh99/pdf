@@ -13,7 +13,7 @@ class PostData extends Model
 {
     use Common;
 
-    protected $connection = 'postalcode';
+    protected $connection = 'gnaf';
     protected $table = 'sina_units';
     protected static $_table = 'sina_units';
 //    protected $postgisFields = [
@@ -55,7 +55,6 @@ class PostData extends Model
     public static function getInfo($postalcode)
     {
 
-
 //        try {
             $item = self::where('postalcode', '=', $postalcode)->get([
 
@@ -82,7 +81,7 @@ class PostData extends Model
 //        } catch (\Exception $exception) {
 //            Log::error($exception->getMessage());
 //        }
-
+//        dd('ite');
         if ($item->count() > 0) {
             $item = $item->toArray()[0];
             if ($item['locationtype'] != 'روستا') {
@@ -90,7 +89,7 @@ class PostData extends Model
             }
             return $item;
         } else {
-            throw new ModelNotFoundException();
+           return null;
         }
     }
     public static function getGeom($postalcode){

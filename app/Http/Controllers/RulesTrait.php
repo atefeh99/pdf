@@ -16,7 +16,6 @@ trait RulesTrait
 
     public static function rules()
     {
-//        dd();
         return [
             InterpreterController::class => [
                 'show' => [
@@ -35,12 +34,8 @@ trait RulesTrait
                 ]
             ],
             PdfMakerController::class => [
-                'getPdf' => [
+               'getPdf' => [
                     'notebook' => [
-//                        'notebook_1' => 'required',
-//                        'notebook_2' => 'required',
-//                        'notebook_3' => 'required',
-                        //  'second.data' => 'array|required',
                         'tour_id' => 'numeric|nullable',
                         'block_id' => 'numeric|nullable',
                     ],
@@ -48,20 +43,36 @@ trait RulesTrait
                         'postalcode.*' => 'required|size:10',
                         'geo' => 'boolean'
                     ]
+                ],
+                'getAsyncPdf' => [
+                    'notebook' => [
+                        'tour_id' => 'numeric|nullable',
+                        'block_id' => 'numeric|nullable',
+                    ],
+                    'gavahi' => [
+                        'postalcode.*' => 'required|size:10',
+                        'geo' => 'boolean'
+                    ]
+                ],
+                'pdfStatus' => [
+                    'job_id' => 'numeric|min:0|required'
+                ],
+                'pdfLink' => [
+                    'job_id' => 'numeric|min:0|required'
                 ]
 
             ]
         ];
     }
 
-    public static function checkRules($data, $function, $identifier, $code, $header)
+    public static function checkRules($data, $function, $code)
     {
         $controller = __CLASS__;
         if (is_object($data)) {
-            if ($identifier) {
+            if (isset($data['identifier'])) {
                 $validation = Validator::make(
                     $data->all(),
-                    self::rules()[$controller][$function][$identifier]
+                    self::rules()[$controller][$function][$data['identifier']]
                 );
             } else $validation = Validator::make(
                 $data->all(),
@@ -70,11 +81,12 @@ trait RulesTrait
 
 
         } else {
-            if ($identifier) {
+            if (isset($data['identifier'])) {
                 $validation = Validator::make(
                     $data,
-                    self::rules()[$controller][$function][$identifier]
+                    self::rules()[$controller][$function][$data['identifier']]
                 );
+
             } else {
                 $validation = Validator::make(
                     $data,
@@ -88,10 +100,8 @@ trait RulesTrait
             throw new RequestRulesException($validation->errors()->getMessages(), $code);
         }
 
-        if ($identifier == 'notebook') {
-            if(!isset($header['x-user-id'])){
-                throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), $code);
-            }
+        if (isset($data['identifier']) && $data['identifier'] == 'notebook') {
+
             if (isset($data['tour_id']) and isset($data['block_id'])) {
                 throw new RequestRulesException(trans('messages.custom.both_filled'), $code);
             } elseif (isset($data['tour_id']) and !$data['tour_id']) {
@@ -103,9 +113,6 @@ trait RulesTrait
             }
         }
 
-
-
-
-        return $validation->validated();
+            return $validation->validated();
     }
 }

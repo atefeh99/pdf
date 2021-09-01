@@ -3,17 +3,21 @@
 namespace App\Http\Services;
 
 use App\Helpers\Random;
+use App\Jobs\MakePdfJob;
+use App\Jobs\MyCustomJob;
 use App\Models\File;
 use App\Models\Interpreter;
 use App\Modules\GetMap\GetMap;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
-use App\Modules\MakePdf;
 use App\Helpers\Date;
 use Carbon\Carbon;
-use App\Models\Notebook\ {Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
+use App\Models\Notebook\{Entrance, PdfStatus, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
 use App\Models\Gavahi\PostData;
 use function PHPUnit\Framework\returnArgument;
+use App\Modules\MakePdf;
 
 
 class PdfMakerService
@@ -25,28 +29,7 @@ class PdfMakerService
         $datetime = explode(' ', Date::convertCarbonToJalali(Carbon::now()));
         $date = str_replace('-', '/', $datetime[0]);
         $barcodes = [];
-//        $params = [
-//            "tour_no"=> $tour_no,
-//            "code_joze" => 5 ,
-//            "province" => $province_name ,
-//            "region" => 'منطقه۹' ,
-//            "county" => '' ,
-//            "district" => '' ,
-//            "postal_region" => '' ,
-//            "blocks_count" => $blocks_c ,
-//            "buildings" => $all_buildings ,
-//            "recog_count" => $unique_recog_code_count ,
-//            "records_counts" => $records ,
-//            "page" => 1,
-//            "date" => $date ,
-//            "data" => $d,
-//            "way_type" => 'خیابان' ,
-//            "way_name" => 'بهشتی',
-//            "neighbourhood_name" =>'عباس آباد' ,
-//            "parts_count" => $parts_count,
-//            "pages" => 5,
-//
-//            ];
+
         if (strpos($identifier, 'notebook') !== false) {
             $blocks_c = 0;
             $all_buildings = 0;
@@ -72,7 +55,7 @@ class PdfMakerService
 
                 $neighbourhoods = [];
                 $ways = [];
-                $blocks_c = count($block->toArray()??[]);
+                $blocks_c = count($block->toArray() ?? []);
                 $d['parts'][0] = Part::get($block->part_id ?? '');
                 $parts_count = count($d['parts']);
                 $d['parts'][0]['blocks'][0] = $block->toArray();
@@ -91,6 +74,8 @@ class PdfMakerService
             } else {
 
                 $tour = Tour::getData($data['tour_id']);
+                Log::info("#tour get " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
                 $tour_name = $tour->name ?? '';
                 $province = $tour->province->name ?? '';
                 $neighbourhoods = [];
@@ -130,8 +115,8 @@ class PdfMakerService
                                 'type' => $address['street']['road_type']['name'] ?? '',
                             ];
                             $ways[] = [
-                                'name' => $address['secondary_street']['name']??'',
-                                'type' => $address['secondary_street']['road_type']['name']??'',
+                                'name' => $address['secondary_street']['name'] ?? '',
+                                'type' => $address['secondary_street']['road_type']['name'] ?? '',
                             ];
                             foreach ($address['entrances'] as $entrance) {
                                 foreach ($entrance['units'] as $unit) {
@@ -183,32 +168,38 @@ class PdfMakerService
         } elseif (strpos($identifier, 'gavahi') !== false) {
             $gavahi_data = [];
             foreach ($data['postalcode'] as $key => $postalcode) {
-
+//                dd($postalcode);
                 $gavahi_data[$key] = PostData::getInfo($postalcode);
 
                 $barcode = '';
-                $barcode_unique = false;
-                while (!$barcode_unique) {
-                    $barcode = Random::randomNumber(20);
-                    if (File::isUniqueBarcode($barcode)) {
-                        $barcode_unique = true;
+                if (isset($gavahi_data[$key])) {
+                    $barcode_unique = false;
+                    while (!$barcode_unique) {
+                        $barcode = Random::randomNumber(20);
+                        if (File::isUniqueBarcode($barcode)) {
+                            $barcode_unique = true;
+                        }
                     }
-                }
-                $gavahi_data[$key]['barcode'] = $barcode;
-                array_push($barcodes, $barcode);
+                    $gavahi_data[$key]['barcode'] = $barcode;
+                    array_push($barcodes, $barcode);
 
-                if ($data['geo'] == 1) {
-                    $image = GetMap::vectorMap($postalcode);
-                    if (!$image) {
-                        $gavahi_data[$key]['image_exists'] = false;
+                    if ($data['geo'] == 1) {
+                        $image = GetMap::vectorMap($postalcode);
+                        if (!$image) {
+                            $gavahi_data[$key]['image_exists'] = false;
+                        } else {
+                            $gavahi_data[$key]['image_exists'] = true;
+                            $name = $postalcode . '.png';
+                            Storage::disk('images')->put($name, $image);
+                        }
                     } else {
-                        $gavahi_data[$key]['image_exists'] = true;
-                        $name = $postalcode . '.png';
-                        Storage::disk('images')->put($name, $image);
+                        $gavahi_data[$key]['image_exists'] = false;
                     }
-                } else {
-                    $gavahi_data[$key]['image_exists'] = false;
                 }
+            }
+            $gavahi_data = array_filter($gavahi_data, function ($a) { return $a !== null;});
+            if(empty($gavahi_data)){
+                throw new ModelNotFoundException();
             }
 
             $params = [
@@ -221,11 +212,11 @@ class PdfMakerService
                 ]
             ];
         }
+//        Log::info("#params sent " . (round(microtime(true) * 1000) - $time) . " milisec long");
         return ['params' => $params, 'barcodes' => $barcodes];
     }
 
-    public
-    static function setNumPersian($result, $id)
+    public static function setNumPersian($result, $id)
     {
         $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
         $num = range(0, 9);
@@ -298,8 +289,8 @@ class PdfMakerService
             if ($result['code_joze']) {
                 $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
             }
-            if($result['ways']){
-                foreach ($result['ways'] as $w=>$way) {
+            if ($result['ways']) {
+                foreach ($result['ways'] as $w => $way) {
                     $result['ways'][$w]['name'] = str_replace($num, $persian, $way['name']);
                 }
             }
@@ -310,8 +301,29 @@ class PdfMakerService
         return $result;
     }
 
-    public
-    static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
+    public static function asyncPdf($identifier, $link, $uuid, $user_id, $data)
+    {
+        $time = round(microtime(true) * 1000);
+        Log::info("#push " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
+        $job_id = Queue::push(new MakePdfJob($identifier, $link, $uuid, $user_id, $data));
+        if ($job_id) {
+            $data = [
+                'job_id' => $job_id,
+                'link' => $link,
+                'user_id' => $user_id,
+
+            ];
+            PdfStatus::store($data);
+            return ['job_id' => $job_id];
+        } else {
+            return false;
+        }
+
+
+    }
+
+    public static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
     {
         $pages = [];
         $indexes = [];
@@ -321,18 +333,13 @@ class PdfMakerService
             $indexes = Interpreter::getBy('identifier', 'gavahi%');
         }
         usort($indexes, function ($a, $b) {
-            return strcmp($a['identifier'], $b['identifier']);
+            return strcmp($a['identifier'], $b['identifier']);//*
         });
-
         $params = [];
         $result = self::setParams($identifier, $link, $data);
         foreach ($indexes as $key => $value) {
-               Storage::put($value['identifier'] . '.blade.php', $value['html']);
+            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
 
-//            $params[$value['identifier']] =
-//                (!$data)
-//                    ? self::setParams($value['identifier'], $tour_no)
-//                    : $data[$value['identifier']];
 
 //            $params[$value['identifier']] = $result['params'];
             if ($result['params'][$value['identifier']]) {
@@ -346,6 +353,7 @@ class PdfMakerService
                     Log::error($exception->getMessage());
 //                    dd($exception->getMessage());
                 }
+
                 $html = $view->toHtml();
 
                 $pages[$key] = $html;
@@ -356,18 +364,31 @@ class PdfMakerService
 
 //        return $params;
         if ($pages) {
+
             MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
             $data = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
                 'barcodes' => $result['barcodes']
             ];
-            // File::store($data);
+            File::store($data);
             return true;
         } else {
             return false;
         }
 
+
+    }
+
+    public static function pdfStatus($job_id, $user_id)
+    {
+        $item = PdfStatus::getStatus($job_id, $user_id);
+        return $item ?? Null;
+    }
+
+    public static function pdfLink($job_id, $user_id)
+    {
+        return PdfStatus::show($job_id, $user_id);
 
     }
 }
