@@ -27,6 +27,7 @@ return [
         'both_filled' => "both tour_id and block_id can't be filled together",
         'both_empty' => "both block_id or tour_id can't be empty",
         'null_field' => "tour_id or block_id can't be null",
+        'notSuccess' => "file status is failed or pending",
 
         'recordExists' => 'this record exists in the dataset',
         'delete' => 'record deleted successfully',
@@ -41,7 +42,8 @@ return [
             'resource_not_found' => 'resource not found',
             'model_not_found' => 'requested :model not found',
             'unauthorized' => 'unauthorized',
-            'query' => 'query exception'
+            'query' => 'query exception',
+            'route_not_found'=>'this route does not exists'
         ],
         'success' => [
             'update' => 'updated successfully',

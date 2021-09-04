@@ -10,7 +10,6 @@ class MakePdf
 {
     public static function createPdf($id, $pages, $params, $uuid)
     {
-
         $mpdf = new Mpdf([
 //            'mode' => 'utf-8',
 //            'defaultPageNumStyle' => 'arabic-indic',
@@ -29,11 +28,11 @@ class MakePdf
 
         if ($id == 'gavahi') {
             $mpdf->showImageErrors = true;
-            $mpdf->imageVars['logo'] = file_get_contents('images/logo.png');
-            $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
-            foreach ($params['gavahi_1']['data'] as $value){
-                if($value['image_exists']){
-                    $mpdf->imageVars[$value['postalcode']] = file_get_contents('images/'.$value['postalcode'].'.png');
+            $mpdf->imageVars['logo'] = file_get_contents(base_path().'/public/images/logo.png');
+//            $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
+            foreach ($params['gavahi_1']['data'] as $value) {
+                if (isset($value['image_exists']) && $value['image_exists'] == true) {
+                    $mpdf->imageVars[$value['postalcode']] = file_get_contents('images/' . $value['postalcode'] . '.png');
 
                 }
             }
@@ -47,17 +46,17 @@ class MakePdf
                 // $chunks = explode("class=table6 tab",$page);
                 // dd($chunks[1]);
                 // foreach($chunks as $chunk){
-                    $mpdf->WriteHTML($page);
+                $mpdf->WriteHTML($page);
 
 
                 // }
 
-            }catch(\Mpdf\MpdfException $e){
+            } catch (\Mpdf\MpdfException $e) {
                 log::error($e->getMessage());
-//                dd($e->getMessage());
+                dd($e->getMessage());
             }
 
-            if ($index != count($pages)-1 ) {
+            if ($index != count($pages) - 1) {
                 $mpdf->AddPage();
             }
         }
