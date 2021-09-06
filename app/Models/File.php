@@ -13,23 +13,25 @@ class File extends Model
     protected $table = 'files';
 
     protected $fillable = [
-      'user_id',
-      'filename',
-      'barcodes'
+        'user_id',
+        'filename',
+        'barcodes',
+        'expired_at'
     ];
-    protected $casts=[
-      'barcodes' => 'array'
+    protected $casts = [
+        'barcodes' => 'array'
     ];
 
     public function getItem()
     {
 
     }
+
     public static function isUniqueBarcode($barcode)
     {
         $query = self::whereRaw('jsonb_contains(barcodes, \'["' . $barcode . '"]\')')->get(['barcodes']);
         if ($query->count() > 0) {
-           return false;
+            return false;
         } else {
             return true;
         }

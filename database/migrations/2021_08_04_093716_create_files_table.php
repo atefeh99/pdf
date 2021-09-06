@@ -19,6 +19,7 @@ class CreateFilesTable extends Migration
             $table->string('filename');
             $table->jsonb('barcodes');
             $table->timestamps();
+            $table->timestamp('expired_at');
         });
     }
 
