@@ -22,7 +22,9 @@ use App\Modules\MakePdf;
 
 class PdfMakerService
 {
-    public static function setParams($identifier, $link, $data = null)
+    use CommonTrait;
+
+    public static function setParams($identifier, $link, $ttl, $data = null)
     {
 
         $params = [];
@@ -197,8 +199,10 @@ class PdfMakerService
                     }
                 }
             }
-            $gavahi_data = array_filter($gavahi_data, function ($a) { return $a !== null;});
-            if(empty($gavahi_data)){
+            $gavahi_data = array_filter($gavahi_data, function ($a) {
+                return $a !== null;
+            });
+            if (empty($gavahi_data)) {
                 throw new ModelNotFoundException();
             }
 
@@ -208,7 +212,8 @@ class PdfMakerService
                     "data" => $gavahi_data,
                     "x" => 1,
                     "length" => count($gavahi_data),
-                    "QRCode" => $link
+                    "QRCode" => $link,
+                    "ttl" => $ttl,
                 ]
             ];
         }
@@ -236,6 +241,7 @@ class PdfMakerService
                     }
                 }
             }
+            $result['ttl'] = str_replace($num, $persian, $result['ttl']);;
         } elseif ($id == 'notebook_1') {
             foreach ($result as $index => $value) {
                 $result[$index] = str_replace($num, $persian, $value);
@@ -327,16 +333,18 @@ class PdfMakerService
     {
         $pages = [];
         $indexes = [];
+        $ttl = '۰';
         if ($identifier == 'notebook') {
             $indexes = Interpreter::getBy('identifier', 'notebook%');
         } elseif ($identifier == 'gavahi') {
             $indexes = Interpreter::getBy('identifier', 'gavahi%');
+            $ttl = $indexes[0]['ttl'];
         }
+//        dd($indexes[0]['ttl']);
         usort($indexes, function ($a, $b) {
             return strcmp($a['identifier'], $b['identifier']);//*
         });
-        $params = [];
-        $result = self::setParams($identifier, $link, $data);
+        $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
 
@@ -369,9 +377,15 @@ class PdfMakerService
             $data = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
-                'barcodes' => $result['barcodes']
+                'barcodes' => $result['barcodes'],
+
             ];
+            if ($identifier == 'gavahi') {
+                $data['expired_at'] = CommonTrait::getExpirationTime($ttl);
+            }
+
             File::store($data);
+
             return true;
         } else {
             return false;
