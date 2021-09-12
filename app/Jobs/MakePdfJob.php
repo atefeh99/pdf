@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Http\Controllers\PdfMakerController;
 use App\Http\Services\PdfMakerService;
-use App\Models\Notebook\PdfStatus;
+use App\Models\PdfStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;

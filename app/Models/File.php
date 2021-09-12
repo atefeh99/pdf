@@ -4,6 +4,8 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Carbon\Carbon;
 
 class File extends Model
 {
@@ -22,9 +24,24 @@ class File extends Model
         'barcodes' => 'array'
     ];
 
-    public function getItem()
+    public static function checkExpiration($filename, $user_id)
     {
-
+//        dd($filename,$user_id);
+        $query = self::where([
+            ['filename', '=', $filename],
+            ['user_id', '=', $user_id]
+        ])->get();
+        if ($query->count() > 0) {
+            $expiraton_dateTime = $query->toArray()[0]['expired_at'];
+            $now = Carbon::now()->toDateTimeString();
+            if ($expiraton_dateTime > $now) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            throw new ModelNotFoundException();
+        }
     }
 
     public static function isUniqueBarcode($barcode)

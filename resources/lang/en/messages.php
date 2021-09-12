@@ -28,6 +28,7 @@ return [
         'both_empty' => "both block_id or tour_id can't be empty",
         'null_field' => "tour_id or block_id can't be null",
         'notSuccess' => "file status is failed or pending",
+        'link_expired'=>"the link has reached to expiration time",
 
         'recordExists' => 'this record exists in the dataset',
         'delete' => 'record deleted successfully',
