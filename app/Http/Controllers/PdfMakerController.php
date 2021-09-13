@@ -49,8 +49,6 @@ class PdfMakerController extends ApiController
 //        return view('gavahi_1', $result['gavahi_1']);
         if ($result) {
             return $this->respondItemResult($link);
-        } elseif ($result == 'expired') {
-            return $this->respondError(trans('messages.custom.link_expired'), 410, 2004);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
         }
