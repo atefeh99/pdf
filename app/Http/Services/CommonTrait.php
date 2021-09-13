@@ -8,6 +8,6 @@ trait CommonTrait
 {
     public static function getExpirationTime($ttl)
     {
-        return Carbon::now()->addMinutes($ttl)->toDateTimeString();
+        return Carbon::now()->addDays($ttl)->toDateTimeString();
     }
 }
