@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Notebook;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,7 +55,7 @@ class PdfStatus extends Model
             if($item->toArray()[0]['status'] == 'success') {
                 return $item->toArray()[0];
             }else{
-                return 'not success';
+                return null;
             }
         } else {
             return null;

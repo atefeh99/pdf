@@ -18,7 +18,6 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
-
 class PdfMakerController extends ApiController
 {
     use RulesTrait;
@@ -48,12 +47,13 @@ class PdfMakerController extends ApiController
         $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
 //        dd($result);
 //        return view('gavahi_1', $result['gavahi_1']);
-        if ($result)
+        if ($result) {
             return $this->respondItemResult($link);
-        else
+        } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
-
+        }
     }
+
     public function getAsyncPdf(Request $request, $identifier)
     {
         $user_id = $request->header('x-user-id');
@@ -61,7 +61,7 @@ class PdfMakerController extends ApiController
         if (!isset($user_id)) {
             throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), 4001);
         }
-        if($identifier != 'notebook' && $identifier != 'gavahi'){
+        if ($identifier != 'notebook' && $identifier != 'gavahi') {
             throw new NotFoundHttpException(trans('messages.custom.error.route_not_found'));
         }
         $input = $request->all();
@@ -126,11 +126,12 @@ class PdfMakerController extends ApiController
             3000,
         );
         $link = PdfMakerService::pdfLink($job_id, $user_id);
+
         if (!isset($link)) {
-            return $this->respondNoFound(trans('messages.custom.404'), 2002);
-        } elseif($link == 'not success') {
-            return $this->respondError(trans('messages.custom.notSuccess'),422,2003);
-        }else{
+            return $this->respondError(trans('messages.custom.notSuccess'), 422, 2003);
+        } elseif ($link == 'expired') {
+            return $this->respondError(trans('messages.custom.link_expired'), 410, 2004);
+        } else {
             return $this->respondItemResult($link);
         }
     }

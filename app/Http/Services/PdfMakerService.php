@@ -4,7 +4,6 @@ namespace App\Http\Services;
 
 use App\Helpers\Random;
 use App\Jobs\MakePdfJob;
-use App\Jobs\MyCustomJob;
 use App\Models\File;
 use App\Models\Interpreter;
 use App\Modules\GetMap\GetMap;
@@ -14,8 +13,9 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\Date;
 use Carbon\Carbon;
-use App\Models\Notebook\{Entrance, PdfStatus, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
+use App\Models\Notebook\{Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
 use App\Models\Gavahi\PostData;
+use App\Models\PdfStatus;
 use function PHPUnit\Framework\returnArgument;
 use App\Modules\MakePdf;
 
@@ -310,9 +310,10 @@ class PdfMakerService
     public static function asyncPdf($identifier, $link, $uuid, $user_id, $data)
     {
         $time = round(microtime(true) * 1000);
-        Log::info("#push " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
         $job_id = Queue::push(new MakePdfJob($identifier, $link, $uuid, $user_id, $data));
+        Log::info("#push " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
         if ($job_id) {
             $data = [
                 'job_id' => $job_id,
@@ -387,6 +388,7 @@ class PdfMakerService
             File::store($data);
 
             return true;
+
         } else {
             return false;
         }
@@ -394,15 +396,28 @@ class PdfMakerService
 
     }
 
-    public static function pdfStatus($job_id, $user_id)
+    public
+    static function pdfStatus($job_id, $user_id)
     {
         $item = PdfStatus::getStatus($job_id, $user_id);
         return $item ?? Null;
     }
 
-    public static function pdfLink($job_id, $user_id)
+    public
+    static function pdfLink($job_id, $user_id)
     {
-        return PdfStatus::show($job_id, $user_id);
+        $data = PdfStatus::show($job_id, $user_id);
+        if (isset($data)) {
+            $filename = str_replace(array("/", ".", "pdf"), '', $data['link']);
+            $expired = File::checkExpiration($filename, $user_id);
+            if ($expired) {
+                return 'expired';
+            } else {
+                return $data;
+            }
+        } else {
+            return null;
+        }
 
     }
 }

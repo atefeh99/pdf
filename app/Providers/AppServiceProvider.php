@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Notebook\PdfStatus;
+use App\Models\PdfStatus;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
