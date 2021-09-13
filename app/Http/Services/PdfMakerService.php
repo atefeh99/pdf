@@ -386,12 +386,8 @@ class PdfMakerService
             }
 
             File::store($data);
-            $expired = File::checkExpiration($uuid,$user_id);
-            if($expired){
-                return 'expired';
-            }else{
-                return true;
-            }
+
+            return true;
 
         } else {
             return false;
@@ -400,21 +396,23 @@ class PdfMakerService
 
     }
 
-    public static function pdfStatus($job_id, $user_id)
+    public
+    static function pdfStatus($job_id, $user_id)
     {
         $item = PdfStatus::getStatus($job_id, $user_id);
         return $item ?? Null;
     }
 
-    public static function pdfLink($job_id, $user_id)
+    public
+    static function pdfLink($job_id, $user_id)
     {
         $data = PdfStatus::show($job_id, $user_id);
-        if(isset($data)){
-            $filename = str_replace(array("/", ".","pdf"), '', $data['link']);
-            $expired = File::checkExpiration($filename,$user_id);
-            if($expired){
+        if (isset($data)) {
+            $filename = str_replace(array("/", ".", "pdf"), '', $data['link']);
+            $expired = File::checkExpiration($filename, $user_id);
+            if ($expired) {
                 return 'expired';
-            } else{
+            } else {
                 return $data;
             }
         } else {
