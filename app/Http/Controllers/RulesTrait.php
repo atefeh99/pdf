@@ -40,8 +40,13 @@ trait RulesTrait
                         'block_id' => 'numeric|nullable',
                     ],
                     'gavahi' => [
-                        'postalcode.*' => 'required|size:10',
-                        'geo' => 'boolean'
+                        'ClientBatchID'=> 'numeric|required',
+                        'Postcodes' => 'required|array',
+                        'Postcodes.*'=> 'required|array',
+                        'Postcodes.*.ClientRowID' => 'required|numeric',
+                        'Postcodes.*.PostCode'=> 'required',
+                        'Signature'=> 'string',
+                        'geo' => 'boolean',
                     ]
                 ],
                 'getAsyncPdf' => [
@@ -50,8 +55,13 @@ trait RulesTrait
                         'block_id' => 'numeric|nullable',
                     ],
                     'gavahi' => [
-                        'postalcode.*' => 'required|size:10',
-                        'geo' => 'boolean'
+                        'ClientBatchID'=> 'numeric|required',
+                        'Postcodes' => 'required|array',
+                        'Postcodes.*'=> 'required|array',
+                        'Postcodes.*.ClientRowID' => 'required|numeric',
+                        'Postcodes.*.PostCode'=> 'required',
+                        'Signature'=> 'string',
+                        'geo' => 'boolean',
                     ]
                 ],
                 'pdfStatus' => [

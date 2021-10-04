@@ -47,7 +47,10 @@ class PdfMakerController extends ApiController
         $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
 //        dd($result);
 //        return view('gavahi_1', $result['gavahi_1']);
-        if ($result) {
+        if (is_array($result) ) {
+//            return $this->respondArrayResult()
+        }elseif (is_bool($result)){
+
             return $this->respondItemResult($link);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);

@@ -53,7 +53,8 @@ return [
             'validation_email_sent' => 'validation email sent',
             'ok_validation' => 'your account has been successfully validated',
             'forgot_password' => 'please check your email to continue!',
-            'unsubscribe' => 'you have unsubscribed successfully'
+            'unsubscribe' => 'you have unsubscribed successfully',
+            'ResMsg'=> 'موفق'
         ]
     ]
 ];

@@ -24,6 +24,26 @@ class PdfMakerService
 {
     use CommonTrait;
 
+    public static $composite_response = [
+
+        'barcode' => 'CertificateNo',
+        'statename' => 'Province',
+        'townname' => 'TownShip',
+        'zonename' => 'Zone',
+        'villagename' => 'Village',
+        'locationtype' => 'LocalityType',
+        'locationname' => 'LocalityName',
+//            'localitycode'=>'LocalityCode',
+        'parish' => 'SubLocality',
+        'preaven' => 'Street2',
+        'avenue' => 'Street',
+        'plate_no' => 'HouseNumber',
+        'floorno' => 'Floor',
+        'unit' => 'SideFloor',
+        'postcode' => 'PostCode'
+//            'description'=>'Description',
+    ];
+
     public static function setParams($identifier, $link, $ttl, $data = null)
     {
 
@@ -169,8 +189,9 @@ class PdfMakerService
 
         } elseif (strpos($identifier, 'gavahi') !== false) {
             $gavahi_data = [];
-            foreach ($data['postalcode'] as $key => $postalcode) {
-//                dd($postalcode);
+            $postalcodes = collect($data['Postcodes'])->pluck('PostCode')->all();
+
+            foreach ($postalcodes as $key => $postalcode) {
                 $gavahi_data[$key] = PostData::getInfo($postalcode);
 
                 $barcode = '';
@@ -225,85 +246,89 @@ class PdfMakerService
     {
         $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
         $num = range(0, 9);
+        if ($id == 'postcode') {
+            $result = str_replace($num, $persian, $result);
 
-        if ($result['date']) {
-            $result['date'] = str_replace($num, $persian, $result['date']);
-        }
-        if ($id == 'gavahi_1') {
-            foreach ($result['data'] as $index => $value) {
-                foreach ($value as $field => $v) {
-                    if ($field != 'barcode') {
-                        $result['data'][$index][$field] = str_replace($num, $persian, $v);
-                        if ($field == 'postalcode') {
-                            $result['data'][$index][$field] = mb_str_split($result['data'][$index][$field], $length = 1);
+        } else {
 
+            if ($result['date']) {
+                $result['date'] = str_replace($num, $persian, $result['date']);
+            }
+            if ($id == 'gavahi_1') {
+                foreach ($result['data'] as $index => $value) {
+                    foreach ($value as $field => $v) {
+                        if ($field != 'barcode') {
+                            $result['data'][$index][$field] = str_replace($num, $persian, $v);
+                            if ($field == 'postalcode') {
+                                $result['data'][$index]['postcode'] = $result['data'][$index][$field];
+                                $result['data'][$index][$field] = mb_str_split($result['data'][$index][$field], $length = 1);
+                            }
                         }
                     }
                 }
-            }
-            $result['ttl'] = str_replace($num, $persian, $result['ttl']);;
-        } elseif ($id == 'notebook_1') {
-            foreach ($result as $index => $value) {
-                $result[$index] = str_replace($num, $persian, $value);
-            }
+                $result['ttl'] = str_replace($num, $persian, $result['ttl']);;
+            } elseif ($id == 'notebook_1') {
+                foreach ($result as $index => $value) {
+                    $result[$index] = str_replace($num, $persian, $value);
+                }
 
-        } elseif ($id == 'notebook_2') {
-            if ($result['tour_no']) {
-                $result['tour_no'] = str_replace($num, $persian, $result['tour_no']);
-            }
-            if ($result['code_joze']) {
-                $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
-            }
-            foreach ($result['data']['parts'] as $p => $part) {
-                foreach ($part['blocks'] as $bl => $block) {
-                    $result['data']['parts'][$p]['blocks'][$bl]['id'] = str_replace($num, $persian, $block['id']);
-                    foreach ($block['buildings'] as $bu => $building) {
-                        $result['data']['parts'][$p]['blocks'][$bl]['buildings'][$bu]['building_no'] =
-                            str_replace($num, $persian, $building['building_no']);
-                        $result['data']['parts'][$p]['blocks'][$bl]['buildings'][$bu]['floor_count'] =
-                            str_replace($num, $persian, $building['floor_count']);
-                        foreach ($building['addresses'] as $a => $add) {
-                            $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]['street']['name'] = str_replace($num, $persian, $add['street']['name']);
-                            $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]['secondary_street']['name'] = str_replace($num, $persian, $add['secondary_street']['name']);
-                            foreach ($add['entrances'] as $e => $ent) {
-                                foreach ($ent['units'] as $u => $unit) {
+            } elseif ($id == 'notebook_2') {
+                if ($result['tour_no']) {
+                    $result['tour_no'] = str_replace($num, $persian, $result['tour_no']);
+                }
+                if ($result['code_joze']) {
+                    $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
+                }
+                foreach ($result['data']['parts'] as $p => $part) {
+                    foreach ($part['blocks'] as $bl => $block) {
+                        $result['data']['parts'][$p]['blocks'][$bl]['id'] = str_replace($num, $persian, $block['id']);
+                        foreach ($block['buildings'] as $bu => $building) {
+                            $result['data']['parts'][$p]['blocks'][$bl]['buildings'][$bu]['building_no'] =
+                                str_replace($num, $persian, $building['building_no']);
+                            $result['data']['parts'][$p]['blocks'][$bl]['buildings'][$bu]['floor_count'] =
+                                str_replace($num, $persian, $building['floor_count']);
+                            foreach ($building['addresses'] as $a => $add) {
+                                $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]['street']['name'] = str_replace($num, $persian, $add['street']['name']);
+                                $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]['secondary_street']['name'] = str_replace($num, $persian, $add['secondary_street']['name']);
+                                foreach ($add['entrances'] as $e => $ent) {
+                                    foreach ($ent['units'] as $u => $unit) {
 
-                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["row_no"] =
-                                        str_replace($num, $persian, $unit['row_no']);
-                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["plate_no"] =
-                                        str_replace($num, $persian, $ent["plate_no"]);
-                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["floor_no"] =
-                                        str_replace($num, $persian, $unit["floor_no"]);
-                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["unit_no"] =
-                                        str_replace($num, $persian, $unit["unit_no"]);
-                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
-                                        str_replace($num, $persian, $unit["location_type_id"]);
-                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
-                                        str_replace($num, $persian, $unit["location_type_id"]);
-                                    $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["recog_code"] =
-                                        str_replace($num, $persian, $unit["recog_code"]);
+                                        $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["row_no"] =
+                                            str_replace($num, $persian, $unit['row_no']);
+                                        $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["plate_no"] =
+                                            str_replace($num, $persian, $ent["plate_no"]);
+                                        $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["floor_no"] =
+                                            str_replace($num, $persian, $unit["floor_no"]);
+                                        $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["unit_no"] =
+                                            str_replace($num, $persian, $unit["unit_no"]);
+                                        $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
+                                            str_replace($num, $persian, $unit["location_type_id"]);
+                                        $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["location_type_id"] =
+                                            str_replace($num, $persian, $unit["location_type_id"]);
+                                        $result['data']["parts"][$p]["blocks"][$bl]["buildings"][$bu]["addresses"][$a]["entrances"][$e]["units"][$u]["recog_code"] =
+                                            str_replace($num, $persian, $unit["recog_code"]);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-        } elseif ($id == 'notebook_3') {
-            if ($result['tour_no']) {
-                $result['tour_no'] = str_replace($num, $persian, $result['tour_no']);
-            }
-            if ($result['code_joze']) {
-                $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
-            }
-            if ($result['ways']) {
-                foreach ($result['ways'] as $w => $way) {
-                    $result['ways'][$w]['name'] = str_replace($num, $persian, $way['name']);
+            } elseif ($id == 'notebook_3') {
+                if ($result['tour_no']) {
+                    $result['tour_no'] = str_replace($num, $persian, $result['tour_no']);
+                }
+                if ($result['code_joze']) {
+                    $result['code_joze'] = str_replace($num, $persian, $result['code_joze']);
+                }
+                if ($result['ways']) {
+                    foreach ($result['ways'] as $w => $way) {
+                        $result['ways'][$w]['name'] = str_replace($num, $persian, $way['name']);
+                    }
                 }
             }
         }
 
 
-//        dd($result);
         return $result;
     }
 
@@ -367,27 +392,37 @@ class PdfMakerService
 
                 $pages[$key] = $html;
             } else {
-                return false;
+                if ($identifier == 'gavahi') {
+                    return [
+                        'ResCode' => "",
+                        'ResMsg' => trans('messages.custom.error.ResMsg'),
+                        'Data' => array_values($data)
+                    ];
+                } else {
+                    return false;
+                }
             }
         }
-
 //        return $params;
         if ($pages) {
 
             MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
-            $data = [
+            $d = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
                 'barcodes' => $result['barcodes'],
 
             ];
             if ($identifier == 'gavahi') {
-                $data['expired_at'] = CommonTrait::getExpirationTime($ttl);
+                $d['expired_at'] = CommonTrait::getExpirationTime($ttl);
             }
 
-            File::store($data);
-
-            return true;
+            File::store($d);
+            if ($identifier == 'gavahi') {
+                return self::makeResponse($data, $result['params'][$identifier . '_1'], $link);
+            } else {
+                return true;
+            }
 
         } else {
             return false;
@@ -396,8 +431,69 @@ class PdfMakerService
 
     }
 
-    public
-    static function pdfStatus($job_id, $user_id)
+    public static function makeResponse($reqData, $resData, $link)
+    {
+// toDo response namovafagh
+        $resData = collect($resData['data'])->keyBy('postcode')->toArray();
+        $data = array();
+        foreach ($reqData['Postcodes'] as $datum) {
+
+            $postcode = self::setNumPersian($datum['PostCode'], 'postcode');
+            $client_row_id = $datum['ClientRowID'];
+
+            $data[$postcode] = [
+                'ClientRowID' => $client_row_id,
+                "Postcode" => $postcode,
+            ];
+            if (array_key_exists($postcode, $resData)) {
+                $data[$postcode] += [
+                    'Succ' => 'true',
+                    'Result' => [
+                        'CertificateUrl' => $link
+                    ]
+                ];
+                foreach ($resData[$postcode] as $field_name => $field_value) {
+//                    dd($resData[$postcode]);
+
+                    $new_key = array_key_exists($field_name, self::$composite_response) ?
+                        self::$composite_response[$field_name] : '';
+                    if ($new_key && $field_value) {
+                        if ($field_name == 'floorno' && $field_value == '۰') {
+                            $field_value = 'همکف';
+                        }
+                        $data[$postcode]['Result'][$new_key] = $field_value;
+                    } elseif ($new_key && !$field_value) {
+                        $data[$postcode]['Result'][$new_key] = null;
+                    }
+                    $data[$postcode]['Result'] += [
+                        'ErrorCode' => "",
+                        'ErrorMessage' => "",
+                        'TraceID' => ""
+                    ];
+                }
+                $data[$postcode]['Errors'] = null;
+            } else {
+                $data[$postcode] += [
+                    'Succ' => 'false',
+                    'Result' => null,
+                    'Errors' => [
+                        'ErrorCode' => "",
+                        'ErrorMessage' => ""
+                    ]
+                ];
+            }
+        }
+
+
+        return [
+            'ResCode' => 0,
+            'ResMsg' => trans('messages.custom.success.ResMsg'),
+            'Data' => array_values($data)
+
+        ];
+    }
+
+    public static function pdfStatus($job_id, $user_id)
     {
         $item = PdfStatus::getStatus($job_id, $user_id);
         return $item ?? Null;
