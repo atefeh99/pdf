@@ -19,7 +19,6 @@ class CreateInterpretersTable extends Migration
             $table->text('html')->nullable();
             $table->id();
             $table->timestamps();
-            $table->bigInteger('ttl')->default(10);
         });
     }
 
