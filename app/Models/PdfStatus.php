@@ -16,7 +16,7 @@ class PdfStatus extends Model
         'status'
     ];
 
-    public static function changeStatus($job_id,$status)
+    public static function changeStatus($job_id, $status)
     {
         $item = self::where('job_id', $job_id)->firstOrFail();
         $item->update(['status' => $status]);
@@ -42,23 +42,29 @@ class PdfStatus extends Model
         }
     }
 
-    public static function show($job_id, $user_id)
+    public static function show($job_id, $user_id, $output)
     {
 //        dd($job_id);
         $item = self::where([
             ['job_id', '=', $job_id],
             ['user_id', '=', $user_id],
         ])->get(
-            ['job_id', 'status', 'link']
+            [$output]
         );
-        if (count($item) > 0){
-            if($item->toArray()[0]['status'] == 'success') {
+        if (count($item) > 0) {
+            if ($item->toArray()[0]['status'] == 'success') {
                 return $item->toArray()[0];
-            }else{
+            } else {
                 return null;
             }
         } else {
             return null;
         }
+    }
+
+    public static function updateInfo($job_id, $info)
+    {
+        $item = self::where('job_id', $job_id)->firstOrFail();
+        $item->update(['info' => $info]);
     }
 }

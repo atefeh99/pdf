@@ -1,3 +1,4 @@
+
 <?php
 
 return [
@@ -44,7 +45,8 @@ return [
             'model_not_found' => 'requested :model not found',
             'unauthorized' => 'unauthorized',
             'query' => 'query exception',
-            'route_not_found'=>'this route does not exists'
+            'route_not_found'=>'this route does not exists',
+            'ResMsg'=> 'ناموفق'
         ],
         'success' => [
             'update' => 'updated successfully',

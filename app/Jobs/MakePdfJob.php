@@ -38,7 +38,7 @@ class MakePdfJob implements ShouldQueue
     public function handle()
     {
 
-        PdfMakerService::getPdf($this->identifier,
+       $info = PdfMakerService::getPdf($this->identifier,
             $this->link,
             $this->uuid,
             $this->user_id,
@@ -46,6 +46,7 @@ class MakePdfJob implements ShouldQueue
 
         //success
         PdfStatus::changeStatus($this->job->getJobId(),'success');
+        PdfStatus::updateInfo($this->job->getJobId(),$info);
         Log::info('status changed');
 //        return "job_id:". $this->job->getJobId();
 //        Log::info('job_id:  '.$this->job->getJobId());
