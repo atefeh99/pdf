@@ -443,7 +443,7 @@ class PdfMakerService
             if ($identifier == 'gavahi_with_info') {
                 $postalcodes = collect($data['Postcodes'])->pluck('PostCode')->all();
             } elseif ($identifier == 'gavahi') {
-                $postalcodes = $data['Postcodes'];
+                $postalcodes = $data['postalcode'];
             }
             $gavahi_data = PostData::getInfo($postalcodes);
 
