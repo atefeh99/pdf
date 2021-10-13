@@ -25,7 +25,7 @@ $router->group(['prefix' => 'interpreters'], function () use ($router) {
     $router->delete('/{id}', 'InterpreterController@remove');
 
 });
-
+$router->post('/gavahi_with_info', 'PdfMakerController@gavahiPdfWithInfo');
 $router->post('/{identifier}', 'PdfMakerController@getPdf');
 $router->post('/{identifier}/async', 'PdfMakerController@getAsyncPdf');
 $router->get('/status/{job_id}', 'PdfMakerController@pdfStatus');

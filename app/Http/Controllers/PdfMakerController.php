@@ -26,7 +26,6 @@ class PdfMakerController extends ApiController
     public function getPdf(Request $request, $identifier)
     {
         $user_id = $request->header('x-user-id');
-
         if (!isset($user_id)) {
             throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), 1001);
         }
@@ -45,9 +44,8 @@ class PdfMakerController extends ApiController
 //        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
         $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
         $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
-//        dd($result);
 //        return view('gavahi_1', $result['gavahi_1']);
-        if ($result) {
+        if ($result){
             return $this->respondItemResult($link);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
@@ -80,8 +78,6 @@ class PdfMakerController extends ApiController
 //        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
         $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
         $result = PdfMakerService::asyncPdf($identifier, $link, $uuid, $user_id, $data);
-//        dd($result);
-//        return view('gavahi_1', $result['gavahi_1']);
         if ($result)
             return $this->respondItemResult($result);
         else
@@ -135,6 +131,36 @@ class PdfMakerController extends ApiController
             return $this->respondItemResult($link);
         }
     }
+    public function gavahiPdfWithInfo(Request $request)
+    {
+
+
+        $user_id = $request->header('x-user-id');
+
+        if (!isset($user_id)) {
+            throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), 5001);
+        }
+        $input = $request->all();
+
+        $data = self::checkRules(
+            $input,
+            __FUNCTION__,
+            5002,
+        );
+
+        if (!isset($data['geo'])) {
+            $data['geo'] = 0;
+        }
+        $uuid = Uuid::uuid4();
+        $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
+        $result = PdfMakerService::gavahiPdfWithInfo($link, $uuid, $user_id, $data);
+        if ($result) {
+            return $this->respondArrayResult($result);
+        }else{
+            return $this->respondNoFound(trans('messages.custom.404'), 1002);
+        }
+    }
+
 
 }
 

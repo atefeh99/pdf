@@ -14,8 +14,9 @@ class UpdateInterpretersTable extends Migration
     public function up()
     {
         Schema::table('interpreters', function (Blueprint $table) {
-            $table->bigInteger('ttl')->default(100000);
+            $table->bigInteger('ttl')->default(10);
         });
+
     }
 
     /**
@@ -28,5 +29,6 @@ class UpdateInterpretersTable extends Migration
         Schema::table('interpreters', function (Blueprint $table) {
             $table->dropColumn('ttl');
         });
+
     }
 }

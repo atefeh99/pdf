@@ -34,10 +34,16 @@ class File extends Model
         if ($query->count() > 0) {
             $expiraton_dateTime = $query->toArray()[0]['expired_at'];
             $now = Carbon::now()->toDateTimeString();
-            if ($expiraton_dateTime > $now) {
+//            dd($expiraton_dateTime);
+            if (isset($expiraton_dateTime)) {
+                if ($expiraton_dateTime > $now) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }else{
+                //if notebook pdf
                 return false;
-            } else {
-                return true;
             }
         } else {
             throw new ModelNotFoundException();

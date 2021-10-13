@@ -38,7 +38,7 @@ class MakePdfJob implements ShouldQueue
     public function handle()
     {
 
-        PdfMakerService::getPdf($this->identifier,
+       PdfMakerService::getPdf($this->identifier,
             $this->link,
             $this->uuid,
             $this->user_id,
