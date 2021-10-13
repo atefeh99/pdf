@@ -60,6 +60,9 @@ class PdfMakerService
         usort($indexes, function ($a, $b) {
             return strcmp($a['identifier'], $b['identifier']);//*
         });
+
+        $link = env('API_HOST') . $link;
+
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
@@ -485,6 +488,8 @@ class PdfMakerService
             if (empty($gavahi_data) && $identifier == 'gavahi') {
                 throw new ModelNotFoundException();
             }
+
+//            dd($link);
             $params = [
                 "gavahi_1" => [
                     "date" => $date,
