@@ -61,9 +61,9 @@ class PdfMakerService
             return strcmp($a['identifier'], $b['identifier']);//*
         });
 
-        $link = env('API_HOST') . $link;
+//        $link = env('API_HOST') . $link;
 
-        $result = self::setParams($identifier, $link, $ttl, $data);
+        $result = self::setParams($identifier, env('API_HOST') . $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
 
@@ -157,11 +157,11 @@ class PdfMakerService
 
         $pages = [];
         $identifier = 'gavahi_with_info';
-        $link = env('API_HOST') . $link;
+//        $link = env('API_HOST') . $link;
 
         $indexes = Interpreter::getBy('identifier', 'gavahi%');
         $ttl = $indexes[0]['ttl'];
-        $result = self::setParams($identifier, $link, $ttl, $data);
+        $result = self::setParams($identifier, env('API_HOST') . $link, $ttl, $data);
         $result_copy = $result;
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
@@ -218,7 +218,7 @@ class PdfMakerService
 
             ];
             File::store($d);
-            return self::makeGavahiInfo($data, $result_copy['params']['gavahi_1'], $link);
+            return self::makeGavahiInfo($data, $result_copy['params']['gavahi_1'], env('API_HOST') . $link);
 
         } else {
             return false;
