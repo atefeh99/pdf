@@ -42,14 +42,14 @@ class PdfStatus extends Model
         }
     }
 
-    public static function show($job_id, $user_id, $output)
+    public static function show($job_id, $user_id)
     {
 //        dd($job_id);
         $item = self::where([
             ['job_id', '=', $job_id],
             ['user_id', '=', $user_id],
         ])->get(
-            [$output]
+            ['job_id', 'status', 'link']
         );
         if (count($item) > 0) {
             if ($item->toArray()[0]['status'] == 'success') {

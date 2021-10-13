@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateInterpretersTable extends Migration
+class UpdateFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class UpdateInterpretersTable extends Migration
      */
     public function up()
     {
-        Schema::table('interpreters', function (Blueprint $table) {
-            $table->bigInteger('ttl')->default(10);
+        Schema::table('files', function (Blueprint $table) {
+            $table->timestamp('expired_at')->nullable();
         });
 
     }
@@ -26,8 +26,8 @@ class UpdateInterpretersTable extends Migration
      */
     public function down()
     {
-        Schema::table('interpreters', function (Blueprint $table) {
-            $table->dropColumn('ttl');
+        Schema::table('files', function (Blueprint $table) {
+            $table->dropColumn('expired_at');
         });
 
     }

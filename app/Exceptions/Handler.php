@@ -131,7 +131,7 @@ class Handler extends ExceptionHandler
                 $return_object = [
                     'data' => [
                         'status' => Response::HTTP_NOT_FOUND,
-                        'message' => $e->getMessage(),
+                        'message' => trans('messages.custom.' . Response::HTTP_NOT_FOUND),
                         'code' => 107
                     ],
                     'status' => Response::HTTP_NOT_FOUND

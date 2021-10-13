@@ -40,12 +40,7 @@ trait RulesTrait
                         'block_id' => 'numeric|nullable',
                     ],
                     'gavahi' => [
-                        'ClientBatchID'=> 'numeric|required',
                         'Postcodes' => 'required|array',
-                        'Postcodes.*'=> 'required|array',
-                        'Postcodes.*.ClientRowID' => 'required|numeric',
-                        'Postcodes.*.PostCode'=> 'required',
-                        'Signature'=> 'string',
                         'geo' => 'boolean',
                     ]
                 ],
@@ -55,12 +50,7 @@ trait RulesTrait
                         'block_id' => 'numeric|nullable',
                     ],
                     'gavahi' => [
-                        'ClientBatchID'=> 'numeric|required',
                         'Postcodes' => 'required|array',
-                        'Postcodes.*'=> 'required|array',
-                        'Postcodes.*.ClientRowID' => 'required|numeric',
-                        'Postcodes.*.PostCode'=> 'required',
-                        'Signature'=> 'string',
                         'geo' => 'boolean',
                     ]
                 ],
@@ -69,6 +59,15 @@ trait RulesTrait
                 ],
                 'pdfLink' => [
                     'job_id' => 'numeric|min:0|required'
+                ],
+                'gavahiPdfWithInfo'=> [
+                    'ClientBatchID'=> 'numeric|required',
+                    'Postcodes' => 'required|array',
+                    'Postcodes.*'=> 'required|array',
+                    'Postcodes.*.ClientRowID' => 'required|numeric',
+                    'Postcodes.*.PostCode'=> 'required',
+                    'Signature'=> 'string',
+                    'geo' => 'boolean',
                 ]
 
             ]
