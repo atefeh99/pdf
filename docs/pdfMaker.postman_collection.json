@@ -121,7 +121,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n \"postalcode\" :[\n     \"1531735613\",\n     \"3717846378\",\n     \"8913613398\"\n     \n ]\n\n \n}",
+							"raw": "{\n    \"ClientBatchID\": 38,\n    \"Postcodes\": [\n        \n        {\n            \"ClientRowID\": 129,\n            \"PostCode\": \"8913613639\"\n        },\n        {\n            \"ClientRowID\": 120,\n            \"PostCode\": \"8913610\"\n        }\n    ],\n    \"Signature\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -343,7 +343,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n \"postalcode\" :[\n     \"1531735613\",\n     \"3717846378\",\n     \"8913613398\"\n     \n ]\n\n \n}",
+							"raw": "{\n    \"ClientBatchID\": 38,\n    \"Postcodes\": [\n        \n        {\n            \"ClientRowID\": 129,\n            \"PostCode\": \"8913613639\"\n        },\n        {\n            \"ClientRowID\": 120,\n            \"PostCode\": \"8913610\"\n        }\n    ],\n    \"Signature\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -541,14 +541,14 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:8000/status/55",
+							"raw": "localhost:8000/status/23",
 							"host": [
 								"localhost"
 							],
 							"port": "8000",
 							"path": [
 								"status",
-								"55"
+								"23"
 							]
 						}
 					},
@@ -566,14 +566,14 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:8000/link/55",
+							"raw": "localhost:8000/link/22",
 							"host": [
 								"localhost"
 							],
 							"port": "8000",
 							"path": [
 								"link",
-								"55"
+								"22"
 							]
 						}
 					},

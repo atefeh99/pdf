@@ -52,54 +52,65 @@ class PostData extends Model
         'postalcode',
     ];
 
-    public static function getInfo($postalcode)
+    public static function getInfo($postalcodes)
     {
+        $out_fields = [
 
-//        try {
-            $item = self::where('postalcode', '=', $postalcode)->get([
+            'statename',
+            'townname',
+            'zonename',
+            'villagename',
+            'locationname',
+            'locationtype',
+//                'localitycode',
+        'building_name',
+            'parish',
+            'avenue',
+            'preaven',
+            'plate_no',
+            'blockno',
+            'floorno',
+            'building_type',
+            'tour',
+            'preaventypename',
+            'avenuetypename',
+            'unit',
+            'postalcode'
 
-                'statename',
-                'townname',
-                'zonename',
-                'villagename',
-                'locationname',
-                'locationtype',
-                'parish',
-                'avenue',
-                'preaven',
-                'plate_no',
-                'blockno',
-                'floorno',
-                'building_type',
-                'tour',
-                'preaventypename',
-                'avenuetypename',
-                'unit',
-                'postalcode'
+        ];
 
-            ]);
-//        } catch (\Exception $exception) {
-//            Log::error($exception->getMessage());
-//        }
-//        dd('ite');
-        if ($item->count() > 0) {
-            $item = $item->toArray()[0];
-            if ($item['locationtype'] != 'روستا') {
-                $item['zonename'] = $item['villagename'] = '(فقط برای روستاها)';
+        $items = self::whereIn('postalcode', $postalcodes)->get($out_fields)
+            ->unique(function ($item) use ($out_fields) {
+                $temp = "";
+                foreach ($out_fields as $out_field) {
+                    $temp .= $item[$out_field];
+                }
+                return $temp;
+            })
+            ->keyby('postalcode')
+            ->toArray();
+        if (count($items) > 0) {
+            foreach ($items as $item) {
+
+                if ($item['locationtype'] != 'روستا') {
+                    $item['zonename'] = $item['villagename'] = '(فقط برای روستاها)';
+                }
             }
-            return $item;
+            return $items;
         } else {
-           return null;
+            return null;
         }
     }
-    public static function getGeom($postalcode){
+
+    public static function getGeom($postalcode)
+    {
         $item = self::where('postalcode', '=', $postalcode)->get([
             DB::raw('ST_X (ST_Transform (geom, 4326)) AS lon,
                            ST_Y (ST_Transform (geom, 4326)) AS lat')
         ]);
 
-        return  $item->toArray()[0];
-}
+        return $item->toArray()[0];
+    }
 
 
 }
