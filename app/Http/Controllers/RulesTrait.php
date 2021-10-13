@@ -40,7 +40,7 @@ trait RulesTrait
                         'block_id' => 'numeric|nullable',
                     ],
                     'gavahi' => [
-                        'Postcodes' => 'required|array',
+                        'postalcode' => 'required|array',
                         'geo' => 'boolean',
                     ]
                 ],
@@ -50,7 +50,7 @@ trait RulesTrait
                         'block_id' => 'numeric|nullable',
                     ],
                     'gavahi' => [
-                        'Postcodes' => 'required|array',
+                        'postalcode' => 'required|array',
                         'geo' => 'boolean',
                     ]
                 ],
