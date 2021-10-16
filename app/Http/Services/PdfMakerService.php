@@ -158,6 +158,7 @@ class PdfMakerService
         $pages = [];
         $identifier = 'gavahi_with_info';
 //        $link = env('API_HOST') . $link;
+        //dd($link);
 
         $indexes = Interpreter::getBy('identifier', 'gavahi%');
         $ttl = $indexes[0]['ttl'];
