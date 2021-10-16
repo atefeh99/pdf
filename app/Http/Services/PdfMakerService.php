@@ -63,7 +63,7 @@ class PdfMakerService
 
 //        $link = env('API_HOST') . $link;
 
-        $result = self::setParams($identifier, env('API_HOST') . $link, $ttl, $data);
+        $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
 
@@ -139,7 +139,7 @@ class PdfMakerService
     {
         $data = PdfStatus::show($job_id, $user_id);
         if (isset($data)) {
-            $filename = str_replace(array("/", ".", "pdf"), '', $data['link']);
+            $filename = str_replace(array(env('API_PREFIX').'/','.pdf'), '', $data['link']);
             $expired = File::checkExpiration($filename, $user_id);
             if ($expired) {
                 return 'expired';
@@ -162,7 +162,7 @@ class PdfMakerService
 
         $indexes = Interpreter::getBy('identifier', 'gavahi%');
         $ttl = $indexes[0]['ttl'];
-        $result = self::setParams($identifier, env('API_HOST') . $link, $ttl, $data);
+        $result = self::setParams($identifier,$link, $ttl, $data);
         $result_copy = $result;
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
@@ -175,7 +175,7 @@ class PdfMakerService
                     $view->render();
                 } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
-                    dd($exception->getMessage());
+//                    dd($exception->getMessage());
                 }
 
                 $html = $view->toHtml();
