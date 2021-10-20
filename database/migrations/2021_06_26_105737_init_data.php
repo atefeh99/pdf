@@ -48,7 +48,10 @@ class InitData extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("interpreters");
+
+        $items = self::whereIn('identifier','like',['%gavahi%','%notebook%'])->get();
+        dd($items);
+        $items->delete();
     }
 
 

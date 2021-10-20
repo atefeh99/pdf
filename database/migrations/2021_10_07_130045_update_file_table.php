@@ -13,9 +13,10 @@ class UpdateFileTable extends Migration
      */
     public function up()
     {
+        if(!schema::hasColumn('files','expired_at')){
         Schema::table('files', function (Blueprint $table) {
             $table->timestamp('expired_at')->nullable();
-        });
+        });}
     }
 
     /**
