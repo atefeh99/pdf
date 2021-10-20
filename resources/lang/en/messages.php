@@ -1,3 +1,4 @@
+
 <?php
 
 return [
@@ -28,6 +29,7 @@ return [
         'both_empty' => "both block_id or tour_id can't be empty",
         'null_field' => "tour_id or block_id can't be null",
         'notSuccess' => "file status is failed or pending",
+        'link_expired'=>"the link has reached to expiration time",
 
         'recordExists' => 'this record exists in the dataset',
         'delete' => 'record deleted successfully',
@@ -43,7 +45,8 @@ return [
             'model_not_found' => 'requested :model not found',
             'unauthorized' => 'unauthorized',
             'query' => 'query exception',
-            'route_not_found'=>'this route does not exists'
+            'route_not_found'=>'this route does not exists',
+            'ResMsg'=> 'ناموفق'
         ],
         'success' => [
             'update' => 'updated successfully',
@@ -52,7 +55,8 @@ return [
             'validation_email_sent' => 'validation email sent',
             'ok_validation' => 'your account has been successfully validated',
             'forgot_password' => 'please check your email to continue!',
-            'unsubscribe' => 'you have unsubscribed successfully'
+            'unsubscribe' => 'you have unsubscribed successfully',
+            'ResMsg'=> 'موفق'
         ]
     ]
 ];
