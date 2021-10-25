@@ -10,7 +10,8 @@ class Interpreter extends Model
     protected $fillable = [
         'identifier',
         'description',
-        'html'
+        'html',
+        'api_prefix'
     ];
     protected $connection = 'pgsql';
     protected $table = 'interpreters';

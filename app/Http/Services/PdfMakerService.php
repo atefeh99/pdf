@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\Models\Notebook\{Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
 use App\Models\Gavahi\PostData;
 use App\Models\PdfStatus;
+use Ramsey\Uuid\Uuid;
 use function PHPUnit\Framework\returnArgument;
 use App\Modules\MakePdf;
 
@@ -46,7 +47,7 @@ class PdfMakerService
     ];
 
 
-    public static function getPdf($identifier, $link, $uuid, $user_id, $data = null)
+    public static function getPdf($identifier, $user_id, $data = null)
     {
         $pages = [];
         $indexes = [];
@@ -61,12 +62,12 @@ class PdfMakerService
             return strcmp($a['identifier'], $b['identifier']);//*
         });
 
-//        $link = env('API_HOST') . $link;
+        $uuid = Uuid::uuid4();
+        $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
 
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
-
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -98,29 +99,26 @@ class PdfMakerService
                 $d['expired_at'] = CommonTrait::getExpirationTime($ttl);
             }
             File::store($d);
-            return true;
+            return $link;
         } else {
             return false;
         }
 
     }
 
-    public static function asyncPdf($identifier, $link, $uuid, $user_id, $data)
+    public static function asyncPdf($identifier, $user_id, $data)
     {
         $time = round(microtime(true) * 1000);
-//        $link = env('API_HOST') . $link;
-
-        $job_id = Queue::push(new MakePdfJob($identifier, $link, $uuid, $user_id, $data));
+        $job_id = Queue::push(new MakePdfJob($identifier, $user_id, $data));
         Log::info("#push " . (round(microtime(true) * 1000) - $time) . " milisec long");
-
+        $data = [
+            'job_id' => $job_id,
+            'user_id' => $user_id,
+            'identifier'=> $identifier,
+        ];
+//        dd($data);
+        PdfStatus::store($data);
         if ($job_id) {
-            $data = [
-                'job_id' => $job_id,
-                'link' => $link,
-                'user_id' => $user_id,
-
-            ];
-            PdfStatus::store($data);
             return ['job_id' => $job_id];
         } else {
             return false;
@@ -138,12 +136,21 @@ class PdfMakerService
     public static function pdfLink($job_id, $user_id)
     {
         $data = PdfStatus::show($job_id, $user_id);
+        $api_prefix = '';
         if (isset($data)) {
-            $filename = str_replace(array(env('API_PREFIX').'/','.pdf'), '', $data['link']);
+            if ($data['identifier'] == 'gavahi') {
+                $indexes = Interpreter::getBy('identifier', 'gavahi%');
+                $api_prefix = $indexes[0]['api_prefix'];
+            } elseif ($data['identifier'] == 'notebook') {
+                $indexes = Interpreter::getBy('identifier', 'notebook%');
+                $api_prefix = $indexes[0]['api_prefix'];
+            }
+            $filename = str_replace(array($api_prefix.'/','.pdf'), '', $data['link']);
             $expired = File::checkExpiration($filename, $user_id);
             if ($expired) {
                 return 'expired';
             } else {
+                unset($data['identifier']);
                 return $data;
             }
         } else {
@@ -152,17 +159,16 @@ class PdfMakerService
 
     }
 
-    public static function gavahiPdfWithInfo($link, $uuid, $user_id, $data)
+    public static function gavahiPdfWithInfo($user_id, $data)
     {
 
         $pages = [];
         $identifier = 'gavahi_with_info';
-//        $link = env('API_HOST') . $link;
-        //dd($link);
-
         $indexes = Interpreter::getBy('identifier', 'gavahi%');
         $ttl = $indexes[0]['ttl'];
-        $result = self::setParams($identifier,$link, $ttl, $data);
+        $uuid = Uuid::uuid4();
+        $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
+        $result = self::setParams($identifier, $link, $ttl, $data);
         $result_copy = $result;
         foreach ($indexes as $key => $value) {
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
