@@ -19,6 +19,7 @@ use App\Models\PdfStatus;
 use Ramsey\Uuid\Uuid;
 use function PHPUnit\Framework\returnArgument;
 use App\Modules\MakePdf;
+use App\Modules\Payment\PaymentModule;
 
 
 class PdfMakerService
@@ -495,7 +496,7 @@ class PdfMakerService
             if (empty($gavahi_data) && $identifier == 'gavahi') {
                 throw new ModelNotFoundException();
             }
-
+            $price = PaymentModule::getServices();
 //            dd($link);
             $params = [
                 "gavahi_1" => [
@@ -505,6 +506,7 @@ class PdfMakerService
                     "length" => count($gavahi_data),
                     "QRCode" => $link,
                     "ttl" => $ttl,
+                    "price"=> $price
                 ]
             ];
         }
