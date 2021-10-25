@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateInterpretersTableV2 extends Migration
+class UpdateInterpretersTableV3 extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class UpdateInterpretersTableV2 extends Migration
      */
     public function up()
     {
-        if(!schema::hasColumn('files','expired_at')) {
+        if(!schema::hasColumn('interpreters','api_prefix')) {
 
             Schema::table('interpreters', function (Blueprint $table) {
                 $table->text('api_prefix')->nullable();
