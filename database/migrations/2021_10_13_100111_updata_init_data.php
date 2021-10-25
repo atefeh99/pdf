@@ -27,6 +27,7 @@ class UpdataInitData extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("interpreters");
+        $item = Interpreter::findOrFail(4);
+        $item-> delete();
     }
 }
