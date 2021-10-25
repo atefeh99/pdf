@@ -4,6 +4,7 @@ namespace App\Modules;
 
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
+use Mpdf\MpdfException;
 use mysql_xdevapi\Exception;
 
 class MakePdf
@@ -28,7 +29,7 @@ class MakePdf
 
         if ($id == 'gavahi') {
             $mpdf->showImageErrors = true;
-            $mpdf->imageVars['logo'] = file_get_contents(base_path().'/public/images/logo.png');
+            $mpdf->imageVars['logo'] = file_get_contents(base_path() . '/public/images/logo.png');
 //            $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
             foreach ($params['gavahi_1']['data'] as $value) {
                 if (isset($value['image_exists']) && $value['image_exists'] == true) {
@@ -60,7 +61,11 @@ class MakePdf
                 $mpdf->AddPage();
             }
         }
+        if ($id == 'gavahi' || $id == 'gavahi_with_info') {
+            $mpdf->Output(base_path() . "/public/files/gavahi/" . $uuid . ".pdf", 'F');
 
-        $mpdf->Output(base_path() . "/public/" . $uuid . ".pdf", 'F');
+        } elseif ($id == 'notebook') {
+            $mpdf->Output(base_path() . "/public/files/notebook/" . $uuid . ".pdf", 'F');
+        }
     }
 }
