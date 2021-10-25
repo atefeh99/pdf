@@ -14,8 +14,8 @@ class UpdatePdfStatusTabel extends Migration
     public function up()
     {
         Schema::table('pdf_status', function (Blueprint $table) {
-            $table->text('identifier')->nullable()->change();
-            $table->string('link')->nullable();
+            $table->text('identifier')->nullable();
+            $table->string('link')->nullable()->change();
 
         });
 
