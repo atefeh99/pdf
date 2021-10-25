@@ -46,11 +46,8 @@ class MakePdfJob implements ShouldQueue
             'status'=> 'success',
         ];
         PdfStatus::updateRecord($this->job->getJobId(),$data);
-//        PdfStatus::changeStatus($this->job->getJobId(),'success');
         Log::info('status changed to success');
-//        dd($this->job->getJobId());
-//        dd($this->user_id);
-       PdfStatus::show($this->job->getJobId(),$this->user_id);
+
     }
 
 
