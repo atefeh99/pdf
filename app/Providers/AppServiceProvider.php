@@ -32,7 +32,6 @@ class AppServiceProvider extends ServiceProvider
             ];
             //failed
             PdfStatus::changeStatus($event->job->getJobId(),'failed');
-
             Log::error('data: ' . json_encode($data));
 
         });
