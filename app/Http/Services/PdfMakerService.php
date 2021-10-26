@@ -68,7 +68,7 @@ class PdfMakerService
 
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+            //Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -115,7 +115,7 @@ class PdfMakerService
         $data = [
             'job_id' => $job_id,
             'user_id' => $user_id,
-            'identifier'=> $identifier,
+            'identifier' => $identifier,
         ];
 //        dd($data);
         PdfStatus::store($data);
@@ -146,7 +146,7 @@ class PdfMakerService
                 $indexes = Interpreter::getBy('identifier', 'notebook%');
                 $api_prefix = $indexes[0]['api_prefix'];
             }
-            $filename = str_replace(array($api_prefix.'/','.pdf'), '', $data['link']);
+            $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
             $expired = File::checkExpiration($filename, $user_id);
             if ($expired) {
                 return 'expired';
@@ -496,8 +496,7 @@ class PdfMakerService
             if (empty($gavahi_data) && $identifier == 'gavahi') {
                 throw new ModelNotFoundException();
             }
-            $price = PaymentModule::getServices();
-//            dd($link);
+            $price = self::getPrice();
             $params = [
                 "gavahi_1" => [
                     "date" => $date,
@@ -506,7 +505,7 @@ class PdfMakerService
                     "length" => count($gavahi_data),
                     "QRCode" => $link,
                     "ttl" => $ttl,
-                    "price"=> $price
+                    "price" => $price
                 ]
             ];
         }
@@ -602,6 +601,18 @@ class PdfMakerService
 
 
         return $result;
+    }
+
+    public static function getPrice()
+    {
+        $price = 0;
+        $services = PaymentModule::getServices();
+        foreach ($services->value as $rec) {
+            if($rec->name == 'گواهی') {
+                return $rec->price;
+            }
+        }
+        return $price;
     }
 }
 
