@@ -20,10 +20,10 @@ class PaymentModule
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                "x-api-key: " . env('API_KEY'),
-                "token: " . env('ACCESS_TOKEN'),
-            )
+//            CURLOPT_HTTPHEADER => array(
+//                "x-api-key: " . env('API_KEY'),
+//                "token: " . env('ACCESS_TOKEN'),
+//            )
         ));
 
         $response = curl_exec($curl);
