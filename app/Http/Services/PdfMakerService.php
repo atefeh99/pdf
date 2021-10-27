@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Exceptions\PaymentException;
 use App\Helpers\Random;
 use App\Jobs\MakePdfJob;
 use App\Models\File;
@@ -607,12 +608,16 @@ class PdfMakerService
     {
         $price = 0;
         $services = PaymentModule::getServices();
-        foreach ($services->value as $rec) {
-            if($rec->name == 'گواهی') {
-                return $rec->price;
+        if ($services->value) {
+            foreach ($services->value as $rec) {
+                if ($rec->name == 'گواهی') {
+                    return $rec->price;
+                }
             }
+            return $price;
+        } else {
+            throw new PaymentException(trans('messages.custom.error.payment'));
         }
-        return $price;
     }
 }
 
