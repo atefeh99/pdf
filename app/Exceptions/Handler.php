@@ -136,6 +136,15 @@ class Handler extends ExceptionHandler
                     ],
                     'status' => Response::HTTP_NOT_FOUND
                 ];
+            } elseif ($e instanceof PaymentException) {
+                $return_object = [
+                    'data' => [
+                        'status' => Response::HTTP_NOT_FOUND,
+                        'message' => $e->getErrorMessage(),
+                        'code' => 108
+                    ],
+                    'status' => Response::HTTP_NOT_FOUND
+                ];
             }
 
 
