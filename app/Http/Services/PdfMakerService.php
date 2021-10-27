@@ -521,6 +521,8 @@ class PdfMakerService
         if ($id == 'postcode') {
             $result = str_replace($num, $persian, $result);
 
+        } elseif($id == 'price') {
+            $result = str_replace($num, $persian, $result);
         } else {
 
             if ($result['date']) {
@@ -606,15 +608,14 @@ class PdfMakerService
 
     public static function getPrice()
     {
-        $price = 0;
         $services = PaymentModule::getServices();
-        if ($services->value) {
+        if (isset($services->value)) {
             foreach ($services->value as $rec) {
                 if ($rec->name == 'گواهی') {
+                    $rec->price = self::setNumPersian($rec->price,'price');
                     return $rec->price;
                 }
             }
-            return $price;
         } else {
             throw new PaymentException(trans('messages.custom.error.payment'));
         }
