@@ -13,7 +13,8 @@ class PdfStatus extends Model
         'job_id',
         'link',
         'user_id',
-        'status'
+        'status',
+        'identifier'
     ];
 
     public static function changeStatus($job_id, $status)
@@ -24,7 +25,6 @@ class PdfStatus extends Model
 
     public static function store($data)
     {
-
         return self::create($data);
     }
 
@@ -49,8 +49,9 @@ class PdfStatus extends Model
             ['job_id', '=', $job_id],
             ['user_id', '=', $user_id],
         ])->get(
-            ['job_id', 'status', 'link']
+            ['job_id', 'status', 'link', 'identifier']
         );
+
         if (count($item) > 0) {
             if ($item->toArray()[0]['status'] == 'success') {
                 return $item->toArray()[0];
@@ -67,4 +68,13 @@ class PdfStatus extends Model
         $item = self::where('job_id', $job_id)->firstOrFail();
         $item->update(['info' => $info]);
     }
+
+    public static function updateRecord($job_id, $data)
+    {
+
+        $item = self::where('job_id', $job_id)->firstOrFail();
+        $item->update($data);
+        $item->save();
+    }
+
 }

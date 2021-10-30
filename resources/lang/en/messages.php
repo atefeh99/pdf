@@ -46,7 +46,8 @@ return [
             'unauthorized' => 'unauthorized',
             'query' => 'query exception',
             'route_not_found'=>'this route does not exists',
-            'ResMsg'=> 'ناموفق'
+            'ResMsg'=> 'ناموفق',
+            'payment'=> 'قیمت گواهی یافت نشد'
         ],
         'success' => [
             'update' => 'updated successfully',

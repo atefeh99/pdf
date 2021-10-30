@@ -40,13 +40,10 @@ class PdfMakerController extends ApiController
         if (!isset($data['geo'])) {
             $data['geo'] = 0;
         }
-        $uuid = Uuid::uuid4();
-//        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
-        $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
-        $result = PdfMakerService::getPdf($identifier, $link, $uuid, $user_id, $data);
+        $result = PdfMakerService::getPdf($identifier, $user_id, $data);
 //        return view('gavahi_1', $result['gavahi_1']);
         if ($result){
-            return $this->respondItemResult($link);
+            return $this->respondItemResult($result);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
         }
@@ -74,10 +71,8 @@ class PdfMakerController extends ApiController
         if (!isset($data['geo'])) {
             $data['geo'] = 0;
         }
-        $uuid = Uuid::uuid4();
-//        $link = URL::asset(env('API_PREFIX') . '/' . $uuid . '.pdf');
-        $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
-        $result = PdfMakerService::asyncPdf($identifier, $link, $uuid, $user_id, $data);
+
+        $result = PdfMakerService::asyncPdf($identifier, $user_id, $data);
         if ($result)
             return $this->respondItemResult($result);
         else
@@ -151,9 +146,8 @@ class PdfMakerController extends ApiController
         if (!isset($data['geo'])) {
             $data['geo'] = 0;
         }
-        $uuid = Uuid::uuid4();
-        $link = env('API_PREFIX') . '/' . $uuid . '.pdf';
-        $result = PdfMakerService::gavahiPdfWithInfo($link, $uuid, $user_id, $data);
+
+        $result = PdfMakerService::gavahiPdfWithInfo( $user_id, $data);
         if ($result) {
             return $this->respondArrayResult($result);
         }else{

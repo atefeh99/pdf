@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Http\Controllers\PdfMakerController;
 use App\Http\Services\PdfMakerService;
 use App\Models\PdfStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,16 +14,12 @@ class MakePdfJob implements ShouldQueue
     use  InteractsWithQueue;
 
     public $identifier;
-    public $link;
-    public $uuid;
     public $user_id;
     public $data;
 
-    public function __construct($identifier, $link, $uuid, $user_id, $data)
+    public function __construct($identifier, $user_id, $data)
     {
         $this->identifier = $identifier;
-        $this->link = $link;
-        $this->uuid = $uuid;
         $this->user_id = $user_id;
         $this->data = $data;
     }
@@ -38,17 +33,21 @@ class MakePdfJob implements ShouldQueue
     public function handle()
     {
 
-       PdfMakerService::getPdf($this->identifier,
-            $this->link,
-            $this->uuid,
+       $link = PdfMakerService::getPdf($this->identifier,
             $this->user_id,
             $this->data);
 
+       if($link == false){
+           throw new \Exception();
+       }
         //success
-        PdfStatus::changeStatus($this->job->getJobId(),'success');
-        Log::info('status changed');
-//        return "job_id:". $this->job->getJobId();
-//        Log::info('job_id:  '.$this->job->getJobId());
+        $data = [
+           'link' => $link,
+            'status'=> 'success',
+        ];
+        PdfStatus::updateRecord($this->job->getJobId(),$data);
+        Log::info('status changed to success');
+
     }
 
 
