@@ -33,6 +33,11 @@ return [
 
         'recordExists' => 'this record exists in the dataset',
         'delete' => 'record deleted successfully',
+        'sms_part1'=>'کد پستی های درخواستی شما :',
+        'sms_part2'=>' با استفاده از آدرس  ',
+        'sms_part3'=>'در دسترس است.',
+
+
         'error' => [
             'no_data' => 'your request has no content or content is not valid',
             'try_later' => 'please try later',

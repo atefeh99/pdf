@@ -5,16 +5,10 @@ namespace App\Http\Controllers;
 use App\Exceptions\UnauthorizedUserException;
 use App\Helpers\OdataQueryParser;
 use App\Http\Services\PdfMakerService;
-use Armancodes\DownloadLink\Models\DownloadLink;
-use BaconQrCode\Encoder\QrCode;
-use FastRoute\BadRouteException;
+use App\Http\Services\SendSmsService;
+use App\Modules\SendSms\SendSmsModules;
 use Illuminate\Http\Request;
 use App\Http\Controllers\RulesTrait;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
-use function App\Helpers\asset;
-use function App\Helpers\public_path;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
@@ -43,6 +37,7 @@ class PdfMakerController extends ApiController
         $result = PdfMakerService::getPdf($identifier, $user_id, $data);
 //        return view('gavahi_1', $result['gavahi_1']);
         if ($result){
+            SendSmsService::sendSms($identifier,$data,$result);
             return $this->respondItemResult($result);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
