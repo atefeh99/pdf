@@ -32,7 +32,6 @@ class SendSmsModules
 
     public static function sendPost($mobile, $postalcodes, $link)
     {
-
         $message = self::makeMessage($postalcodes, $link);
         $opts = [
             'http' => [
@@ -40,7 +39,6 @@ class SendSmsModules
             ]
         ];
         $context = stream_context_create($opts);
-        dd($context);
         $soapClientOptions = [
             'stream_context' => $context,
             'cache_wsdl' => WSDL_CACHE_NONE
@@ -52,7 +50,7 @@ class SendSmsModules
             'Password' => env('POST_SMS_PASSWORD'),
             'SourceMobile' => '',
             'DesctinationMobile' => $mobile,
-            'SMS_Body' => "$text\n " . trans('messages.custom.post')
+            'SMS_Body' => $message
         ];
         try {
             $client->SendSMS($params);

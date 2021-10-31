@@ -1,4 +1,3 @@
-
 <?php
 
 return [
@@ -29,13 +28,14 @@ return [
         'both_empty' => "both block_id or tour_id can't be empty",
         'null_field' => "tour_id or block_id can't be null",
         'notSuccess' => "file status is failed or pending",
-        'link_expired'=>"the link has reached to expiration time",
+        'link_expired' => "the link has reached to expiration time",
 
         'recordExists' => 'this record exists in the dataset',
         'delete' => 'record deleted successfully',
-        'sms_part1'=>'کد پستی های درخواستی شما :',
-        'sms_part2'=>' با استفاده از آدرس  ',
-        'sms_part3'=>'در دسترس است.',
+        'sms_part1' => 'کد پستی های درخواستی شما :',
+        'sms_part2' => ' با استفاده از آدرس  ',
+        'sms_part3' => 'در دسترس است.',
+        'sms_notSent' => 'sms not sent for user',
 
 
         'error' => [
@@ -50,9 +50,9 @@ return [
             'model_not_found' => 'requested :model not found',
             'unauthorized' => 'unauthorized',
             'query' => 'query exception',
-            'route_not_found'=>'this route does not exists',
-            'ResMsg'=> 'ناموفق',
-            'payment'=> 'قیمت گواهی یافت نشد'
+            'route_not_found' => 'this route does not exists',
+            'ResMsg' => 'ناموفق',
+            'payment' => 'قیمت گواهی یافت نشد'
         ],
         'success' => [
             'update' => 'updated successfully',
@@ -62,7 +62,7 @@ return [
             'ok_validation' => 'your account has been successfully validated',
             'forgot_password' => 'please check your email to continue!',
             'unsubscribe' => 'you have unsubscribed successfully',
-            'ResMsg'=> 'موفق'
+            'ResMsg' => 'موفق'
         ]
     ]
 ];
