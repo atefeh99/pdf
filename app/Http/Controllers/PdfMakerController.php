@@ -144,6 +144,9 @@ class PdfMakerController extends ApiController
 
         $result = PdfMakerService::gavahiPdfWithInfo( $user_id, $data);
         if ($result) {
+            $identifier = 'gavahi_with_info';
+            SendSmsService::sendSms($identifier,$data,$result,$user_id);
+
             return $this->respondArrayResult($result);
         }else{
             return $this->respondNoFound(trans('messages.custom.404'), 1002);

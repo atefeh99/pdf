@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Http\Services\PdfMakerService;
+use App\Http\Services\SendSmsService;
 use App\Models\PdfStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -47,6 +48,8 @@ class MakePdfJob implements ShouldQueue
         ];
         PdfStatus::updateRecord($this->job->getJobId(),$data);
         Log::info('status changed to success');
+//        SendSmsService::sendSms($this->identifier,$data,$link,$this->user_id);
+
 
     }
 
