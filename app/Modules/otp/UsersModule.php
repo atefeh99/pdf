@@ -4,14 +4,14 @@ namespace App\Modules\otp;
 
 class UsersModule
 {
-    public static function getMobile($user_id)
+    public static function getMobile($user_id = 'b7895798-5acc-47f1-8914-86a57573208e')
     {
 
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => env('OTP_URL') . $user_id,
+            CURLOPT_URL => env('OTP_URL').$user_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -29,9 +29,10 @@ class UsersModule
         $response = json_decode($response);
 
         curl_close($curl);
-        if (isset($response->data)) {
+        if(isset($response->data)){
             return $response->data->mobile;
-        } else {
+        }
+        else{
             return null;
         }
 

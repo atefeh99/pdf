@@ -471,7 +471,6 @@ class PdfMakerService
                     }
                     $gavahi_data[$postalcode]['barcode'] = $barcode;
                     array_push($barcodes, $barcode);
-
                     if ($data['geo'] == 1) {
                         $image = GetMap::vectorMap($postalcode);
                         if (!$image) {
