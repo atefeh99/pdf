@@ -1,18 +1,17 @@
 <?php
 
+namespace App\Modules\otp;
 
-namespace App\Modules\Payment;
-
-
-class PaymentModule
+class UsersModule
 {
-
-    public static function getServices()
+    public static function getMobile($user_id = 'b7895798-5acc-47f1-8914-86a57573208e')
     {
+
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => env('PAYMENT_SERVICES_URL'),
+            CURLOPT_URL => env('OTP_URL').$user_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -21,17 +20,22 @@ class PaymentModule
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
-                "x-api-key: " . env('API_KEY'),
-                "token: " . env('ACCESS_TOKEN'),
-            )
+                'x-scopes: admin',
+//                'x-api-key:'.env('API_KEY'),
+            ),
         ));
 
         $response = curl_exec($curl);
+        $response = json_decode($response);
 
         curl_close($curl);
-        return json_decode($response);
+        if(isset($response->data)){
+            return $response->data->mobile;
+        }
+        else{
+            return null;
+        }
 
     }
-
 
 }
