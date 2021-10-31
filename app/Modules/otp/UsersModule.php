@@ -4,7 +4,7 @@ namespace App\Modules\otp;
 
 class UsersModule
 {
-    public static function getMobile($user_id = 'b7895798-5acc-47f1-8914-86a57573208e')
+    public static function getMobile($user_id)
     {
 
 
