@@ -44,12 +44,14 @@ class SendSmsModules
             'cache_wsdl' => WSDL_CACHE_NONE
         ];
         $client = new \SoapClient(env('POST_SMS_URI'), $soapClientOptions);
+        dd('dvcdx');
+
         $params = [
             'ContractID' => (int)env('POST_SMS_CONTRACT_ID'),
             'Username' => env('POST_SMS_USERNAME'),
             'Password' => env('POST_SMS_PASSWORD'),
             'SourceMobile' => '',
-            'DesctinationMobile' => $mobile,
+            'DestinationMobile' => $mobile,
             'SMS_Body' => $message
         ];
         try {
