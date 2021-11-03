@@ -54,10 +54,8 @@ class PdfMakerService
         $pages = [];
         $indexes = [];
         $ttl = '';
-        if ($identifier == 'notebook') {
-            $indexes = Interpreter::getBy('identifier', 'notebook%');
-        } elseif ($identifier == 'gavahi') {
-            $indexes = Interpreter::getBy('identifier', 'gavahi%');
+        $indexes = Interpreter::getBy('identifier', $identifier . '%');
+        if ($identifier == 'gavahi') {
             $ttl = $indexes[0]['ttl'];
         }
         usort($indexes, function ($a, $b) {
@@ -454,7 +452,7 @@ class PdfMakerService
             } elseif ($identifier == 'gavahi') {
                 $postalcodes = $data['postalcode'];
             }
-            $gavahi_data = PostData::getInfo($postalcodes);
+            $gavahi_data = PostData::getGavahiInfo($postalcodes);
 
 //dd($gavahi_data);
             foreach ($postalcodes as $key => $postalcode) {
@@ -508,6 +506,30 @@ class PdfMakerService
                     "price" => $price
                 ]
             ];
+        } elseif (strpos($identifier, 'direct_mail') !== false) {
+            $ids = [
+                1, 2, 3
+            ];
+            $direct_mail_data = PostData::getDirectMailInfo($ids);
+
+            foreach ($ids as $key => $id) {
+                if (!isset($direct_mail_data[$id])) {
+                    $direct_mail_data[$id] = null;
+                }
+            }
+            $direct_mail_data = array_filter($direct_mail_data, function ($a) {
+                return $a !== null;
+            });
+            if (empty($direct_mail_data)) {
+                throw new ModelNotFoundException();
+            }
+            $params = [
+                "mail_data_1" => [
+                    "data" => $direct_mail_data,
+                    "length" => count($direct_mail_data),
+                ]
+            ];
+
         }
 //        Log::info("#params sent " . (round(microtime(true) * 1000) - $time) . " milisec long");
         return ['params' => $params, 'barcodes' => $barcodes];
@@ -520,7 +542,7 @@ class PdfMakerService
         if ($id == 'postcode') {
             $result = str_replace($num, $persian, $result);
 
-        } elseif($id == 'price') {
+        } elseif ($id == 'price') {
             $result = str_replace($num, $persian, $result);
         } else {
 
@@ -611,7 +633,7 @@ class PdfMakerService
         if (isset($services->value)) {
             foreach ($services->value as $rec) {
                 if ($rec->name == 'گواهی') {
-                    $rec->price = self::setNumPersian($rec->price,'price');
+                    $rec->price = self::setNumPersian($rec->price, 'price');
                     return $rec->price;
                 }
             }

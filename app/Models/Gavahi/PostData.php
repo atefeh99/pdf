@@ -52,10 +52,9 @@ class PostData extends Model
         'postalcode',
     ];
 
-    public static function getInfo($postalcodes)
+    public static function getGavahiInfo($postalcodes)
     {
         $out_fields = [
-
             'statename',
             'townname',
             'zonename',
@@ -111,6 +110,40 @@ class PostData extends Model
 
         return $item->toArray()[0];
     }
+    public static function getDirectMailInfo($ids)
+    {
+        $out_fields = [
+            'postalcode',
+            'statename',
+            'townname',
+            'zonename',
+            'locationname',
+            'locationtype',
+            'parish',
+            'preaventypename',
+            'preaven',
+            'avenuetypename',
+            'avenue',
+            'plate_no',
+            'floorno',
+
+        ];
+        $items = self::whereIn('id', $ids)->get($out_fields)
+            ->unique(function ($item) use ($out_fields) {
+                $temp = "";
+                foreach ($out_fields as $out_field) {
+                    $temp .= $item[$out_field];
+                }
+                return $temp;
+            })
+            ->keyby('id')
+            ->toArray();
+        if (count($items) == 0) return null;
+        return $items;
+
+
+    }
+
 
 
 }

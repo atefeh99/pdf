@@ -11,7 +11,7 @@ class MakePdf
 {
     public static function createPdf($id, $pages, $params, $uuid)
     {
-        $mpdf = new Mpdf([
+        $arguments = [
 //            'mode' => 'utf-8',
 //            'defaultPageNumStyle' => 'arabic-indic',
             'orientation' => 'P',
@@ -22,7 +22,9 @@ class MakePdf
             'margin_header' => '0',
             'margin_footer' => '3',
 
-        ]);
+        ];
+
+        $mpdf = new Mpdf($arguments);
         $mpdf->useSubstitutions = false;
 
         // ini_set("pcre.backtrack_limit", "10000000");

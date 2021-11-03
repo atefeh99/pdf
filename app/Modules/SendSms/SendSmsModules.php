@@ -43,8 +43,12 @@ class SendSmsModules
             'stream_context' => $context,
             'cache_wsdl' => WSDL_CACHE_NONE
         ];
-        $client = new \SoapClient(env('POST_SMS_URI'), $soapClientOptions);
-        dd('dvcdx');
+        try{
+            $client = new \SoapClient(env('POST_SMS_URI'), $soapClientOptions);
+
+        }catch(\Exception $e){
+            dd($e->getMessage());
+        }
 
         $params = [
             'ContractID' => (int)env('POST_SMS_CONTRACT_ID'),
@@ -57,7 +61,8 @@ class SendSmsModules
         try {
             $client->SendSMS($params);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+//            Log::error($e->getMessage());
+            dd($e->getMessage());
         }
 
         return [
