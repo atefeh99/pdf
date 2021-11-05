@@ -12,7 +12,7 @@ class PaymentModule
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => env('SERVICES_URL'),
+            CURLOPT_URL => env('PAYMENT_SERVICES_URL'),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
