@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Helpers\Date;
 use Carbon\Carbon;
 use App\Models\Notebook\{Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
-use App\Models\Gavahi\PostData;
+use App\Models\Sina\PostData;
 use App\Models\PdfStatus;
 use Ramsey\Uuid\Uuid;
 use function PHPUnit\Framework\returnArgument;
@@ -64,10 +64,11 @@ class PdfMakerService
 
         $uuid = Uuid::uuid4();
         $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
-
         $result = self::setParams($identifier, $link, $ttl, $data);
+
         foreach ($indexes as $key => $value) {
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+
+            //Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -76,7 +77,7 @@ class PdfMakerService
                     $view->render();
                 } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
-//                    dd($exception->getMessage());
+                    dd($exception->getMessage());
                 }
 
                 $html = $view->toHtml();
@@ -508,7 +509,7 @@ class PdfMakerService
             ];
         } elseif (strpos($identifier, 'direct_mail') !== false) {
             $ids = [
-                1, 2, 3
+                100, 30, 15
             ];
             $direct_mail_data = PostData::getDirectMailInfo($ids);
 
@@ -520,12 +521,14 @@ class PdfMakerService
             $direct_mail_data = array_filter($direct_mail_data, function ($a) {
                 return $a !== null;
             });
+
             if (empty($direct_mail_data)) {
                 throw new ModelNotFoundException();
             }
             $params = [
-                "mail_data_1" => [
+                "direct_mail_1" => [
                     "data" => $direct_mail_data,
+                    "x" => 1,
                     "length" => count($direct_mail_data),
                 ]
             ];
@@ -544,6 +547,17 @@ class PdfMakerService
 
         } elseif ($id == 'price') {
             $result = str_replace($num, $persian, $result);
+        } elseif ($id == 'direct_mail_1') {
+            foreach ($result['data'] as $id=>$val) {
+                foreach ($val as $field=>$value){
+                    $result['data'][$id][$field] = str_replace($num, $persian, $value);
+//                    if ($field == 'postalcode') {
+//                        $result['data'][$id]['postcode'] = $result['data'][$id][$field];
+//                        $result['data'][$id][$field] = mb_str_split($result['data'][$id][$field], $length = 1);
+//                    }
+                }
+            }
+//            dd($result);
         } else {
 
             if ($result['date']) {

@@ -42,7 +42,8 @@ trait RulesTrait
                     'gavahi' => [
                         'postalcode' => 'required|array',
                         'geo' => 'boolean',
-                    ]
+                    ],
+                   'direct_mail'=> [],
                 ],
                 'getAsyncPdf' => [
                     'notebook' => [

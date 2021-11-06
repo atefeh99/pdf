@@ -2,7 +2,7 @@
 
 namespace App\Modules\GetMap;
 
-use App\Models\Gavahi\PostData;
+use App\Models\Sina\PostData;
 use Illuminate\Support\Facades\Http;
 use function PHPUnit\Framework\isNull;
 

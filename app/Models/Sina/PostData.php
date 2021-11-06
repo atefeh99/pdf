@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models\Gavahi;
+namespace App\Models\Sina;
 
 
 use Illuminate\Database\Eloquent\Model;
@@ -68,6 +68,7 @@ class PostData extends Model
             'preaven',
             'plate_no',
             'blockno',
+            'building',
             'floorno',
             'building_type',
             'tour',
@@ -117,6 +118,7 @@ class PostData extends Model
             'statename',
             'townname',
             'zonename',
+            'villagename',
             'locationname',
             'locationtype',
             'parish',
@@ -126,6 +128,7 @@ class PostData extends Model
             'avenue',
             'plate_no',
             'floorno',
+            'id'
 
         ];
         $items = self::whereIn('id', $ids)->get($out_fields)

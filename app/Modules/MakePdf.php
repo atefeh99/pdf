@@ -23,12 +23,29 @@ class MakePdf
             'margin_footer' => '3',
 
         ];
+        if ($id == 'gavahi' || $id == 'gavahi_with_info') {
+            $arguments['format'] = [183, 124];
+            $arguments['default_font_size'] = '12';
 
+        }
+
+
+        if ($id == 'direct_mail') {
+            $arguments = [
+                'format' => [100, 50],
+                'default_font_size' => 4,
+                'margin' => 'auto',
+            ];
+
+        }
         $mpdf = new Mpdf($arguments);
         $mpdf->useSubstitutions = false;
 
         // ini_set("pcre.backtrack_limit", "10000000");
-
+        if ($id == 'direct_mail') {
+            $mpdf->showImageErrors = true;
+            $mpdf->imageVars['logo'] = file_get_contents(base_path() . '/public/images/mini-logo.png');
+        }
         if ($id == 'gavahi') {
             $mpdf->showImageErrors = true;
             $mpdf->imageVars['logo'] = file_get_contents(base_path() . '/public/images/logo.png');
@@ -55,19 +72,23 @@ class MakePdf
                 // }
 
             } catch (\Mpdf\MpdfException $e) {
-                log::error($e->getMessage());
-//                dd($e->getMessage());
+//                log::error($e->getMessage());
+                dd($e->getMessage());
             }
 
             if ($index != count($pages) - 1) {
                 $mpdf->AddPage();
             }
         }
-        if ($id == 'gavahi' || $id == 'gavahi_with_info') {
-            $mpdf->Output(base_path() . "/public/files/gavahi/" . $uuid . ".pdf", 'F');
+//        if ($id == 'gavahi' || $id == 'gavahi_with_info') {
+        $mpdf->Output(base_path() . "/public/files/$id/$uuid.pdf", 'F');
 
-        } elseif ($id == 'notebook') {
-            $mpdf->Output(base_path() . "/public/files/notebook/" . $uuid . ".pdf", 'F');
-        }
+//        }
+//        elseif ($id == 'notebook') {
+//            $mpdf->Output(base_path() . "/public/files/notebook/" . $uuid . ".pdf", 'F');
+//        }elseif ($id == 'direct_mail') {
+//            $mpdf->Output(base_path() . "/public/files/direct_mail/" . $uuid . ".pdf", 'F');
+//
+//        }
     }
 }
