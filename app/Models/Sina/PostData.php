@@ -14,7 +14,7 @@ class PostData extends Model
     use Common;
 
     protected $connection = 'gnaf';
-    protected $table = 'sina_units';
+    protected $table = 'sina_unit';
     protected static $_table = 'sina_units';
 //    protected $postgisFields = [
 //        'geom'
@@ -75,7 +75,9 @@ class PostData extends Model
             'preaventypename',
             'avenuetypename',
             'unit',
-            'postalcode'
+            'postalcode',
+            'activity_type'
+
 
         ];
 
@@ -128,7 +130,13 @@ class PostData extends Model
             'avenue',
             'plate_no',
             'floorno',
-            'id'
+            'id',
+            'mainavenue',
+            'building',
+            'blockno',
+            'unit',
+           'activity_type',
+           'activity_name'
 
         ];
         $items = self::whereIn('id', $ids)->get($out_fields)

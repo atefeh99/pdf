@@ -9,7 +9,7 @@ use mysql_xdevapi\Exception;
 
 class MakePdf
 {
-    public static function createPdf($id, $pages, $params, $uuid)
+    public static function createPdf($id, $pages, $params, $uuid, $data)
     {
         $arguments = [
 //            'mode' => 'utf-8',
@@ -24,19 +24,19 @@ class MakePdf
 
         ];
         if ($id == 'gavahi' || $id == 'gavahi_with_info') {
-            $arguments['format'] = [183, 124];
-            $arguments['default_font_size'] = '12';
+            if ($data['geo'] == 0) {
+                $arguments['format'] = [183, 124];
+            } else {
+                $arguments['format'] = [183, 224];
+            }
+            $arguments['default_font_size'] = '10';
 
         }
 
 
         if ($id == 'direct_mail') {
-            $arguments = [
-                'format' => [100, 50],
-                'default_font_size' => 4,
-                'margin' => 'auto',
-            ];
-
+            $arguments ['format']= [80,50];
+            $arguments ['default_font_size']= 5;
         }
         $mpdf = new Mpdf($arguments);
         $mpdf->useSubstitutions = false;

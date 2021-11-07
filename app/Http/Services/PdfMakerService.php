@@ -88,9 +88,10 @@ class PdfMakerService
             }
 
         }
-//        return $params;
+//        dd();
+//        return $result['params']['direct_mail_1'];
         if ($pages) {
-            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
+            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid,$data);
             $d = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
@@ -509,7 +510,7 @@ class PdfMakerService
             ];
         } elseif (strpos($identifier, 'direct_mail') !== false) {
             $ids = [
-                100, 30, 15
+                38, 39, 73
             ];
             $direct_mail_data = PostData::getDirectMailInfo($ids);
 
