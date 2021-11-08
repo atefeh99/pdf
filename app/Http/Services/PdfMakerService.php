@@ -67,7 +67,7 @@ class PdfMakerService
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
 
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+          //  Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -76,6 +76,7 @@ class PdfMakerService
                     $view->render();
                 } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
+                    dd($exception->getMessage());
                 }
 
                 $html = $view->toHtml();
@@ -483,7 +484,6 @@ class PdfMakerService
                             Storage::disk('images')->put($name, $image);
                         }
                     } else {
-
                         $gavahi_data[$postalcode]['image_exists'] = false;
                     }
 

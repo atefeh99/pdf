@@ -58,10 +58,9 @@ class MakePdf
             $mpdf->showImageErrors = true;
             $mpdf->imageVars['logo'] = file_get_contents(base_path() . '/public/images/logo.png');
 //            $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
-            foreach ($params['gavahi_1']['data'] as $value) {
+            foreach ($params['gavahi_1']['data'] as $key=>$value) {
                 if (isset($value['image_exists']) && $value['image_exists'] == true) {
-                    $mpdf->imageVars[$value['postalcode']] = file_get_contents('images/' . $value['postalcode'] . '.png');
-
+                    $mpdf->imageVars[$key] = file_get_contents('images/' . $key . '.png');
                 }
             }
 //            $mpdf->imageVars['3711655194'] = file_get_contents('images/3711655194.png');
@@ -82,6 +81,7 @@ class MakePdf
 
             } catch (\Mpdf\MpdfException $e) {
                 log::error($e->getMessage());
+                dd($e->getMessage());
             }
 
             if ($index != count($pages) - 1) {
