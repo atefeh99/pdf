@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Gavahi;
+namespace App\Models\Sina;
 
 trait Common
 {
@@ -76,36 +76,35 @@ trait Common
             }
         }
 //        plateno
-        if (array_key_exists('pelak', $this->attributes)
-            && $this->attributes['pelak']) {
+        if (array_key_exists('plate_no', $this->attributes)
+            && $this->attributes['plate_no']) {
             $result .= 'پلاک ';
-            $result .= $this->attributes['pelak'];
-            $result .= '، ';
+            $result .= $this->attributes['plate_no'];
         }
 //        floor
         if (array_key_exists('floorno', $this->attributes)) {
+            $result .= '، ';
             $result .= 'طبقه ';
             $result .= ((int)$this->attributes['floorno'] == 0) ?
                 'همکف' : $this->attributes['floorno'];
-            $result .= '، ';
         }
 
 
 //        unit
         if (array_key_exists('unit', $this->attributes)
             && $this->attributes['unit']) {
+            $result .= '، ';
             $result .= 'واحد ';
             $result .= $this->attributes['unit'];
-            $result .= '، ';
         }
 
 
 //        postalcode
-        if (array_key_exists('postalcode', $this->attributes)
-            && $this->attributes['postalcode']) {
-            $result .= 'کد پستی:';
-            $result .= $this->attributes['postalcode'];
-        }
+//        if (array_key_exists('postalcode', $this->attributes)
+//            && $this->attributes['postalcode']) {
+//            $result .= 'کد پستی:';
+//            $result .= $this->attributes['postalcode'];
+//        }
 
 
         return $result;

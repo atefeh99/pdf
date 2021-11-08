@@ -26,6 +26,7 @@ class SendSmsService
             if ($sms_module == "KAVENEGAR") {
                 SendSmsModules::sendKavenegar($mobile, $postalcodes, $link);
             } elseif ($sms_module == "Post") {
+
                 SendSmsModules::sendPost($mobile, $postalcodes, $link);
             }
         }else{

@@ -30,5 +30,6 @@ class UpdateGavahiHtml extends Migration
     public function down()
     {
         $item = Interpreter::findOrFail(4);
-        $item-> delete();    }
+        $item->delete();
+    }
 }
