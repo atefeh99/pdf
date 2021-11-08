@@ -29,166 +29,172 @@ class UpdateDirectMailHtml extends Migration
             width: 100%;
         }
 
-
-        /*.border {*/
-        /*    border: 1px solid black*/
-        /*}*/
-
-        /*.table td {*/
-        /*    text-align: center*/
-        /*}*/
-
-        {{--.table2 td {--}}
-        {{--    text-align: center;--}}
-        {{--    width: 30px--}}
-        {{--}--}}
-
-        {{--.barcode {--}}
-        {{--    padding: 1.5mm;--}}
-        {{--    margin: 5px;--}}
-        {{--    margin-bottom: 4px;--}}
-        {{--    vertical-align: top;--}}
-        {{--    color: black--}}
-        {{--}--}}
-
-        {{--.barcodecell {--}}
-        {{--    vertical-align: middle--}}
-
-
         table td {
             text-align: center;
         }
-        .table2{
-            background-color: blue;
+
+        .table2 {
             min-width: 100%;
+            width: 100%;
+            margin-right: 0;
+            margin-left: 0;
+
         }
+
+        .table2 tr {
+            text-align: center;
+            padding: 0;
+        }
+
         .table2 td {
-            background-color: white;
             padding: 0;
             /*width:150px;*/
+            /*text-align: center;*/
+        }
+
+        .table3 {
+            min-width: 100%;
+            width: 100%;
+            margin-right: 0;
+            margin-left: 0;
+            bottom: 0;
+        }
+
+        .table3 tr {
+            padding: 0;
+        }
+
+        .table3 td {
+            padding: 0;
+
         }
     </style>
-</head> {{--@php--}} {{--import --}} {{--@endphp--}}
-<body > {{--{{ var_dump($data) }}--}}
-{{--<div style="height:100%;width:100%;background-color: blue">--}}
-    @foreach($data as $key=>$item)
-        <table >
-            <tr>
-                <td style="float: right"><img src="var:logo" width="50px" height="50px"
-                                                         style="margin-right: 0px;margin-top: 0px"></td>
-                <td width="50px"></td>
-                <td style="text-align: right;font-size: 15">
-                    کد پستی
-                    {{$item["postalcode"]}}
+</head>
+<body>
+@foreach($data as $key=>$item)
+    <table>
+        <tr>
+            <td style="margin-right:0;"><img src="var:logo" width="45px" height="40px"
+                                             style="margin-right: 0px;margin-top: 0px"></td>
+            <td style="width:45px;"></td>
+            <td style="text-align: right;font-size: 14;width:100px;padding-top: 0">
+                کد پستی
+                {{$item["postalcode"]}}
 
-                </td>
-                <td style="width:90px"></td>
-            </tr>
-        </table>
-        <table class="table2">
-
-            <tr>
-                <td style="border-bottom: 1px dotted black">
-                    @if($item["statename"])
+            </td>
+            <td style="width:90px;"></td>
+        </tr>
+    </table>
+    <table class="table2">
+        <tr>
+            <td style="border-bottom: 1px dotted black;padding-top:2px">
+                @if($item["statename"])
+                    @if($item["locationtype"] != "روستا")
                         استان
-                        {{$item["statename"]}}
                     @endif
-                    @if($item["townname"])
-                        ،
-                        شهرستان
-                        {{$item["townname"]}}
-                    @endif
-                    @if($item["zonename"])
-                        ،
-                        بخش
-                        {{$item["zonename"]}}
-                    @endif
-                    @if($item["villagename"])
-                        ،
-                        دهستان
-                        {{$item["villagename"]}}
-                    @endif
-                    @if($item["locationtype"] && $item["locationname"])
-                        ،
-                        {{$item["locationtype"]}}:
-                        {{$item["locationname"]}}
-                    @endif
-                </td>
-            </tr>
-            <tr>
-                <td style="border-bottom: 1px dotted black">
-                    @if($item["parish"])
-                        {{$item["parish"]}}
-                    @endif
-                    @if($item["mainavenue"])
-                        ،
-                        {{$item["mainavenue"]}}
-                    @endif
-                    @if($item["preaventypename"] && $item["preaven"])
-                        ،
-                        {{$item["preaventypename"]}}
-                        {{$item["preaven"]}}
-                    @endif
-                    @if($item["avenuetypename"] && $item["avenue"])
-                        ،
-                        {{$item["avenuetypename"]}}
-                        {{$item["avenue"]}}
-                    @endif
+                    {{$item["statename"]}}
+                @endif
+                @if($item["townname"])
+                    ،
+                    شهرستان
+                    {{$item["townname"]}}
+                @endif
+                @if($item["zonename"])
+                    ،
+                    بخش
+                    {{$item["zonename"]}}
+                @endif
+                @if($item["villagename"])
+                    ،
+                    دهستان
+                    {{$item["villagename"]}}
+                @endif
+                @if($item["locationtype"] && $item["locationname"])
+                    ،
+                    {{$item["locationtype"]}}:
+                    {{$item["locationname"]}}
+                @endif
+            </td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px dotted black">
+                @if($item["parish"])
+                    {{$item["parish"]}}
+                @endif
+                @if($item["mainavenue"])
+                    ،
+                    {{$item["mainavenue"]}}
+                @endif
+                @if($item["preaventypename"] && $item["preaven"])
+                    ،
+                    {{$item["preaventypename"]}}
+                    {{$item["preaven"]}}
+                @endif
+                @if($item["avenuetypename"] && $item["avenue"])
+                    ،
+                    {{$item["avenuetypename"]}}
+                    {{$item["avenue"]}}
+                @endif
 
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @if($item["plate_no"])
-                        پلاک
-                        {{$item["plate_no"]}}
-                    @endif
-                    @if($item["building"])
-                        ،
-                        {{$item["building"]}}
-                    @endif
-                    @if($item["blockno"])
-                        ،
-                        بلوک
-                        {{$item["blockno"]}}
-                    @endif
-                    @if($item["floorno"])
-                        ،
-                        طبقه
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @if($item["plate_no"])
+                    پلاک
+                    {{$item["plate_no"]}}
+                @endif
+                @if($item["building"])
+                    ،
+                    {{$item["building"]}}
+                @endif
+                @if($item["blockno"])
+                    ،
+                    بلوک
+                    {{$item["blockno"]}}
+                @endif
+                @if($item["floorno"])
+                    ،
+                    طبقه
+                    @if($item["floorno"] != "۰")
                         {{$item["floorno"]}}
+                    @else
+                        همکف
                     @endif
-                    @if($item["unit"])
-                        ،
-                        واحد
-                        {{$item["unit"]}}
-                    @endif
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @if($item["activity_type"])
-                        {{$item["activity_type"]}}
-                    @endif
-                    @if($item["activity_name"])
-                        ،
-                        {{$item["activity_name"]}}
-                    @endif
-                </td>
+                @endif
+                @if($item["unit"])
+                    ،
+                    واحد
+                    {{$item["unit"]}}
+                @endif
+            </td>
+        </tr>
+    </table>
+    <table class="table3">
+        <tr>
+            <td style="height: 12px;"></td>
+        </tr>
+        <tr>
+            <td>
+                @if($item["activity_type"])
+                    {{$item["activity_type"]}}
+                @endif
+                @if($item["activity_name"])
+                    ،
+                    {{$item["activity_name"]}}
+                @endif
+            </td>
 
-            </tr>
-            <tr>
-                <td>
-                    اصلاحات ..............................
-                </td>
-            </tr>
-        </table>
-        @if($x !== $length)
-            <pagebreak/> @endif @php $x++; @endphp@endforeach
-{{--</div>--}}
+        </tr>
+        <tr>
+            <td>
+                اصلاحات ....................................................................................
+    </table>
+    @if($x !== $length)
+        <pagebreak/> @endif @php $x++; @endphp@endforeach
 </body>
 </html>
-
-            '
+ '
         ]);
     }
 

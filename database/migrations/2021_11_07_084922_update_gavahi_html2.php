@@ -50,8 +50,9 @@ class UpdateGavahiHtml2 extends Migration
         }</style>
 </head> {{--@php--}} {{--import --}} {{--@endphp--}}
 <body> {{--{{ var_dump($data) }}--}}
-<div style="border:1px solid black ">
+{{--<div style="border:1px solid black ">--}}
     @foreach($data as $key=>$item)
+        <div style="border:1px solid black ">
         <table>
             <tr>
                 <td style="margin-left:90px;width:200px; height:100px"><img src="var:logo" width="150px" height="100px">
@@ -213,8 +214,9 @@ class UpdateGavahiHtml2 extends Migration
                 </td>
             </tr>
         </table>
-</div>
-<div style="border:1px solid black;border-top:none ">
+        </div>
+
+        <div style="border:1px solid black;border-top:none ">
 
     <table>
         <tr>
@@ -266,6 +268,7 @@ class UpdateGavahiHtml2 extends Migration
 </div>@if($x !== $length)
     <pagebreak/> @endif @php $x++; @endphp@endforeach</body>
 </html>
+
 '
         ]);
     }

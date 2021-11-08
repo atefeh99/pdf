@@ -65,10 +65,9 @@ class PdfMakerService
         $uuid = Uuid::uuid4();
         $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
         $result = self::setParams($identifier, $link, $ttl, $data);
-
         foreach ($indexes as $key => $value) {
 
-            //Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -77,7 +76,6 @@ class PdfMakerService
                     $view->render();
                 } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
-                    dd($exception->getMessage());
                 }
 
                 $html = $view->toHtml();
@@ -88,7 +86,9 @@ class PdfMakerService
             }
 
         }
-//        dd();
+        $time = round(microtime(true) * 1000);
+        Log::info("#pages complete " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
 //        return $result['params']['direct_mail_1'];
         if ($pages) {
             MakePdf::createPdf($identifier, $pages, $result['params'], $uuid,$data);
@@ -218,7 +218,7 @@ class PdfMakerService
 
         if ($pages) {
 
-            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid);
+            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid,$data);
             $d = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
@@ -409,6 +409,8 @@ class PdfMakerService
                     }
                 }
             }
+            Log::info("#part data added " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
 //            $ways = array_unique($ways);
             $neighbourhoods = array_unique($neighbourhoods);
             $ways = array_map("unserialize", array_unique(array_map("serialize", $ways)));
@@ -510,7 +512,7 @@ class PdfMakerService
             ];
         } elseif (strpos($identifier, 'direct_mail') !== false) {
             $ids = [
-                38, 39, 73
+                38, 39, 1265082
             ];
             $direct_mail_data = PostData::getDirectMailInfo($ids);
 
