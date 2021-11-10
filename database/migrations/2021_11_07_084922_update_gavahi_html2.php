@@ -14,7 +14,7 @@ class UpdateGavahiHtml2 extends Migration
      */
     public function up()
     {
-        $item = Interpreter::where('identifier','gavahi_1')->get();
+        $item = Interpreter::where('identifier','gavahi_1');
         $item->update([
             'html' => '<html>
 <head>
@@ -280,7 +280,7 @@ class UpdateGavahiHtml2 extends Migration
      */
     public function down()
     {
-        $item =Interpreter::where('identifier','gavahi_1')->get();
+        $item =Interpreter::where('identifier','gavahi_1');
         $item->delete();
     }
 }

@@ -14,7 +14,7 @@ class UpdateDirectMailHtml extends Migration
      */
     public function up()
     {
-        $item = Interpreter::where('identifier','direct_mail')->get();
+        $item = Interpreter::where('identifier','direct_mail');
         $item->update([
             'html' => '
             <html>
@@ -205,7 +205,7 @@ class UpdateDirectMailHtml extends Migration
      */
     public function down()
     {
-        $item = Interpreter::findOrFail(5);
+        $item = Interpreter::where('identifier','direct_mail');
         $item->delete();
     }
 }
