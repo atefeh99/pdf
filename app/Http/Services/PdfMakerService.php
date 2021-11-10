@@ -67,7 +67,7 @@ class PdfMakerService
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
 
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+              Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -76,6 +76,7 @@ class PdfMakerService
                     $view->render();
                 } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
+                    dd($exception->getMessage());
                 }
 
                 $html = $view->toHtml();
@@ -91,7 +92,7 @@ class PdfMakerService
 
 //        return $result['params']['direct_mail_1'];
         if ($pages) {
-            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid,$data);
+            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid, $data);
             $d = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
@@ -218,7 +219,7 @@ class PdfMakerService
 
         if ($pages) {
 
-            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid,$data);
+            MakePdf::createPdf($identifier, $pages, $result['params'], $uuid, $data);
             $d = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
@@ -483,7 +484,6 @@ class PdfMakerService
                             Storage::disk('images')->put($name, $image);
                         }
                     } else {
-
                         $gavahi_data[$postalcode]['image_exists'] = false;
                     }
 
@@ -498,7 +498,14 @@ class PdfMakerService
             if (empty($gavahi_data) && $identifier == 'gavahi') {
                 throw new ModelNotFoundException();
             }
-            $price = self::getPrice();
+            try {
+                $costs = self::getCost();
+            } catch (PaymentException $e) {
+                throw new PaymentException($e->getMessage());
+            }
+            $price = $costs['price'];
+            $tax = $costs['tax'];
+
             $params = [
                 "gavahi_1" => [
                     "date" => $date,
@@ -507,7 +514,8 @@ class PdfMakerService
                     "length" => count($gavahi_data),
                     "QRCode" => $link,
                     "ttl" => $ttl,
-                    "price" => $price
+                    "price" => $price,
+                    "tax" => $tax
                 ]
             ];
         } elseif (strpos($identifier, 'direct_mail') !== false) {
@@ -549,10 +557,11 @@ class PdfMakerService
             $result = str_replace($num, $persian, $result);
 
         } elseif ($id == 'price') {
-            $result = str_replace($num, $persian, $result);
+            $result['price'] = str_replace($num, $persian, $result['price']);
+            $result['tax'] = str_replace($num, $persian, $result['tax']);
         } elseif ($id == 'direct_mail_1') {
-            foreach ($result['data'] as $id=>$val) {
-                foreach ($val as $field=>$value){
+            foreach ($result['data'] as $id => $val) {
+                foreach ($val as $field => $value) {
                     $result['data'][$id][$field] = str_replace($num, $persian, $value);
 //                    if ($field == 'postalcode') {
 //                        $result['data'][$id]['postcode'] = $result['data'][$id][$field];
@@ -644,16 +653,24 @@ class PdfMakerService
         return $result;
     }
 
-    public static function getPrice()
+    public static function getCost()
     {
         $services = PaymentModule::getServices();
+        $price = null;
+        $tax = null;
+
         if (isset($services->value)) {
-            foreach ($services->value as $rec) {
-                if ($rec->name == 'گواهی') {
-                    $rec->price = self::setNumPersian($rec->price, 'price');
-                    return $rec->price;
+            foreach ($services->value as $res) {
+                if ($res->name == 'گواهی') {
+                    $calculate_tax = $res->price + $res->tax;
+                    $persian_num = self::setNumPersian(['price' => $res->price, 'tax' => $calculate_tax], 'price');
+                    $price = $persian_num['price'];
+                    $tax = $persian_num['tax'];
                 }
             }
+            return ['price' => $price, 'tax' => $tax];
+
+
         } else {
             throw new PaymentException(trans('messages.custom.error.payment'));
         }
