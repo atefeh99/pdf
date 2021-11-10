@@ -14,7 +14,7 @@ class UpdateDirectMailHtml extends Migration
      */
     public function up()
     {
-        $item = Interpreter::findOrFail(5);
+        $item = Interpreter::where('identifier','direct_mail')->get();
         $item->update([
             'html' => '
             <html>
