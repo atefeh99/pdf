@@ -3,6 +3,7 @@
 namespace App\Modules\GetMap;
 
 use App\Models\Sina\PostData;
+use Illuminate\Support\Facades\Log;
 
 class GetMap
 {
@@ -18,10 +19,10 @@ class GetMap
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-//            CURLOPT_URL => "localhost:8080?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
+            CURLOPT_URL => "localhost:8080?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
 //            CURLOPT_URL => "https://dev.map.ir/static?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=15&type=vector&style=light",
 
-            CURLOPT_URL => "https://dev.map.ir/static?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
+//            CURLOPT_URL => "https://dev.map.ir/static?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -36,7 +37,16 @@ class GetMap
         ));
 
         $response = curl_exec($curl);
-        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);curl_close($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        if(curl_exec($curl) === false)
+        {
+            log::info( 'Curl error: ' . curl_error($curl));
+        }
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+            log::info($error_msg);
+        }
+        curl_close($curl);
 
         if ($httpcode != 200) {
             return null;
