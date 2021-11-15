@@ -3,6 +3,7 @@
 namespace App\Modules\GetMap;
 
 use App\Models\Sina\PostData;
+use Illuminate\Support\Facades\Log;
 
 class GetMap
 {
@@ -36,7 +37,16 @@ class GetMap
         ));
 
         $response = curl_exec($curl);
-        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);curl_close($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        if(curl_exec($curl) === false)
+        {
+            log::info( 'Curl error: ' . curl_error($curl));
+        }
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+            log::info($error_msg);
+        }
+        curl_close($curl);
 
         if ($httpcode != 200) {
             return null;

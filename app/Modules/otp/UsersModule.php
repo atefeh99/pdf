@@ -34,7 +34,10 @@ class UsersModule
         if($httpcode != 200){
             return null;
         }
-        return $response->data->mobile;
+        if(isset($response->data)){
+            return $response->data->mobile;
+
+        }
 
 
 
