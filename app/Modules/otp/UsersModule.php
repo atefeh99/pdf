@@ -25,15 +25,18 @@ class UsersModule
         ));
 
         $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);curl_close($curl);
+
         $response = json_decode($response);
 
         curl_close($curl);
-        if(isset($response->data)){
-            return $response->data->mobile;
-        }
-        else{
+
+        if($httpcode != 200){
             return null;
         }
+        return $response->data->mobile;
+
+
 
     }
 

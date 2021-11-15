@@ -18,9 +18,8 @@ class GetMap
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-//            CURLOPT_URL => 'localhost:8080?width=1400&height=800&markers=color:red%7Clabel:a%7C51.394912,35.72164&zoom_level=14&type=vector&style=light',
-            CURLOPT_URL => 'localhost:8080?width=1400&height=800&markers=color:red%7Clabel:a%7C51.394912,35.72164&zoom_level=14&type=vector&style=light',
-
+//            CURLOPT_URL => "localhost:8080?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
+            CURLOPT_URL => 'https://dev.map.ir/static?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=10&type=vector&style=light',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -28,14 +27,19 @@ class GetMap
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                "x-api-key: " . env('DEV_API_KEY'),
+
+            ),
         ));
 
         $response = curl_exec($curl);
-        curl_close($curl);
-        if($response == '500 error'){
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);curl_close($curl);
+
+        if ($httpcode != 200) {
             return null;
         }
-
         return $response;
+
     }
 }
