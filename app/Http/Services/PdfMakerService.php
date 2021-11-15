@@ -76,7 +76,6 @@ class PdfMakerService
                     $view->render();
                 } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
-                    dd($exception->getMessage());
                 }
 
                 $html = $view->toHtml();
