@@ -22,7 +22,7 @@ class GetMap
 //            CURLOPT_URL => "localhost:8080?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
 //            CURLOPT_URL => "https://dev.map.ir/static?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=15&type=vector&style=light",
 
-            CURLOPT_URL => env('STATIC_MAP_URL')."?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
+            CURLOPT_URL => env('STATIC_MAP_URL')."?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=19&type=vector",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
