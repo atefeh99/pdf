@@ -14,7 +14,7 @@ class PostData extends Model
     use Common;
 
     protected $connection = 'gnaf';
-    protected $table = 'sina_unit';
+    protected $table = 'sina_units';
     protected static $_table = 'sina_units';
 //    protected $postgisFields = [
 //        'geom'

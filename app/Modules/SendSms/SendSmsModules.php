@@ -47,7 +47,8 @@ class SendSmsModules
             $client = new \SoapClient(env('POST_SMS_URI'), $soapClientOptions);
 
         }catch(\Exception $e){
-            dd($e->getMessage());
+            Log::error($e->getMessage());
+//            dd($e->getMessage());
         }
 
         $params = [
@@ -61,8 +62,7 @@ class SendSmsModules
         try {
             $client->SendSMS($params);
         } catch (\Exception $e) {
-//            Log::error($e->getMessage());
-            dd($e->getMessage());
+            Log::error($e->getMessage());
         }
 
         return [
