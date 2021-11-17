@@ -22,7 +22,7 @@ class GetMap
 //            CURLOPT_URL => "localhost:8080?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
 //            CURLOPT_URL => "https://dev.map.ir/static?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=15&type=vector&style=light",
 
-            CURLOPT_URL => env('STATIC_MAP_URL')."?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
+            CURLOPT_URL => env('STATIC_MAP_URL')."?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=19&type=vector&style=light",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -36,27 +36,25 @@ class GetMap
             ),
         ]);
         if(!env('OFFLINE')){
+
             $headers = [
-                "x-api-key: " . env('DEV_API_KEY'),
+                "x-api-key: " . env('API_KEY'),
+                "token: " . env('ACCESS_TOKEN'),
+
             ];
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         }
 
-
-
         $response = curl_exec($curl);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        if(curl_exec($curl) === false)
-        {
-            log::info( 'Curl error: ' . curl_error($curl));
-        }
-        if (curl_errno($curl)) {
-            $error_msg = curl_error($curl);
-            log::info($error_msg);
-        }
+
+//        if ($response['curl_error']) dd($response['curl_error']);
+//        if (!$response['body'])     dd("Body of file is empty");
+//dd($curl);
         curl_close($curl);
 
         if ($httpcode != 200) {
+//            dd($httpcode);
             return null;
         }
         return $response;
