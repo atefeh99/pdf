@@ -14,11 +14,11 @@ class UpdateInterpretersColumn extends Migration
      */
     public function up()
     {
-        $notebooks= Interpreter::where('identifier','like','%notebook%')->get();
+        $notebooks= Interpreter::where('identifier','like','%notebook%');
         foreach ($notebooks as $notebook){
             $notebook->update(['api_prefix'=>'https://gnaf-dev.map.ir/pdf']);
         }
-        $gavahi_ha = Interpreter::where('identifier','like','%gavahi%')->get();
+        $gavahi_ha = Interpreter::where('identifier','like','%gavahi%');
         foreach ($gavahi_ha as $gavahi){
             $gavahi->update(['api_prefix'=>'https://sina-dev.map.ir/pdf']);
         }

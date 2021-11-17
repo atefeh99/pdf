@@ -2,9 +2,8 @@
 
 namespace App\Modules\GetMap;
 
-use App\Models\Gavahi\PostData;
-use Illuminate\Support\Facades\Http;
-use function PHPUnit\Framework\isNull;
+use App\Models\Sina\PostData;
+use Illuminate\Support\Facades\Log;
 
 class GetMap
 {
@@ -16,22 +15,49 @@ class GetMap
         if (!$lon or !$lat) {
             return null;
         }
-        try {
+//
+        $curl = curl_init();
 
-            $response = Http::get(env('GEO_URL'), [
-                'width' => 1400,
-                'height' => 800,
-                'zoom_level' => 14,
-                'style' => 'light',
-                'type' => 'vector',
-                'markers' => 'color:red|label:a|' . $lon . ',' . $lat
+        curl_setopt_array($curl,[
+//            CURLOPT_URL => "localhost:8080?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=18&type=vector",
+//            CURLOPT_URL => "https://dev.map.ir/static?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=15&type=vector&style=light",
 
-            ]);
-        } catch (\Exception $e) {
+            CURLOPT_URL => env('STATIC_MAP_URL')."?width=1400&height=800&markers=color:gavahi_blue|$lon,$lat&zoom_level=19&type=vector&style=light",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
 
-            $response = null;
+
+            ),
+        ]);
+        if(!env('OFFLINE')){
+
+            $headers = [
+                "x-api-key: " . env('API_KEY'),
+                "token: " . env('ACCESS_TOKEN'),
+
+            ];
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         }
 
+        $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+//        if ($response['curl_error']) dd($response['curl_error']);
+//        if (!$response['body'])     dd("Body of file is empty");
+//dd($curl);
+        curl_close($curl);
+
+        if ($httpcode != 200) {
+//            dd($httpcode);
+            return null;
+        }
         return $response;
+
     }
 }

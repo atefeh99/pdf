@@ -35,7 +35,7 @@ class PdfMakerController extends ApiController
             $data['geo'] = 0;
         }
         $result = PdfMakerService::getPdf($identifier, $user_id, $data);
-//        return view('gavahi_1', $result['gavahi_1']);
+//        return view('direct_mail_1', $result);
         if ($result){
             SendSmsService::sendSms($identifier,$data,$result,$user_id);
             return $this->respondItemResult($result);

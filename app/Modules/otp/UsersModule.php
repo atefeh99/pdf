@@ -7,7 +7,6 @@ class UsersModule
     public static function getMobile($user_id)
     {
 
-//        $user_id='31c5d23a-2882-44e7-ba85-3ac9cd15bcdc';
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => env('OTP_URL').$user_id,
@@ -25,15 +24,21 @@ class UsersModule
         ));
 
         $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);curl_close($curl);
+
         $response = json_decode($response);
 
         curl_close($curl);
-        if(isset($response->data)){
-            return $response->data->mobile;
-        }
-        else{
+
+        if($httpcode != 200){
             return null;
         }
+        if(isset($response->data)){
+            return $response->data->mobile;
+
+        }
+
+
 
     }
 

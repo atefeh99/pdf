@@ -43,13 +43,20 @@ class SendSmsModules
             'stream_context' => $context,
             'cache_wsdl' => WSDL_CACHE_NONE
         ];
-        $client = new \SoapClient(env('POST_SMS_URI'), $soapClientOptions);
+        try{
+            $client = new \SoapClient(env('POST_SMS_URI'), $soapClientOptions);
+
+        }catch(\Exception $e){
+            Log::error($e->getMessage());
+//            dd($e->getMessage());
+        }
+
         $params = [
             'ContractID' => (int)env('POST_SMS_CONTRACT_ID'),
             'Username' => env('POST_SMS_USERNAME'),
             'Password' => env('POST_SMS_PASSWORD'),
             'SourceMobile' => '',
-            'DesctinationMobile' => $mobile,
+            'DestinationMobile' => $mobile,
             'SMS_Body' => $message
         ];
         try {
