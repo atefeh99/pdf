@@ -24,11 +24,11 @@ class MakePdf
 
         ];
         if ($id == 'gavahi' || $id == 'gavahi_with_info') {
-            if ($data['geo'] == 0) {
-                $arguments['format'] = [183, 124];
-            } else {
-                $arguments['format'] = [183, 224];
-            }
+//            if ($data['geo'] == 0) {
+//                $arguments['format'] = [183, 124];
+//            } else {
+//                $arguments['format'] = [183, 224];
+//            }
             $arguments['default_font_size'] = '10';
 
         }
