@@ -16,7 +16,7 @@ class MakePdf
 //            'defaultPageNumStyle' => 'arabic-indic',
             'orientation' => 'P',
             'margin_left' => '10',
-            'margin_right' => '5',
+            'margin_right' => '10',
             'margin_top' => '3',
             'margin_bottom' => '0',
             'margin_header' => '0',
