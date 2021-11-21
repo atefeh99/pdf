@@ -33,6 +33,13 @@ class SendSmsModules
     public static function sendPost($mobile, $postalcodes, $link)
     {
         $message = self::makeMessage($postalcodes, $link);
+
+        $mobile = str_replace('+98', '98', $mobile);
+        $mobile = str_starts_with($mobile, '0098')?
+            str_replace('0098', '98', $mobile):$mobile;
+        $mobile = str_starts_with($mobile, '980')?
+            str_replace('980', '98', $mobile):$mobile;
+
         $opts = [
             'http' => [
                 'user_agent' => 'PHPSoapClient'
@@ -56,7 +63,7 @@ class SendSmsModules
             'Username' => env('POST_SMS_USERNAME'),
             'Password' => env('POST_SMS_PASSWORD'),
             'SourceMobile' => '',
-            'DestinationMobile' => $mobile,
+            'DesctinationMobile' => $mobile,
             'SMS_Body' => $message
         ];
         try {
