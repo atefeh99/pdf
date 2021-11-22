@@ -16,7 +16,7 @@ class MakePdf
 //            'defaultPageNumStyle' => 'arabic-indic',
             'orientation' => 'P',
             'margin_left' => '10',
-            'margin_right' => '5',
+            'margin_right' => '10',
             'margin_top' => '3',
             'margin_bottom' => '0',
             'margin_header' => '0',
@@ -24,11 +24,11 @@ class MakePdf
 
         ];
         if ($id == 'gavahi' || $id == 'gavahi_with_info') {
-            if ($data['geo'] == 0) {
-                $arguments['format'] = [183, 124];
-            } else {
-                $arguments['format'] = [183, 224];
-            }
+//            if ($data['geo'] == 0) {
+//                $arguments['format'] = [183, 124];
+//            } else {
+//                $arguments['format'] = [183, 224];
+//            }
             $arguments['default_font_size'] = '10';
 
         }
