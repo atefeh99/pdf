@@ -85,6 +85,8 @@ class MakePdf
         Log::info("#end creating pdf " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
         $mpdf->Output(base_path() . "/public/files/$id/$uuid.pdf", 'F');
+        Log::info("#pdf output finished" . (round(microtime(true) * 1000) - $time) . " milisec long");
+
 
 //        }
 //        elseif ($id == 'notebook') {
