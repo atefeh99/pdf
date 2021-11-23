@@ -43,7 +43,6 @@ class MakePdf
             $arguments['margin_right'] = '4';
             $arguments['margin_footer'] = '0';
 
-
         }
         $mpdf = new Mpdf($arguments);
         $mpdf->useSubstitutions = false;
@@ -70,14 +69,7 @@ class MakePdf
 
         foreach ($pages as $index => $page) {
             try {
-
-                // $chunks = explode("class=table6 tab",$page);
-                // dd($chunks[1]);
-                // foreach($chunks as $chunk){
                 $mpdf->WriteHTML($page);
-
-
-                // }
 
             } catch (\Mpdf\MpdfException $e) {
                 log::error($e->getMessage());

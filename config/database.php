@@ -53,6 +53,16 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
         ],
+        'sina' => [
+            'driver' => 'pgsql',
+            'host' => env('DB3_HOST'),
+            'database' => env('DB3_DATABASE'),
+            'username' => env('DB3_USERNAME'),
+            'password' => env('DB3_PASSWORD'),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+        ],
 //        'postalcode' => [
 //            'driver' => 'pgsql',
 //            'host' => env('DB3_HOST'),

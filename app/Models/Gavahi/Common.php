@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Sina;
+namespace App\Models\Gavahi;
 
 trait Common
 {

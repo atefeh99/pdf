@@ -2,7 +2,7 @@
 
 namespace App\Modules\GetMap;
 
-use App\Models\Sina\PostData;
+use App\Models\Gavahi\PostData;
 use Illuminate\Support\Facades\Log;
 
 class GetMap
