@@ -43,7 +43,6 @@ trait RulesTrait
                         'postalcode' => 'required|array',
                         'geo' => 'boolean',
                     ],
-                   'direct_mail'=> [],
                 ],
                 'getAsyncPdf' => [
                     'notebook' => [
@@ -53,6 +52,11 @@ trait RulesTrait
                     'gavahi' => [
                         'postalcode' => 'required|array',
                         'geo' => 'boolean',
+                    ],
+                    'direct_mail'=> [
+                        "class_id" => 'integer|required',
+                        "population_point_id" => 'array|required',
+                        "population_point_id.*" => 'int|required'
                     ]
                 ],
                 'pdfStatus' => [
@@ -107,6 +111,7 @@ trait RulesTrait
 
         }
         if ($validation->fails()) {
+            dd($validation->errors()->getMessages());
             throw new RequestRulesException($validation->errors()->getMessages(), $code);
         }
 

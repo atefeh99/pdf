@@ -5,6 +5,8 @@ namespace App\Http\Services;
 use App\Exceptions\PaymentException;
 use App\Helpers\Random;
 use App\Jobs\MakePdfJob;
+use App\Models\DirectMail\IsicClass;
+use App\Models\DirectMail\SinaUnits;
 use App\Models\File;
 use App\Models\Interpreter;
 use App\Modules\GetMap\GetMap;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Helpers\Date;
 use Carbon\Carbon;
 use App\Models\Notebook\{Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
-use App\Models\Sina\PostData;
+use App\Models\Gavahi\PostData;
 use App\Models\PdfStatus;
 use Ramsey\Uuid\Uuid;
 use function PHPUnit\Framework\returnArgument;
@@ -67,7 +69,7 @@ class PdfMakerService
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
 
-              Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -118,7 +120,6 @@ class PdfMakerService
             'user_id' => $user_id,
             'identifier' => $identifier,
         ];
-//        dd($data);
         PdfStatus::store($data);
         if ($job_id) {
             return ['job_id' => $job_id];
@@ -140,13 +141,9 @@ class PdfMakerService
         $data = PdfStatus::show($job_id, $user_id);
         $api_prefix = '';
         if (isset($data)) {
-            if ($data['identifier'] == 'gavahi') {
-                $indexes = Interpreter::getBy('identifier', 'gavahi%');
-                $api_prefix = $indexes[0]['api_prefix'];
-            } elseif ($data['identifier'] == 'notebook') {
-                $indexes = Interpreter::getBy('identifier', 'notebook%');
-                $api_prefix = $indexes[0]['api_prefix'];
-            }
+            $indexes = Interpreter::getBy('identifier', $data['identifier'] . "%");
+            $api_prefix = $indexes[0]['api_prefix'];
+
             $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
             $expired = File::checkExpiration($filename, $user_id);
             if ($expired) {
@@ -518,12 +515,10 @@ class PdfMakerService
                 ]
             ];
         } elseif (strpos($identifier, 'direct_mail') !== false) {
-            $ids = [
-                38, 39, 1265082
-            ];
-            $direct_mail_data = PostData::getDirectMailInfo($ids);
+            $class_name = IsicClass::getName($data['class_id']);
+            $direct_mail_data = SinaUnits::index($data['population_point_id']);
 
-            foreach ($ids as $key => $id) {
+            foreach ($data['population_point_id'] as $key => $id) {
                 if (!isset($direct_mail_data[$id])) {
                     $direct_mail_data[$id] = null;
                 }
@@ -539,6 +534,7 @@ class PdfMakerService
                 "direct_mail_1" => [
                     "data" => $direct_mail_data,
                     "x" => 1,
+                    "class_name" => $class_name,
                     "length" => count($direct_mail_data),
                 ]
             ];
