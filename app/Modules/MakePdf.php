@@ -24,13 +24,18 @@ class MakePdf
 
         ];
         if ($id == 'gavahi' || $id == 'gavahi_with_info') {
-//            if ($data['geo'] == 0) {
-//                $arguments['format'] = [183, 124];
-//            } else {
-//                $arguments['format'] = [183, 224];
-//            }
-            $arguments['default_font_size'] = '10';
 
+            $arguments['margin_left'] = '16';
+            $arguments['margin_right'] = '16';
+            $arguments['margin_top'] = '10';
+            if($data['geo'] == "1"){
+                $arguments['margin_top'] = '21';
+            } else {
+                $arguments['margin_top'] = '12';
+            }
+            $arguments['margin_bottom'] = '40';
+
+            $arguments['default_font_size'] = '10';
         }
 
 
@@ -57,7 +62,7 @@ class MakePdf
             $mpdf->showImageErrors = true;
             $mpdf->imageVars['logo'] = file_get_contents(base_path() . '/public/images/logo.png');
 //            $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
-            foreach ($params['gavahi_1']['data'] as $key=>$value) {
+            foreach ($params['gavahi_1']['data'] as $key => $value) {
                 if (isset($value['image_exists']) && $value['image_exists'] == true) {
                     $mpdf->imageVars[$key] = file_get_contents('images/' . $key . '.png');
                 }
