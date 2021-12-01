@@ -42,7 +42,7 @@ trait RulesTrait
                     'gavahi' => [
                         'postalcode' => 'required|array',
                         'geo' => 'boolean',
-                        "tracking_code" => 'int|required'
+                        "tracking_code" => 'int'
                     ],
                 ],
                 'getAsyncPdf' => [
