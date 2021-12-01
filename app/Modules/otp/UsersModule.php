@@ -6,12 +6,11 @@ class UsersModule
 {
     public static function getMobile($user_id)
     {
-        $user_id = '1cdb8ffa-22f3-469d-b759-aec16e9e899e';
+        $user_id = '55c732fb-4c77-45ff-89b4-b23ea76eac1d';
 
         $curl = curl_init();
-
         curl_setopt_array($curl, array(
-            CURLOPT_URL => env('OTP_URL').$user_id,
+            CURLOPT_URL => env('OTP_URL') . $user_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -20,8 +19,6 @@ class UsersModule
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
         ));
-
-
 
 
 //        if (!env('OFFLINE')) {
@@ -34,8 +31,6 @@ class UsersModule
 
         $response = curl_exec($curl);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-//        curl_close($curl);
-
         $response = json_decode($response);
 
         curl_close($curl);

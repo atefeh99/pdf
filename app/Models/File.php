@@ -71,6 +71,7 @@ class File extends Model
             ['filename', '=', $filename],
             ['user_id', '=', $user_id]
         ])->get('expired_at')->toArray();
+//        dd($query);
         if(count($query) > 0) return $query[0]['expired_at'];
         else throw new ModelNotFoundException();
     }
