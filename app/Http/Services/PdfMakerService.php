@@ -66,6 +66,7 @@ class PdfMakerService
 
         $uuid = Uuid::uuid4();
         $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
+        Log::info('setting params');
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
 
@@ -94,6 +95,8 @@ class PdfMakerService
 //        return $result['params']['direct_mail_1'];
         if ($pages) {
             MakePdf::createPdf($identifier, $pages, $result['params'], $uuid, $data);
+            Log::info("#pdf created " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
             $d = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
@@ -306,6 +309,8 @@ class PdfMakerService
         $datetime = explode(' ', Date::convertCarbonToJalali(Carbon::now()));
         $date = str_replace('-', '/', $datetime[0]);
         $barcodes = [];
+        $time = round(microtime(true) * 1000);
+
 
         if (strpos($identifier, 'notebook') !== false) {
             $blocks_c = 0;
@@ -320,7 +325,6 @@ class PdfMakerService
             $district = '';
             $zone = '';
 
-            $time = round(microtime(true) * 1000);
             if (isset($data['block_id'])) {
                 $block = Block::getData($data['block_id']) ?? [];
                 $tour_name = $block->tour->name ?? '';
@@ -501,7 +505,6 @@ class PdfMakerService
             }
             $price = $costs['price'];
             $tax = $costs['tax'];
-
             $params = [
                 "gavahi_1" => [
                     "date" => $date,
@@ -515,8 +518,14 @@ class PdfMakerService
                 ]
             ];
         } elseif (strpos($identifier, 'direct_mail') !== false) {
+            Log::info("#start " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
             $class_name = IsicClass::getName($data['class_id']);
+            Log::info("#name get " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
             $direct_mail_data = SinaUnits::index($data['population_point_id']);
+            Log::info("#get data " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
 
             foreach ($data['population_point_id'] as $key => $id) {
                 if (!isset($direct_mail_data[$id])) {
@@ -538,6 +547,7 @@ class PdfMakerService
                     "length" => count($direct_mail_data),
                 ]
             ];
+            Log::info("#params set in direct mail " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
         }
 //        Log::info("#params sent " . (round(microtime(true) * 1000) - $time) . " milisec long");
@@ -656,7 +666,7 @@ class PdfMakerService
 
         if (isset($services->value)) {
             foreach ($services->value as $res) {
-                if ($res->name == 'گواهی') {
+                if ($res->name == env('PAYMENT_SERVICES_NAME')) {
                     $calculate_tax = $res->price + $res->tax;
                     $persian_num = self::setNumPersian(['price' => $res->price, 'tax' => $calculate_tax], 'price');
                     $price = $persian_num['price'];

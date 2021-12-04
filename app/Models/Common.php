@@ -22,5 +22,9 @@ trait Common
     {
         $this->attributes['barcodes'] = json_encode($value);
     }
+    public function getExpiredAtAttribute($value)
+    {
+        return Date::convertCarbonToJalali($value);
+    }
 
 }

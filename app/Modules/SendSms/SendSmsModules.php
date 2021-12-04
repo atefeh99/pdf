@@ -10,11 +10,11 @@ use Kavenegar\Exceptions\HttpException;
 class SendSmsModules
 {
 
-    public static function sendKavenegar($mobile, $postalcodes, $link)
+    public static function sendKavenegar($mobile, $postalcodes, $link,$tracking_code,$expiration_time)
     {
         try {
             $sender = env('KAVENEGAR_SENDER');        //This is the Sender number
-            $message = self::makeMessage($postalcodes, $link);
+            $message = self::makeMessage($postalcodes, $link,$tracking_code,$expiration_time);
             $receptor = array($mobile);            //Receptors number
             $sms_api = new Kavenegar\KavenegarApi(env('KAVENEGAR_API_KEY'));
             $sms_api->Send($sender, $receptor, $message);
@@ -30,9 +30,9 @@ class SendSmsModules
 
     }
 
-    public static function sendPost($mobile, $postalcodes, $link)
+    public static function sendPost($mobile, $postalcodes, $link,$tracking_code,$expiration_time)
     {
-        $message = self::makeMessage($postalcodes, $link);
+        $message = self::makeMessage($postalcodes, $link,$tracking_code,$expiration_time);
 
         $mobile = str_replace('+98', '98', $mobile);
         $mobile = str_starts_with($mobile, '0098')?
@@ -79,18 +79,24 @@ class SendSmsModules
 
     }
 
-    public static function makeMessage($postalcodes, $link)
+    public static function makeMessage($postalcodes, $link, $tracking_code,$expiration_time)
     {
-        $message = trans('messages.custom.sms_part1') . "\n";
+        $message = trans('messages.custom.sms_part1') . "\n" . trans('messages.custom.sms_part2');
+
         foreach ($postalcodes as $k => $p) {
             $message .= $p;
             if ($k != count($postalcodes) - 1) {
                 $message .= ",\n";
             }
         }
-        $message .= "\n" . trans('messages.custom.sms_part2') .
-            "\n" . $link . "\n"
-            . trans('messages.custom.sms_part3');
+        $message .= "\n" . trans('messages.custom.sms_part3');
+        $message .= $tracking_code;
+        $message .= "\n" . trans('messages.custom.sms_part4');
+        $message .= $expiration_time;
+        $message .= "\n" . trans('messages.custom.sms_part5');
+        $message .= "\n" . $link;
+        $message .= "\n" . trans('messages.custom.sms_part6');
+
         return $message;
     }
 }

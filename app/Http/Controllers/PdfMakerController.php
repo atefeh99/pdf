@@ -37,7 +37,10 @@ class PdfMakerController extends ApiController
         $result = PdfMakerService::getPdf($identifier, $user_id, $data);
 //        return view('direct_mail_1', $result);
         if ($result) {
-            SendSmsService::sendSms($identifier,$data,$result,$user_id);
+            if($identifier=='gavahi'){
+                $data['tracking_code'] = 23;
+                SendSmsService::sendSms($identifier,$data,$result,$user_id);
+            }
             return $this->respondItemResult($result);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);

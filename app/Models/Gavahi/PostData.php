@@ -27,7 +27,9 @@ class PostData extends Model
 //    ];
 
     protected $appends = [
-        'address'
+        'address',
+        'country_division',
+        'post_address'
     ];
     protected $fillable = [
 
@@ -62,7 +64,7 @@ class PostData extends Model
             'locationname',
             'locationtype',
 //                'localitycode',
-        'building_name',
+            'building_name',
             'parish',
             'avenue',
             'preaven',
