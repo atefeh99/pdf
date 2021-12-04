@@ -543,7 +543,7 @@ class PdfMakerService
                 "direct_mail_1" => [
                     "data" => $direct_mail_data,
                     "x" => 1,
-                    "class_name" => $class_name,
+//                    "class_name" => $class_name,
                     "length" => count($direct_mail_data),
                 ]
             ];
