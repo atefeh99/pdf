@@ -6,7 +6,7 @@ class UsersModule
 {
     public static function getMobile($user_id)
     {
-        $user_id = 'b7895798-5acc-47f1-8914-86a57573208e';
+//        $user_id = 'b7895798-5acc-47f1-8914-86a57573208e';
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
