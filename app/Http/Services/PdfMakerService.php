@@ -70,7 +70,7 @@ class PdfMakerService
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
 
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+           // Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -543,7 +543,7 @@ class PdfMakerService
                 "direct_mail_1" => [
                     "data" => $direct_mail_data,
                     "x" => 1,
-                    "class_name" => $class_name,
+//                    "class_name" => $class_name,
                     "length" => count($direct_mail_data),
                 ]
             ];

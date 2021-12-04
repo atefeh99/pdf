@@ -12,7 +12,7 @@ trait Common
     {
         $result = '';
         if ($this->attributes['statename']) {
-//            $result .= 'استان ';
+
             Log::info($this->attributes['statename']);
 
             $result .= $this->attributes['statename'];
@@ -25,7 +25,9 @@ trait Common
 
         }
         if ($this->attributes['townname']) {
-            $result .= 'شهرستان ';
+            if ($this->attributes['locationtype'] == 'شهر') {
+                $result .= 'شهرستان ';
+            }
             $result .= $this->attributes['townname'];
             if (($this->attributes['zonename'])
                 || ($this->attributes['villagename'])
@@ -33,11 +35,9 @@ trait Common
                     && $this->attributes['locationname'])
             ) $result .= '،';
         }
-        if ($this->attributes['zonename']) {
-            if ($this->attributes['locationtype'] == 'شهر') {
-                $result .= 'بخش ';
-            }
-            $result .= $this->attributes['zonename'];
+        if ($this->attributes['zonename'] && $this->attributes['locationtype'] != 'شهر') {
+
+            $result .= 'بخش ' . $this->attributes['zonename'];
             if (($this->attributes['villagename'])
                 || ($this->attributes['locationtype']
                     && $this->attributes['locationname'])
@@ -65,7 +65,7 @@ trait Common
     {
         $result = '';
         if ($this->attributes["parish"]) {
-            Log::info($this->attributes["parish"] );
+            Log::info($this->attributes["parish"]);
 
             $result .= $this->attributes["parish"];
 

@@ -121,7 +121,7 @@ class UpdateGavahiHtml7 extends Migration
                     <b style="font-size: 14;">
                         تقسیمات کشوری:
                         &#160;
-                        {{$item["country_devision"]}}
+                        {{$item["country_division"]}}
                     </b>
                 </td>
             </tr>

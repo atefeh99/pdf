@@ -43,6 +43,7 @@ class SinaUnits extends Model
             'blockno',
             'unit',
             'population_point_id',
+            'activity'
         ];
         Log::info("#making indexes " );
 
