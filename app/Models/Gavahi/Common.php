@@ -112,7 +112,7 @@ trait Common
         return $result;
     }
 
-    public function getCountryDevisionAttribute($value)
+    public function getCountryDivisionAttribute($value)
     {
         $result = '';
         if ($this->attributes['statename']) {

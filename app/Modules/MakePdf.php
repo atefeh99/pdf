@@ -40,7 +40,7 @@ class MakePdf
 
 
         if ($id == 'direct_mail') {
-            $arguments ['format'] = [80, 50];
+            $arguments ['format'] = [70, 60];
             $arguments ['default_font_size'] = 10;
             $arguments['margin_top'] = '0';
 
