@@ -112,7 +112,7 @@ trait Common
         return $result;
     }
 
-    public function getPostAddressAttribute($value)
+    public function getCountryDevisionAttribute($value)
     {
         $result = '';
         if ($this->attributes['statename']) {
@@ -165,7 +165,7 @@ trait Common
 
     }
 
-    public function getParishAndWayAttribute($value)
+    public function getPostAddressAttribute($value)
     {
         $result = '';
         if ($this->attributes["parish"]) {
