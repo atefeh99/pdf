@@ -39,7 +39,6 @@ class UsersModule
         $response = json_decode($response);
 
         curl_close($curl);
-//dd($httpcode);
         if ($httpcode != 200) {
             return null;
         }

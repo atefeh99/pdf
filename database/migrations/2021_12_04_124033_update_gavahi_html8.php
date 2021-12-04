@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateGavahiHtml7 extends Migration
+class UpdateGavahiHtml8 extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class UpdateGavahiHtml7 extends Migration
      */
     public function up()
     {
-        $item = Interpreter::where('identifier','gavahi_1');
+        $item = Interpreter::where('identifier', 'gavahi_1');
         $item->update([
             'html' => '
 <html>
@@ -121,7 +121,7 @@ class UpdateGavahiHtml7 extends Migration
                     <b style="font-size: 14;">
                         تقسیمات کشوری:
                         &#160;
-                        {{$item["country_devision"]}}
+                        {{$item["country_division"]}}
                     </b>
                 </td>
             </tr>
@@ -258,7 +258,7 @@ class UpdateGavahiHtml7 extends Migration
      */
     public function down()
     {
-        $item = Interpreter::where('identifier','gavahi_1');
+        $item = Interpreter::where('identifier', 'gavahi_1');
         $item->delete();
     }
 }
