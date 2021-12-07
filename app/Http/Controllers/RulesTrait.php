@@ -34,7 +34,7 @@ trait RulesTrait
                 ]
             ],
             PdfMakerController::class => [
-               'getPdf' => [
+                'getPdf' => [
                     'notebook' => [
                         'tour_id' => 'numeric|nullable',
                         'block_id' => 'numeric|nullable',
@@ -54,10 +54,9 @@ trait RulesTrait
                         'postalcode' => 'required|array',
                         'geo' => 'boolean',
                     ],
-                    'direct_mail'=> [
-                        "class_id" => 'integer|required',
-                        "population_point_id" => 'array|required',
-                        "population_point_id.*" => 'int|required'
+                    'direct_mail' => [
+                        "class_id" => 'int|required',
+                        "divisions" => 'array|required',
                     ]
                 ],
                 'pdfStatus' => [
@@ -66,13 +65,13 @@ trait RulesTrait
                 'pdfLink' => [
                     'job_id' => 'numeric|min:0|required'
                 ],
-                'gavahiPdfWithInfo'=> [
-                    'ClientBatchID'=> 'numeric|required',
+                'gavahiPdfWithInfo' => [
+                    'ClientBatchID' => 'numeric|required',
                     'Postcodes' => 'required|array',
-                    'Postcodes.*'=> 'required|array',
+                    'Postcodes.*' => 'required|array',
                     'Postcodes.*.ClientRowID' => 'required|numeric',
-                    'Postcodes.*.PostCode'=> 'required',
-                    'Signature'=> 'string',
+                    'Postcodes.*.PostCode' => 'required',
+                    'Signature' => 'string',
                     'geo' => 'boolean',
                 ]
 
@@ -82,6 +81,7 @@ trait RulesTrait
 
     public static function checkRules($data, $function, $code)
     {
+//        dd($data);
         $controller = __CLASS__;
         if (is_object($data)) {
             if (isset($data['identifier'])) {
@@ -129,6 +129,6 @@ trait RulesTrait
             }
         }
 
-            return $validation->validated();
+        return $validation->validated();
     }
 }
