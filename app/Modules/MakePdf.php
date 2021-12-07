@@ -28,6 +28,7 @@ class MakePdf
             $arguments['margin_left'] = '16';
             $arguments['margin_right'] = '16';
             $arguments['margin_top'] = '10';
+
             if($data['geo'] == "1"){
                 $arguments['margin_top'] = '21';
             } else {
@@ -77,7 +78,8 @@ class MakePdf
                 $mpdf->WriteHTML($page);
 
             } catch (\Mpdf\MpdfException $e) {
-                log::error($e->getMessage());
+                dd($e->getMessage());
+//                log::error($e->getMessage());
             }
 
             if ($index != count($pages) - 1) {

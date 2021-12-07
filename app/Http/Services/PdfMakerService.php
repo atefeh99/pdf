@@ -70,7 +70,7 @@ class PdfMakerService
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
 
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+//            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -520,21 +520,21 @@ class PdfMakerService
         } elseif (strpos($identifier, 'direct_mail') !== false) {
             Log::info("#start " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
-            $class_name = IsicClass::getName($data['class_id']);
+//            $class_name = IsicClass::getName($data['class_id']);
             Log::info("#name get " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
-            $direct_mail_data = SinaUnits::index($data['population_point_id']);
+            $direct_mail_data = SinaUnits::index($data);
             Log::info("#get data " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
 
-            foreach ($data['population_point_id'] as $key => $id) {
-                if (!isset($direct_mail_data[$id])) {
-                    $direct_mail_data[$id] = null;
-                }
-            }
-            $direct_mail_data = array_filter($direct_mail_data, function ($a) {
-                return $a !== null;
-            });
+//            foreach ($data['div_id'] as $key => $id) {
+//                if (!isset($direct_mail_data[$id])) {
+//                    $direct_mail_data[$id] = null;
+//                }
+//            }
+//            $direct_mail_data = array_filter($direct_mail_data, function ($a) {
+//                return $a !== null;
+//            });
 
             if (empty($direct_mail_data)) {
                 throw new ModelNotFoundException();
@@ -543,7 +543,6 @@ class PdfMakerService
                 "direct_mail_1" => [
                     "data" => $direct_mail_data,
                     "x" => 1,
-//                    "class_name" => $class_name,
                     "length" => count($direct_mail_data),
                 ]
             ];

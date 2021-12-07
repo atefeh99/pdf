@@ -144,6 +144,8 @@ class FontVariables
                     'useOTL' => 0xFF,
                     'useKashida' => 75,
                 ],
+
+
                 "freemono" => [
                     'R' => "FreeMono.ttf",
                     'B' => "FreeMonoBold.ttf",
@@ -193,6 +195,7 @@ class FontVariables
                     'R' => "Akkadian.otf",
                     'useOTL' => 0xFF,
                 ],
+
                 "quivira" => [
                     'R' => "Quivira.otf",
                     'useOTL' => 0xFF,
@@ -292,10 +295,10 @@ class FontVariables
                     'useOTL' => 0xFF,
                     'useKashida' => 75,
                 ],
-                "BTraffic" => [
-                    'R' => "BTraffic.ttf", //regular
-                    'B' => "BTrafficBold.ttf", //bold
-                    'useOTL' => 0xFF,
+                "traffic" => [
+                    'R' => "Far_Traffic.ttf", //regular
+//                    'B' => "trafficbold.ttf", //bold
+//                    'useOTL' => 0xFF,
                     'useKashida' => 75,
                 ],
             ],
