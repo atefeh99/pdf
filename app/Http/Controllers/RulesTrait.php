@@ -112,7 +112,7 @@ trait RulesTrait
 
         }
         if ($validation->fails()) {
-            dd($validation->errors()->getMessages());
+//            dd($validation->errors()->getMessages());
             throw new RequestRulesException($validation->errors()->getMessages(), $code);
         }
 
