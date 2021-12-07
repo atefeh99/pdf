@@ -78,8 +78,8 @@ class MakePdf
                 $mpdf->WriteHTML($page);
 
             } catch (\Mpdf\MpdfException $e) {
-                dd($e->getMessage());
-//                log::error($e->getMessage());
+//                dd($e->getMessage());
+                log::error($e->getMessage());
             }
 
             if ($index != count($pages) - 1) {

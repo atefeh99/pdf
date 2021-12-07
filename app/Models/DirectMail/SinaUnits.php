@@ -25,7 +25,6 @@ class SinaUnits extends Model
 
     public static function index($data)
     {
-//        $out_fields = ',unit,province_id,county_id,parish_id,population_point_id,activity,act_type_id';
         $out_fields = [
             'postalcode',
             'statename',
