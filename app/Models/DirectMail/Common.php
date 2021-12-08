@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Log;
 
 trait Common
 {
+     public $state_name = [
+         'سیستان و بلوچستان'=>'سیستان',
+         'سیستان وبلوچستان'=>'سیستان',
+         'چهارمحال و بختیاری'=>'چهارمحال',
+         'چهارمحال وبختیاری'=>'چهارمحال',
+         'کهگیلویه و بویراحمد'=>'کهگیلویه',
+         'کهگیلویه وبویراحمد'=>'کهگیلویه'
+     ];
     public function getCountryDivisionAttribute($value)
     {
         $result = '';
@@ -15,19 +23,28 @@ trait Common
 
             Log::info($this->attributes['statename']);
 
-            $result .= $this->attributes['statename'];
+            $result .= 'استان ' . $this->attributes['statename'];
             if (($this->attributes['townname'])
                 || ($this->attributes['zonename'])
                 || ($this->attributes['villagename'])
                 || ($this->attributes['locationtype']
                     && $this->attributes['locationname'])
             ) $result .= '،';
+//
+        }
+
+        if ($this->attributes['locationtype'] == 'شهر' && mb_strlen($result) >= 15) {
+            $result = str_replace("استان ", "", $result);
+
+            if (mb_strlen($result) >= 15 && array_key_exists($this->attributes['statename'],$this->state_name)) {
+                $result = str_replace($this->attributes['statename'], $this->state_name[$this->attributes['statename']], $result);
+            }
 
         }
+
         if ($this->attributes['townname']) {
-            if ($this->attributes['locationtype'] == 'شهر') {
-                $result .= 'شهرستان ';
-            }
+            $result .= 'شهرستان ';
+
             $result .= $this->attributes['townname'];
             if (($this->attributes['zonename'])
                 || ($this->attributes['villagename'])
@@ -35,6 +52,12 @@ trait Common
                     && $this->attributes['locationname'])
             ) $result .= '،';
         }
+
+        if (mb_strlen($result) >= 20 && $this->attributes['locationtype'] != 'شهر') {
+            $result = str_replace('استان ', "", $result);
+
+        }
+
         if ($this->attributes['zonename'] && $this->attributes['locationtype'] != 'شهر') {
 
             $result .= 'بخش ' . $this->attributes['zonename'];
@@ -43,6 +66,7 @@ trait Common
                     && $this->attributes['locationname'])
             ) $result .= '،';
         }
+
         if ($this->attributes['villagename']) {
             $result .= 'دهستان ';
             $result .= $this->attributes['villagename'];
@@ -50,6 +74,14 @@ trait Common
                 && $this->attributes['locationname'])
             ) $result .= '،';
         }
+
+        if (mb_strlen($result) >= 40 && $this->attributes['locationtype'] != 'شهر') {
+            $result = str_replace('شهرستان ', "", $result);
+            if (mb_strlen($result) >= 40 && array_key_exists($this->attributes['statename'],$this->state_name)) {
+                $result = str_replace($this->attributes['statename'], $this->state_name[$this->attributes['statename']], $result);
+            }
+        }
+
         if ($this->attributes['locationtype']
             && $this->attributes['locationname']
         ) {
