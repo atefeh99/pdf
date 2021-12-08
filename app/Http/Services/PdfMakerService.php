@@ -526,15 +526,31 @@ class PdfMakerService
             $direct_mail_data = SinaUnits::index($data);
             Log::info("#get data " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
+            foreach ($direct_mail_data as $key=>$datum) {
 
-//            foreach ($data['div_id'] as $key => $id) {
-//                if (!isset($direct_mail_data[$id])) {
-//                    $direct_mail_data[$id] = null;
-//                }
-//            }
-//            $direct_mail_data = array_filter($direct_mail_data, function ($a) {
-//                return $a !== null;
-//            });
+                $direct_mail_data[$key]['font_size1'] = 9;
+                $direct_mail_data[$key]['font_size2'] = 12;
+
+                $division = mb_strlen($datum['country_division']);
+//                dd(mb_strlen($datum['parish_and_way']));
+
+                if ($division <= 79) {
+                    $direct_mail_data[$key]['font_size1'] = 9;
+                }
+                if ($division > 79 && $division <= 89) {
+                    $direct_mail_data[$key]['font_size1'] = 8;
+                }
+                if ($division > 89 && $division <= 99) {
+                    $direct_mail_data[$key]['font_size1'] = 7;
+                }
+                if ($division > 99 || $division >= 109) {
+                    $direct_mail_data[$key]['font_size1'] = 6;
+                }
+                if (mb_strlen($datum['parish_and_way']) >= 60) {
+                    $direct_mail_data[$key]['font_size2'] = 8;
+                }
+
+            }
 
             if (empty($direct_mail_data)) {
                 throw new ModelNotFoundException();
@@ -544,6 +560,7 @@ class PdfMakerService
                     "data" => $direct_mail_data,
                     "x" => 1,
                     "length" => count($direct_mail_data),
+
                 ]
             ];
             Log::info("#params set in direct mail " . (round(microtime(true) * 1000) - $time) . " milisec long");
@@ -566,11 +583,13 @@ class PdfMakerService
         } elseif ($id == 'direct_mail_1') {
             foreach ($result['data'] as $id => $val) {
                 foreach ($val as $field => $value) {
-                    $result['data'][$id][$field] = str_replace($num, $persian, $value);
+                    if($field != 'font_size1' && $field != 'font_size2') {
+                        $result['data'][$id][$field] = str_replace($num, $persian, $value);
 //                    if ($field == 'postalcode') {
 //                        $result['data'][$id]['postcode'] = $result['data'][$id][$field];
 //                        $result['data'][$id][$field] = mb_str_split($result['data'][$id][$field], $length = 1);
 //                    }
+                    }
                 }
             }
 //            dd($result);
@@ -653,7 +672,7 @@ class PdfMakerService
             }
         }
 
-
+//dd($result);
         return $result;
     }
 
