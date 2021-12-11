@@ -44,7 +44,6 @@ class GetMap
             ];
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         }
-
         $response = curl_exec($curl);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 

@@ -115,47 +115,48 @@ trait Common
     public function getCountryDivisionAttribute($value)
     {
         $result = '';
-        if ($this->attributes['statename']) {
-//            $result .= 'استان ';
-            Log::info($this->attributes['statename']);
 
-            $result .= $this->attributes['statename'];
-            if (($this->attributes['townname'])
-                || ($this->attributes['zonename'])
-                || ($this->attributes['villagename'])
-                || ($this->attributes['locationtype']
-                    && $this->attributes['locationname'])
+        if (!empty($this->attributes["statename"])) {
+//            $result .= 'استان ';
+            Log::info($this->attributes["statename"]);
+
+            $result .= $this->attributes["statename"];
+            if (!empty(($this->attributes["townname"]))
+                || !empty($this->attributes['zonename'])
+                || !empty($this->attributes['villagename'])
+                || !empty($this->attributes['locationtype'])
+                    && !empty($this->attributes['locationname'])
             ) $result .= '،';
 
         }
-        if ($this->attributes['townname']) {
+        if (!empty($this->attributes['townname'])) {
             $result .= 'شهرستان ';
             $result .= $this->attributes['townname'];
-            if (($this->attributes['zonename'])
-                || ($this->attributes['villagename'])
-                || ($this->attributes['locationtype']
-                    && $this->attributes['locationname'])
+            if (!empty($this->attributes['zonename'])
+                || !empty($this->attributes['villagename'])
+                || !empty($this->attributes['locationtype'])
+                    && !empty($this->attributes['locationname'])
             ) $result .= '،';
         }
-        if ($this->attributes['zonename']) {
+        if (!empty($this->attributes['zonename']) ){
             if ($this->attributes['locationtype'] == 'شهر') {
                 $result .= 'بخش ';
             }
             $result .= $this->attributes['zonename'];
-            if (($this->attributes['villagename'])
-                || ($this->attributes['locationtype']
-                    && $this->attributes['locationname'])
+            if (!empty(($this->attributes['villagename']))
+                || !empty(($this->attributes['locationtype'])
+                    && !empty($this->attributes['locationname']))
             ) $result .= '،';
         }
-        if ($this->attributes['villagename']) {
+        if (!empty($this->attributes['villagename'])) {
             $result .= 'دهستان ';
             $result .= $this->attributes['villagename'];
-            if (($this->attributes['locationtype']
-                && $this->attributes['locationname'])
+            if (!empty($this->attributes['locationtype'])
+                && !empty($this->attributes['locationname'])
             ) $result .= '،';
         }
-        if ($this->attributes['locationtype']
-            && $this->attributes['locationname']
+        if (!empty($this->attributes['locationtype'])
+            && !empty($this->attributes['locationname'])
         ) {
             $result .= $this->attributes['locationtype'];
             $result .= ':';
@@ -168,83 +169,83 @@ trait Common
     public function getPostAddressAttribute($value)
     {
         $result = '';
-        if ($this->attributes["parish"]) {
+        if (!empty($this->attributes["parish"])) {
             Log::info($this->attributes["parish"]);
 
             $result .= 'محله: '.$this->attributes["parish"];
 
-            if (($this->attributes["preaventypename"] && $this->attributes["preaven"])
-                || ($this->attributes["avenuetypename"] && $this->attributes["avenue"]
-                    || $this->attributes["plate_no"]
-                    || $this->attributes["building"]
-                    || $this->attributes["blockno"]
-                    || $this->attributes["floorno"]
-                    || $this->attributes["floorno"] == 0)
+            if (!empty($this->attributes["preaventypename"]) && !empty($this->attributes["preaven"])
+                || !empty($this->attributes["avenuetypename"]) && !empty($this->attributes["avenue"])
+                    || !empty($this->attributes["plate_no"])
+                    || !empty($this->attributes["building"])
+                    || !empty($this->attributes["blockno"])
+                    || !empty($this->attributes["floorno"])
+                    || $this->attributes["floorno"] == 0
             ) $result .= '،';
 
         }
 
-        if ($this->attributes["preaventypename"] && $this->attributes["preaven"]) {
+        if (!empty($this->attributes["preaventypename"]) && !empty($this->attributes["preaven"])) {
 
             $result .= 'معبر ماقبل آخر:'.$this->attributes['preaventypename'] . ' ' . $this->attributes["preaven"];
-            if (($this->attributes["avenuetypename"] && $this->attributes["avenue"])
-                || $this->attributes["plate_no"]
-                || $this->attributes["building"]
-                || $this->attributes["blockno"]
-                || $this->attributes["floorno"]
+            if (!empty($this->attributes["avenuetypename"]) && !empty($this->attributes["avenue"])
+                || !empty($this->attributes["plate_no"])
+                || !empty($this->attributes["building"])
+                || !empty($this->attributes["blockno"])
+                || !empty($this->attributes["floorno"])
                 || $this->attributes["floorno"] == 0
             ) $result .= '،';
         }
-        if ($this->attributes["avenuetypename"] && $this->attributes["avenue"]) {
+        if (!empty($this->attributes["avenuetypename"]) && !empty($this->attributes["avenue"])) {
 
             $result .= 'معبر آخر:'.$this->attributes["avenuetypename"] . ' ' . $this->attributes["avenue"];
-            if ($this->attributes["plate_no"]
-                || $this->attributes["building"]
-                || $this->attributes["blockno"]
-                || $this->attributes["floorno"]
+            if (!empty($this->attributes["plate_no"])
+                || !empty($this->attributes["building"])
+                || !empty($this->attributes["blockno"])
+                || !empty($this->attributes["floorno"])
                 || $this->attributes["floorno"] == 0
             ) $result .= '،';
         }
 
-        if ($this->attributes["plate_no"]) {
+        if (!empty($this->attributes["plate_no"])) {
             Log::info($this->attributes["plate_no"]);
             $result .= 'پلاک ' . $this->attributes["plate_no"];
 
-            if (($this->attributes["building"])
-                || ($this->attributes["blockno"])
-                || ($this->attributes["floorno"])
+            if (!empty($this->attributes["building"])
+                || !empty($this->attributes["blockno"])
+                || !empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
-                || ($this->attributes["unit"]
-                    || $this->attributes["blockno"])
+                || !empty($this->attributes["unit"])
+                    || !empty($this->attributes["blockno"])
             ) $result .= '،';
 
         }
 
-        if ($this->attributes["blockno"]) {
+        if (!empty($this->attributes["blockno"])) {
             $result .= 'ورودی/ بلوک: ' . $this->attributes['blockno'];
-            if ($this->attributes["building"]
-                ||($this->attributes["floorno"])
+            if (!empty($this->attributes["building"])
+                ||!empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
-                || ($this->attributes["unit"])
+                || !empty($this->attributes["unit"])
             ) $result .= '،';
         }
-        if ($this->attributes["building"]) {
+        if (!empty($this->attributes["building"])) {
             $result .= $this->attributes["building"];
-            if (($this->attributes["floorno"])
+            if (!empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
-                || ($this->attributes["unit"])
+                || !empty($this->attributes["unit"])
             ) $result .= '،';
         }
-        if ($this->attributes["floorno"] || $this->attributes["floorno"] == 0) {
+        if (isset($this->attributes["floorno"])) {
             $result .= 'طبقه ';
             if ($this->attributes["floorno"] == 0) {
                 $result .= 'همکف';
             } else {
                 $result .= $this->attributes["floorno"];
             }
-            if ($this->attributes["unit"]) $result .= '،';
+            if (!empty($this->attributes["unit"])) $result .= '،';
         }
-        if ($this->attributes["unit"]) {
+        if (!empty($this->attributes["unit"])) {
             $result .= 'واحد ' . $this->attributes["unit"];
 
         }
