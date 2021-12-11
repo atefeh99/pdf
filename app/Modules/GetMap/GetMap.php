@@ -53,7 +53,7 @@ class GetMap
         curl_close($curl);
 
         if ($httpcode != 200) {
-            dd($httpcode);
+//            dd($httpcode);
             return null;
         }
         return $response;
