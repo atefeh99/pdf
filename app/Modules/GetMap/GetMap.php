@@ -44,7 +44,6 @@ class GetMap
             ];
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         }
-
         $response = curl_exec($curl);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
@@ -54,7 +53,7 @@ class GetMap
         curl_close($curl);
 
         if ($httpcode != 200) {
-//            dd($httpcode);
+            dd($httpcode);
             return null;
         }
         return $response;
