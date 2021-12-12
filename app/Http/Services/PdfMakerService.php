@@ -528,13 +528,14 @@ class PdfMakerService
 
             foreach ($direct_mail_data as $key=>$datum) {
 
-                $direct_mail_data[$key]['font_size1'] = 9;
+                $direct_mail_data[$key]['font_size1'] = 10;
                 $direct_mail_data[$key]['font_size2'] = 12;
 
                 $division = mb_strlen($datum['country_division']);
-//                dd(mb_strlen($datum['parish_and_way']));
-
-                if ($division <= 79) {
+                if ($division <= 60) {
+                    $direct_mail_data[$key]['font_size1'] = 10;
+                }
+                if ($division > 60 && $division <= 79) {
                     $direct_mail_data[$key]['font_size1'] = 9;
                 }
                 if ($division > 79 && $division <= 89) {
