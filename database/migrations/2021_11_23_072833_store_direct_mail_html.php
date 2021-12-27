@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateDirectMailHtml extends Migration
+class StoreDirectMailHtml extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,10 @@ class UpdateDirectMailHtml extends Migration
      */
     public function up()
     {
-        $item = Interpreter::where('identifier','direct_mail_1');
-        $item->update([
+        Interpreter::store([
+            'identifier'=>'direct_mail_1',
+            'description' => 'this is the direct_mail_1 html',
+            'api_prefix'=> 'https://sina-dev.map.ir/pdf/files/direct_mail',
             'html' => '
             <html>
 <head>
@@ -176,12 +178,8 @@ class UpdateDirectMailHtml extends Migration
         </tr>
         <tr>
             <td>
-                @if($item["activity_type"])
-                    {{$item["activity_type"]}}
-                @endif
-                @if($item["activity_name"])
-                    ،
-                    {{$item["activity_name"]}}
+               @if($class_name)
+                    {{$class_name}}
                 @endif
             </td>
 

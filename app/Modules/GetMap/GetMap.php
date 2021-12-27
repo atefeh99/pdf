@@ -2,7 +2,7 @@
 
 namespace App\Modules\GetMap;
 
-use App\Models\Sina\PostData;
+use App\Models\Gavahi\PostData;
 use Illuminate\Support\Facades\Log;
 
 class GetMap
@@ -44,7 +44,6 @@ class GetMap
             ];
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         }
-
         $response = curl_exec($curl);
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 

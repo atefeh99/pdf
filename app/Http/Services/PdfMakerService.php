@@ -5,6 +5,8 @@ namespace App\Http\Services;
 use App\Exceptions\PaymentException;
 use App\Helpers\Random;
 use App\Jobs\MakePdfJob;
+use App\Models\DirectMail\IsicClass;
+use App\Models\DirectMail\SinaUnits;
 use App\Models\File;
 use App\Models\Interpreter;
 use App\Modules\GetMap\GetMap;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Helpers\Date;
 use Carbon\Carbon;
 use App\Models\Notebook\{Entrance, Tour, Part, Province, Block, Building, Address, Unit, Neighbourhood, Way};
-use App\Models\Sina\PostData;
+use App\Models\Gavahi\PostData;
 use App\Models\PdfStatus;
 use Ramsey\Uuid\Uuid;
 use function PHPUnit\Framework\returnArgument;
@@ -64,10 +66,11 @@ class PdfMakerService
 
         $uuid = Uuid::uuid4();
         $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
+        Log::info('setting params');
         $result = self::setParams($identifier, $link, $ttl, $data);
         foreach ($indexes as $key => $value) {
 
-              Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
@@ -92,6 +95,8 @@ class PdfMakerService
 //        return $result['params']['direct_mail_1'];
         if ($pages) {
             MakePdf::createPdf($identifier, $pages, $result['params'], $uuid, $data);
+            Log::info("#pdf created " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
             $d = [
                 'user_id' => $user_id,
                 'filename' => $uuid,
@@ -118,7 +123,6 @@ class PdfMakerService
             'user_id' => $user_id,
             'identifier' => $identifier,
         ];
-//        dd($data);
         PdfStatus::store($data);
         if ($job_id) {
             return ['job_id' => $job_id];
@@ -140,13 +144,9 @@ class PdfMakerService
         $data = PdfStatus::show($job_id, $user_id);
         $api_prefix = '';
         if (isset($data)) {
-            if ($data['identifier'] == 'gavahi') {
-                $indexes = Interpreter::getBy('identifier', 'gavahi%');
-                $api_prefix = $indexes[0]['api_prefix'];
-            } elseif ($data['identifier'] == 'notebook') {
-                $indexes = Interpreter::getBy('identifier', 'notebook%');
-                $api_prefix = $indexes[0]['api_prefix'];
-            }
+            $indexes = Interpreter::getBy('identifier', $data['identifier'] . "%");
+            $api_prefix = $indexes[0]['api_prefix'];
+
             $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
             $expired = File::checkExpiration($filename, $user_id);
             if ($expired) {
@@ -309,6 +309,8 @@ class PdfMakerService
         $datetime = explode(' ', Date::convertCarbonToJalali(Carbon::now()));
         $date = str_replace('-', '/', $datetime[0]);
         $barcodes = [];
+        $time = round(microtime(true) * 1000);
+
 
         if (strpos($identifier, 'notebook') !== false) {
             $blocks_c = 0;
@@ -323,7 +325,6 @@ class PdfMakerService
             $district = '';
             $zone = '';
 
-            $time = round(microtime(true) * 1000);
             if (isset($data['block_id'])) {
                 $block = Block::getData($data['block_id']) ?? [];
                 $tour_name = $block->tour->name ?? '';
@@ -504,7 +505,6 @@ class PdfMakerService
             }
             $price = $costs['price'];
             $tax = $costs['tax'];
-
             $params = [
                 "gavahi_1" => [
                     "date" => $date,
@@ -518,19 +518,40 @@ class PdfMakerService
                 ]
             ];
         } elseif (strpos($identifier, 'direct_mail') !== false) {
-            $ids = [
-                38, 39, 1265082
-            ];
-            $direct_mail_data = PostData::getDirectMailInfo($ids);
+            Log::info("#start " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
-            foreach ($ids as $key => $id) {
-                if (!isset($direct_mail_data[$id])) {
-                    $direct_mail_data[$id] = null;
+//            $class_name = IsicClass::getName($data['class_id']);
+            Log::info("#name get " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
+            $direct_mail_data = SinaUnits::index($data);
+            Log::info("#get data " . (round(microtime(true) * 1000) - $time) . " milisec long");
+
+            foreach ($direct_mail_data as $key=>$datum) {
+
+                $direct_mail_data[$key]['font_size1'] = 10;
+                $direct_mail_data[$key]['font_size2'] = 12;
+
+                $division = mb_strlen($datum['country_division']);
+                if ($division <= 60) {
+                    $direct_mail_data[$key]['font_size1'] = 10;
                 }
+                if ($division > 60 && $division <= 79) {
+                    $direct_mail_data[$key]['font_size1'] = 9;
+                }
+                if ($division > 79 && $division <= 89) {
+                    $direct_mail_data[$key]['font_size1'] = 8;
+                }
+                if ($division > 89 && $division <= 99) {
+                    $direct_mail_data[$key]['font_size1'] = 7;
+                }
+                if ($division > 99 || $division >= 109) {
+                    $direct_mail_data[$key]['font_size1'] = 6;
+                }
+                if (mb_strlen($datum['parish_and_way']) >= 60) {
+                    $direct_mail_data[$key]['font_size2'] = 8;
+                }
+
             }
-            $direct_mail_data = array_filter($direct_mail_data, function ($a) {
-                return $a !== null;
-            });
 
             if (empty($direct_mail_data)) {
                 throw new ModelNotFoundException();
@@ -540,8 +561,10 @@ class PdfMakerService
                     "data" => $direct_mail_data,
                     "x" => 1,
                     "length" => count($direct_mail_data),
+
                 ]
             ];
+            Log::info("#params set in direct mail " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
         }
 //        Log::info("#params sent " . (round(microtime(true) * 1000) - $time) . " milisec long");
@@ -561,11 +584,13 @@ class PdfMakerService
         } elseif ($id == 'direct_mail_1') {
             foreach ($result['data'] as $id => $val) {
                 foreach ($val as $field => $value) {
-                    $result['data'][$id][$field] = str_replace($num, $persian, $value);
+                    if($field != 'font_size1' && $field != 'font_size2') {
+                        $result['data'][$id][$field] = str_replace($num, $persian, $value);
 //                    if ($field == 'postalcode') {
 //                        $result['data'][$id]['postcode'] = $result['data'][$id][$field];
 //                        $result['data'][$id][$field] = mb_str_split($result['data'][$id][$field], $length = 1);
 //                    }
+                    }
                 }
             }
 //            dd($result);
@@ -648,7 +673,7 @@ class PdfMakerService
             }
         }
 
-
+//dd($result);
         return $result;
     }
 
@@ -660,7 +685,7 @@ class PdfMakerService
 
         if (isset($services->value)) {
             foreach ($services->value as $res) {
-                if ($res->name == 'گواهی') {
+                if ($res->name == env('PAYMENT_SERVICES_NAME')) {
                     $calculate_tax = $res->price + $res->tax;
                     $persian_num = self::setNumPersian(['price' => $res->price, 'tax' => $calculate_tax], 'price');
                     $price = $persian_num['price'];

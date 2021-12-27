@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models\Sina;
+namespace App\Models\Gavahi;
 
 
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +27,9 @@ class PostData extends Model
 //    ];
 
     protected $appends = [
-        'address'
+        'address',
+        'country_division',
+        'post_address'
     ];
     protected $fillable = [
 
@@ -62,7 +64,7 @@ class PostData extends Model
             'locationname',
             'locationtype',
 //                'localitycode',
-        'building_name',
+            'building_name',
             'parish',
             'avenue',
             'preaven',
@@ -113,48 +115,5 @@ class PostData extends Model
 
         return $item->toArray()[0];
     }
-    public static function getDirectMailInfo($ids)
-    {
-        $out_fields = [
-            'postalcode',
-            'statename',
-            'townname',
-            'zonename',
-            'villagename',
-            'locationname',
-            'locationtype',
-            'parish',
-            'preaventypename',
-            'preaven',
-            'avenuetypename',
-            'avenue',
-            'plate_no',
-            'floorno',
-            'id',
-            'mainavenue',
-            'building',
-            'blockno',
-            'unit',
-           'activity_type',
-           'activity_name'
-
-        ];
-        $items = self::whereIn('id', $ids)->get($out_fields)
-            ->unique(function ($item) use ($out_fields) {
-                $temp = "";
-                foreach ($out_fields as $out_field) {
-                    $temp .= $item[$out_field];
-                }
-                return $temp;
-            })
-            ->keyby('id')
-            ->toArray();
-        if (count($items) == 0) return null;
-        return $items;
-
-
-    }
-
-
 
 }

@@ -24,25 +24,30 @@ class MakePdf
 
         ];
         if ($id == 'gavahi' || $id == 'gavahi_with_info') {
-//            if ($data['geo'] == 0) {
-//                $arguments['format'] = [183, 124];
-//            } else {
-//                $arguments['format'] = [183, 224];
-//            }
-            $arguments['default_font_size'] = '10';
 
+            $arguments['margin_left'] = '16';
+            $arguments['margin_right'] = '16';
+            $arguments['margin_top'] = '10';
+
+            if($data['geo'] == "1"){
+                $arguments['margin_top'] = '21';
+            } else {
+                $arguments['margin_top'] = '12';
+            }
+            $arguments['margin_bottom'] = '40';
+
+            $arguments['default_font_size'] = '10';
         }
 
 
         if ($id == 'direct_mail') {
-            $arguments ['format'] = [80, 50];
+            $arguments ['format'] = [70, 60];
             $arguments ['default_font_size'] = 10;
             $arguments['margin_top'] = '0';
 
             $arguments['margin_left'] = '4';
             $arguments['margin_right'] = '4';
             $arguments['margin_footer'] = '0';
-
 
         }
         $mpdf = new Mpdf($arguments);
@@ -58,7 +63,7 @@ class MakePdf
             $mpdf->showImageErrors = true;
             $mpdf->imageVars['logo'] = file_get_contents(base_path() . '/public/images/logo.png');
 //            $mpdf->imageVars['barcode'] = file_get_contents('images/barcode.png');
-            foreach ($params['gavahi_1']['data'] as $key=>$value) {
+            foreach ($params['gavahi_1']['data'] as $key => $value) {
                 if (isset($value['image_exists']) && $value['image_exists'] == true) {
                     $mpdf->imageVars[$key] = file_get_contents('images/' . $key . '.png');
                 }
@@ -70,16 +75,10 @@ class MakePdf
 
         foreach ($pages as $index => $page) {
             try {
-
-                // $chunks = explode("class=table6 tab",$page);
-                // dd($chunks[1]);
-                // foreach($chunks as $chunk){
                 $mpdf->WriteHTML($page);
 
-
-                // }
-
             } catch (\Mpdf\MpdfException $e) {
+//                dd($e->getMessage());
                 log::error($e->getMessage());
             }
 
@@ -93,6 +92,8 @@ class MakePdf
         Log::info("#end creating pdf " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
         $mpdf->Output(base_path() . "/public/files/$id/$uuid.pdf", 'F');
+        Log::info("#pdf output finished" . (round(microtime(true) * 1000) - $time) . " milisec long");
+
 
 //        }
 //        elseif ($id == 'notebook') {

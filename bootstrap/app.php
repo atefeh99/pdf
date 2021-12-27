@@ -63,8 +63,7 @@ $app->singleton(
 $app->configure('app');
 $app->configure('filesystems');
 $app->configure('database');
-
-
+$app->configure('logUsage');
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +79,10 @@ $app->configure('database');
 // $app->middleware([
 //     App\Http\Middleware\ExampleMiddleware::class
 // ]);
+$app->middleware([
+    \MapIr\LaravelLogUsage\Http\Middleware\LogUsageMiddleware::class
+]);
+
 
 // $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,

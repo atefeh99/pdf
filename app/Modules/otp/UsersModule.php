@@ -6,10 +6,11 @@ class UsersModule
 {
     public static function getMobile($user_id)
     {
+//        $user_id = 'b7895798-5acc-47f1-8914-86a57573208e';
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => env('OTP_URL').$user_id,
+            CURLOPT_URL => env('OTP_URL') . $user_id,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -21,23 +22,30 @@ class UsersModule
                 'x-scopes: admin',
 //                'x-api-key:'.env('API_KEY'),
             ),
+
         ));
 
-        $response = curl_exec($curl);
-        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);curl_close($curl);
 
+//        if (!env('OFFLINE')) {
+//            $headers = [
+//                "x-api-key: " . env('OTP_API_KEY'),
+//                "token: " . env('OTP_ACCESS_TOKEN'),
+//            ];
+//            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+//        }
+
+        $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $response = json_decode($response);
 
         curl_close($curl);
-
-        if($httpcode != 200){
+        if ($httpcode != 200) {
             return null;
         }
-        if(isset($response->data)){
+        if (isset($response->data)) {
             return $response->data->mobile;
 
         }
-
 
 
     }

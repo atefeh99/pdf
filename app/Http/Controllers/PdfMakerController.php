@@ -36,8 +36,11 @@ class PdfMakerController extends ApiController
         }
         $result = PdfMakerService::getPdf($identifier, $user_id, $data);
 //        return view('direct_mail_1', $result);
-        if ($result){
-            SendSmsService::sendSms($identifier,$data,$result,$user_id);
+        if ($result) {
+            if($identifier=='gavahi'){
+                $data['tracking_code'] = 23;
+                SendSmsService::sendSms($identifier,$data,$result,$user_id);
+            }
             return $this->respondItemResult($result);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
@@ -51,7 +54,8 @@ class PdfMakerController extends ApiController
         if (!isset($user_id)) {
             throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), 4001);
         }
-        if ($identifier != 'notebook' && $identifier != 'gavahi') {
+
+        if ($identifier != 'notebook' && $identifier != 'gavahi' && $identifier != 'direct_mail') {
             throw new NotFoundHttpException(trans('messages.custom.error.route_not_found'));
         }
         $input = $request->all();
@@ -63,7 +67,7 @@ class PdfMakerController extends ApiController
             __FUNCTION__,
             4000,
         );
-        if (!isset($data['geo'])) {
+        if (str_contains($identifier,'gavahi') &&(!isset($data['geo']))) {
             $data['geo'] = 0;
         }
 
@@ -121,6 +125,7 @@ class PdfMakerController extends ApiController
             return $this->respondItemResult($link);
         }
     }
+
     public function gavahiPdfWithInfo(Request $request)
     {
 
@@ -142,13 +147,13 @@ class PdfMakerController extends ApiController
             $data['geo'] = 0;
         }
 
-        $result = PdfMakerService::gavahiPdfWithInfo( $user_id, $data);
+        $result = PdfMakerService::gavahiPdfWithInfo($user_id, $data);
         if ($result) {
             $identifier = 'gavahi_with_info';
-            SendSmsService::sendSms($identifier,$data,$result,$user_id);
+            SendSmsService::sendSms($identifier, $data, $result, $user_id);
 
             return $this->respondArrayResult($result);
-        }else{
+        } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
         }
     }

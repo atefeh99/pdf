@@ -32,9 +32,15 @@ return [
 
         'recordExists' => 'this record exists in the dataset',
         'delete' => 'record deleted successfully',
-        'sms_part1' => 'کد پستی های درخواستی شما :',
-        'sms_part2' => ' با استفاده از آدرس  ',
-        'sms_part3' => 'در دسترس است.',
+        'sms_part1' => 'گواهی کد پستی شما با موفقیت صادر شد.',
+        'sms_part2' =>'کدپستی :',
+        'sms_part3' => 'کد پیگیری : ',
+        'sms_part4' => 'تاریخ اعتبار گواهی : ',
+        'sms_part5' => 'لینک دریافت گواهی : ',
+        'sms_part6' => '** شرکت ملی پست ج ا ا **',
+
+
+
         'sms_notSent' => 'sms not sent for user',
 
 

@@ -33,12 +33,14 @@ class MakePdfJob implements ShouldQueue
      */
     public function handle()
     {
+        Log::info('start getting pdf');
 
        $link = PdfMakerService::getPdf($this->identifier,
             $this->user_id,
             $this->data);
-
+        Log::info('get link successfully');
        if($link == false){
+           Log::info('get exception');
            throw new \Exception();
        }
         //success
@@ -46,6 +48,8 @@ class MakePdfJob implements ShouldQueue
            'link' => $link,
             'status'=> 'success',
         ];
+        Log::info('try changing status');
+
         PdfStatus::updateRecord($this->job->getJobId(),$data);
         Log::info('status changed to success');
 //        SendSmsService::sendSms($this->identifier,$data,$link,$this->user_id);
