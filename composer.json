@@ -13,6 +13,7 @@
         "ext-curl": "*",
         "ext-json": "*",
         "armancodes/laravel-download-link": "^1.1",
+        "map-ir/laravel-log-usage": "^0.2.2",
         "curl/curl": "^2.3",
         "doctrine/dbal": "^3.1",
         "guzzlehttp/guzzle": "6.0",
