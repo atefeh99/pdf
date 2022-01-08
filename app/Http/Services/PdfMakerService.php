@@ -10,6 +10,7 @@ use App\Models\DirectMail\SinaUnits;
 use App\Models\File;
 use App\Models\Interpreter;
 use App\Modules\GetMap\GetMap;
+use App\Modules\Notification\MQTT;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
@@ -56,6 +57,7 @@ class PdfMakerService
         $pages = [];
         $indexes = [];
         $ttl = '';
+        $extra_info = null;
         $indexes = Interpreter::getBy('identifier', $identifier . '%');
         if ($identifier == 'gavahi') {
             $ttl = $indexes[0]['ttl'];
@@ -104,9 +106,11 @@ class PdfMakerService
             ];
             if ($identifier == 'gavahi') {
                 $d['expired_at'] = CommonTrait::getExpirationTime($ttl);
+                $extra_info = $result['params']['gavahi_1']['data'];
             }
             File::store($d);
-            return $link;
+
+            return ['link'=>$link , 'extra_info'=>$extra_info];
         } else {
             return false;
         }
@@ -187,7 +191,6 @@ class PdfMakerService
                 }
 
                 $html = $view->toHtml();
-
                 $pages[$key] = $html;
             } else {
                 //data does not exist for all postcodes
@@ -238,7 +241,6 @@ class PdfMakerService
 
     public static function makeGavahiInfo($reqData, $resData, $link)
     {
-//        dd($reqData, $resData, $link);
 
 // toDo response namovafagh
         $resData = $resData['data'];
@@ -526,7 +528,7 @@ class PdfMakerService
             $direct_mail_data = SinaUnits::index($data);
             Log::info("#get data " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
-            foreach ($direct_mail_data as $key=>$datum) {
+            foreach ($direct_mail_data as $key => $datum) {
 
                 $direct_mail_data[$key]['font_size1'] = 10;
                 $direct_mail_data[$key]['font_size2'] = 12;
@@ -584,7 +586,7 @@ class PdfMakerService
         } elseif ($id == 'direct_mail_1') {
             foreach ($result['data'] as $id => $val) {
                 foreach ($val as $field => $value) {
-                    if($field != 'font_size1' && $field != 'font_size2') {
+                    if ($field != 'font_size1' && $field != 'font_size2') {
                         $result['data'][$id][$field] = str_replace($num, $persian, $value);
 //                    if ($field == 'postalcode') {
 //                        $result['data'][$id]['postcode'] = $result['data'][$id][$field];
