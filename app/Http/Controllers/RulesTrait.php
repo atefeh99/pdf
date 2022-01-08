@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\Exceptions\UnauthorizedUserException;
 use Illuminate\Support\Facades\Validator;
 use App\Exceptions\RequestRulesException;
-use App\Http\Controllers\Process\SynchronizationController;
-use App\Http\Controllers\Task\TaskManagementController;
-use App\Http\Controllers\Task\CommentController;
 use Illuminate\Validation\Rule;
 
 trait RulesTrait
@@ -81,7 +78,6 @@ trait RulesTrait
 
     public static function checkRules($data, $function, $code)
     {
-//        dd($data);
         $controller = __CLASS__;
         if (is_object($data)) {
             if (isset($data['identifier'])) {
@@ -111,6 +107,7 @@ trait RulesTrait
 
 
         }
+
         if ($validation->fails()) {
 //            dd($validation->errors()->getMessages());
             throw new RequestRulesException($validation->errors()->getMessages(), $code);

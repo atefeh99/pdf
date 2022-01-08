@@ -9,6 +9,7 @@ use App\Http\Services\SendSmsService;
 use App\Modules\SendSms\SendSmsModules;
 use Illuminate\Http\Request;
 use App\Http\Controllers\RulesTrait;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
@@ -35,11 +36,12 @@ class PdfMakerController extends ApiController
             $data['geo'] = 0;
         }
         $result = PdfMakerService::getPdf($identifier, $user_id, $data);
+
 //        return view('direct_mail_1', $result);
         if ($result) {
             if($identifier=='gavahi'){
                 $data['tracking_code'] = 23;
-                SendSmsService::sendSms($identifier,$data,$result,$user_id);
+                SendSmsService::sendSms($identifier,$data,$result['link'],$user_id);
             }
             return $this->respondItemResult($result);
         } else {
@@ -142,15 +144,14 @@ class PdfMakerController extends ApiController
             __FUNCTION__,
             5002,
         );
-
         if (!isset($data['geo'])) {
             $data['geo'] = 0;
         }
 
         $result = PdfMakerService::gavahiPdfWithInfo($user_id, $data);
         if ($result) {
-            $identifier = 'gavahi_with_info';
-            SendSmsService::sendSms($identifier, $data, $result, $user_id);
+//            $identifier = 'gavahi_with_info';
+//            SendSmsService::sendSms($identifier, $data, $result, $user_id);
 
             return $this->respondArrayResult($result);
         } else {

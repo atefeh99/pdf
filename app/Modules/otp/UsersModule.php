@@ -2,6 +2,8 @@
 
 namespace App\Modules\otp;
 
+use Illuminate\Support\Facades\Log;
+
 class UsersModule
 {
     public static function getMobile($user_id)
@@ -40,6 +42,7 @@ class UsersModule
 
         curl_close($curl);
         if ($httpcode != 200) {
+            Log::info('mobile not found for user');
             return null;
         }
         if (isset($response->data)) {
