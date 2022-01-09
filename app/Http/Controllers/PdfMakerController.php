@@ -43,7 +43,7 @@ class PdfMakerController extends ApiController
                 $data['tracking_code'] = 23;
                 SendSmsService::sendSms($identifier,$data,$result['link'],$user_id);
             }
-            return $this->respondItemResult($result);
+            return $this->respondMyItemResult($result);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
         }
