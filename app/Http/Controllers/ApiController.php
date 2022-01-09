@@ -174,6 +174,15 @@ class ApiController extends Controller
      * @param $data
      * @return mixed
      */
+    public function respondMyItemResult($data)
+    {
+        return $this
+            ->setStatusCode(Response::HTTP_OK)
+            ->respond(
+                $data
+            );
+    }
+
     public function respondItemResult($data)
     {
         return $this
