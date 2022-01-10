@@ -58,16 +58,19 @@ class MakePdfJob implements ShouldQueue
         if ($this->identifier == 'notebook') {
 
             if (isset($this->data['block_id'])) {
+                $metadata['type'] = 'block';
                 $metadata['block_id'] = $this->data['block_id'];
-            } elseif (isset($data['tour_id'])) {
+                $metadata['block_name'] = $result['extra_info']['notebook_1']['block_no'];
+            } elseif (isset($this->data['tour_id'])) {
+                $metadata['type'] = 'tour';
                 $metadata['tour_id'] = $this->data['tour_id'];
+                $metadata['tour_name'] = $result['extra_info']['notebook_1']['tour_no'];
             }
             $metadata['link'] = $result['link'];
             $success_time = Date::convertCarbonToJalali(carbon::now());
             $app = env('MQTT_APPLICATION');
             $mqtt = new Publisher($metadata, $this->job->getJobId(), $success_time, $this->user_id, $app, $this->identifier,null, null, null,null);
             $mqtt->send();
-
 //        SendSmsService::sendSms($this->identifier,$data,$link,$this->user_id);
 
         }

@@ -70,6 +70,9 @@ class PdfMakerService
         $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
         Log::info('setting params');
         $result = self::setParams($identifier, $link, $ttl, $data);
+        if ($identifier == 'notebook') {
+            $extra_info = $result['params'];
+        }
         foreach ($indexes as $key => $value) {
 
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
@@ -108,7 +111,9 @@ class PdfMakerService
                 $d['expired_at'] = CommonTrait::getExpirationTime($ttl);
                 $extra_info = $result['params']['gavahi_1']['data'];
             }
-            File::store($d);
+
+
+                File::store($d);
 
             return ['link'=>$link , 'extra_info'=>$extra_info];
         } else {
@@ -326,9 +331,10 @@ class PdfMakerService
             $county = '';
             $district = '';
             $zone = '';
-
+            $block_name='';
             if (isset($data['block_id'])) {
                 $block = Block::getData($data['block_id']) ?? [];
+                $block_name = $block->name ?? '';
                 $tour_name = $block->tour->name ?? '';
                 $code_joze = $block->part->name ?? '';
                 $province = $block->province->name ?? '';
@@ -419,6 +425,7 @@ class PdfMakerService
             $ways = array_map("unserialize", array_unique(array_map("serialize", $ways)));
             $params = [
                 'notebook_1' => [
+                    "block_no"=>$block_name,
                     "tour_no" => $tour_name,
                     "code_joze" => $code_joze,
                     "province" => $province,
