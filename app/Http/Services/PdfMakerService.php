@@ -157,13 +157,13 @@ class PdfMakerService
                 $indexes = Interpreter::getBy('identifier', $data['identifier'] . "%");
                 $api_prefix = $indexes[0]['api_prefix'];
                 $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
-//            $expired = File::checkExpiration($filename, $user_id);
-//            if ($expired) {
-//                return 'expired';
-//            } else {
-//                unset($data['identifier']);
-                return $data;
-//            }
+                $expired = File::checkExpiration($filename, $user_id);
+                if ($expired) {
+                    return 'expired';
+                } else {
+                    unset($data['identifier']);
+                    return $data;
+                }
             } elseif ($data['status'] == 'failed') {
                 return 'failed';
             } elseif ($data['status'] == 'pending') {
