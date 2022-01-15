@@ -39,9 +39,9 @@ class PdfMakerController extends ApiController
 
 //        return view('direct_mail_1', $result);
         if ($result) {
-            if($identifier=='gavahi'){
+            if ($identifier == 'gavahi') {
                 $data['tracking_code'] = 23;
-                SendSmsService::sendSms($identifier,$data,$result['link'],$user_id);
+                SendSmsService::sendSms($identifier, $data, $result['link'], $user_id);
             }
             return $this->respondMyItemResult($result);
         } else {
@@ -69,7 +69,7 @@ class PdfMakerController extends ApiController
             __FUNCTION__,
             4000,
         );
-        if (str_contains($identifier,'gavahi') &&(!isset($data['geo']))) {
+        if (str_contains($identifier, 'gavahi') && (!isset($data['geo']))) {
             $data['geo'] = 0;
         }
 
@@ -119,10 +119,12 @@ class PdfMakerController extends ApiController
         );
         $link = PdfMakerService::pdfLink($job_id, $user_id);
 
-        if (!isset($link)) {
-            return $this->respondError(trans('messages.custom.notSuccess'), 422, 2003);
+        if ($link == 'failed') {
+            return $this->respondError(trans('messages.custom.failed'), 422, 2008);
+        } elseif ($link == 'pending') {
+            return $this->respondError(trans('messages.custom.pending'), 422, 2009);
         } elseif ($link == 'expired') {
-            return $this->respondError(trans('messages.custom.link_expired'), 410, 2004);
+            return $this->respondError(trans('messages.custom.link_expired'), 410, 2010);
         } else {
             return $this->respondItemResult($link);
         }

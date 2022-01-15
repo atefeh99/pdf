@@ -113,9 +113,9 @@ class PdfMakerService
             }
 
 
-                File::store($d);
+            File::store($d);
 
-            return ['link'=>$link , 'extra_info'=>$extra_info];
+            return ['link' => $link, 'extra_info' => $extra_info];
         } else {
             return false;
         }
@@ -152,18 +152,24 @@ class PdfMakerService
     {
         $data = PdfStatus::show($job_id, $user_id);
         $api_prefix = '';
-        if (isset($data)) {
-            $indexes = Interpreter::getBy('identifier', $data['identifier'] . "%");
-            $api_prefix = $indexes[0]['api_prefix'];
-
-            $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
-            $expired = File::checkExpiration($filename, $user_id);
-            if ($expired) {
-                return 'expired';
-            } else {
-                unset($data['identifier']);
+        if (!empty($data)) {
+            if ($data['status'] == 'success') {
+                $indexes = Interpreter::getBy('identifier', $data['identifier'] . "%");
+                $api_prefix = $indexes[0]['api_prefix'];
+                $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
+//            $expired = File::checkExpiration($filename, $user_id);
+//            if ($expired) {
+//                return 'expired';
+//            } else {
+//                unset($data['identifier']);
                 return $data;
+//            }
+            } elseif ($data['status'] == 'failed') {
+                return 'failed';
+            } elseif ($data['status'] == 'pending') {
+                return 'pending';
             }
+
         } else {
             return null;
         }
@@ -331,7 +337,7 @@ class PdfMakerService
             $county = '';
             $district = '';
             $zone = '';
-            $block_name='';
+            $block_name = '';
             if (isset($data['block_id'])) {
                 $block = Block::getData($data['block_id']) ?? [];
                 $block_name = $block->name ?? '';
@@ -425,7 +431,7 @@ class PdfMakerService
             $ways = array_map("unserialize", array_unique(array_map("serialize", $ways)));
             $params = [
                 'notebook_1' => [
-                    "block_no"=>$block_name,
+                    "block_no" => $block_name,
                     "tour_no" => $tour_name,
                     "code_joze" => $code_joze,
                     "province" => $province,
