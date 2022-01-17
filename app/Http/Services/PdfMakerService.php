@@ -10,6 +10,7 @@ use App\Models\DirectMail\SinaUnits;
 use App\Models\File;
 use App\Models\Interpreter;
 use App\Modules\GetMap\GetMap;
+use App\Modules\Notification\MQTT;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
@@ -56,6 +57,7 @@ class PdfMakerService
         $pages = [];
         $indexes = [];
         $ttl = '';
+        $extra_info = null;
         $indexes = Interpreter::getBy('identifier', $identifier . '%');
         if ($identifier == 'gavahi') {
             $ttl = $indexes[0]['ttl'];
@@ -68,6 +70,9 @@ class PdfMakerService
         $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
         Log::info('setting params');
         $result = self::setParams($identifier, $link, $ttl, $data);
+        if ($identifier == 'notebook') {
+            $extra_info = $result['params'];
+        }
         foreach ($indexes as $key => $value) {
 
             Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
@@ -104,9 +109,13 @@ class PdfMakerService
             ];
             if ($identifier == 'gavahi') {
                 $d['expired_at'] = CommonTrait::getExpirationTime($ttl);
+                $extra_info = $result['params']['gavahi_1']['data'];
             }
+
+
             File::store($d);
-            return $link;
+
+            return ['link' => $link, 'extra_info' => $extra_info];
         } else {
             return false;
         }
@@ -143,20 +152,40 @@ class PdfMakerService
     {
         $data = PdfStatus::show($job_id, $user_id);
         $api_prefix = '';
-        if (isset($data)) {
-            $indexes = Interpreter::getBy('identifier', $data['identifier'] . "%");
-            $api_prefix = $indexes[0]['api_prefix'];
+        if (!empty($data)) {
+            Log::info('data not empty');
 
-            $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
-            $expired = File::checkExpiration($filename, $user_id);
-            if ($expired) {
-                return 'expired';
-            } else {
-                unset($data['identifier']);
-                return $data;
+            if ($data['status'] == 'success') {
+                Log::info('data status success');
+
+                $indexes = Interpreter::getBy('identifier', $data['identifier'] . "%");
+                $api_prefix = $indexes[0]['api_prefix'];
+                Log::info($api_prefix);
+                $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
+                Log::info($filename);
+
+                $expired = File::checkExpiration($filename, $user_id);
+                Log::info($expired);
+
+                if ($expired) {
+                    Log::info('exp');
+                    return 'expired';
+                } else {
+                    unset($data['identifier']);
+                    Log::info('not exp');
+                    return $data;
+                }
+            } elseif ($data['status'] == 'failed') {
+                Log::info('failed');
+
+                return 'failed';
+            } elseif ($data['status'] == 'pending') {
+                Log::info('pending');
+                return 'pending';
             }
+
         } else {
-            return null;
+            throw new ModelNotFoundException();
         }
 
     }
@@ -187,7 +216,6 @@ class PdfMakerService
                 }
 
                 $html = $view->toHtml();
-
                 $pages[$key] = $html;
             } else {
                 //data does not exist for all postcodes
@@ -238,7 +266,6 @@ class PdfMakerService
 
     public static function makeGavahiInfo($reqData, $resData, $link)
     {
-//        dd($reqData, $resData, $link);
 
 // toDo response namovafagh
         $resData = $resData['data'];
@@ -324,9 +351,10 @@ class PdfMakerService
             $county = '';
             $district = '';
             $zone = '';
-
+            $block_name = '';
             if (isset($data['block_id'])) {
                 $block = Block::getData($data['block_id']) ?? [];
+                $block_name = $block->name ?? '';
                 $tour_name = $block->tour->name ?? '';
                 $code_joze = $block->part->name ?? '';
                 $province = $block->province->name ?? '';
@@ -417,6 +445,7 @@ class PdfMakerService
             $ways = array_map("unserialize", array_unique(array_map("serialize", $ways)));
             $params = [
                 'notebook_1' => [
+                    "block_no" => $block_name,
                     "tour_no" => $tour_name,
                     "code_joze" => $code_joze,
                     "province" => $province,
@@ -526,7 +555,7 @@ class PdfMakerService
             $direct_mail_data = SinaUnits::index($data);
             Log::info("#get data " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
-            foreach ($direct_mail_data as $key=>$datum) {
+            foreach ($direct_mail_data as $key => $datum) {
 
                 $direct_mail_data[$key]['font_size1'] = 10;
                 $direct_mail_data[$key]['font_size2'] = 12;
@@ -584,7 +613,7 @@ class PdfMakerService
         } elseif ($id == 'direct_mail_1') {
             foreach ($result['data'] as $id => $val) {
                 foreach ($val as $field => $value) {
-                    if($field != 'font_size1' && $field != 'font_size2') {
+                    if ($field != 'font_size1' && $field != 'font_size2') {
                         $result['data'][$id][$field] = str_replace($num, $persian, $value);
 //                    if ($field == 'postalcode') {
 //                        $result['data'][$id]['postcode'] = $result['data'][$id][$field];

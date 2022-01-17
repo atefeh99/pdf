@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class PdfStatus extends Model
 {
@@ -44,21 +45,22 @@ class PdfStatus extends Model
 
     public static function show($job_id, $user_id)
     {
-//        dd($job_id);
+//        dd($job_id, $user_id);
         $item = self::where([
             ['job_id', '=', $job_id],
             ['user_id', '=', $user_id],
         ])->get(
             ['job_id', 'status', 'link', 'identifier']
         );
+        Log::info('item get');
 
         if (count($item) > 0) {
-            if ($item->toArray()[0]['status'] == 'success') {
-                return $item->toArray()[0];
-            } else {
-                return null;
-            }
+            Log::info('count > 0');
+
+            return $item->toArray()[0];
         } else {
+            Log::info('null');
+
             return null;
         }
     }

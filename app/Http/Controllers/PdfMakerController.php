@@ -9,6 +9,7 @@ use App\Http\Services\SendSmsService;
 use App\Modules\SendSms\SendSmsModules;
 use Illuminate\Http\Request;
 use App\Http\Controllers\RulesTrait;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
@@ -35,13 +36,15 @@ class PdfMakerController extends ApiController
             $data['geo'] = 0;
         }
         $result = PdfMakerService::getPdf($identifier, $user_id, $data);
+
 //        return view('direct_mail_1', $result);
         if ($result) {
-            if($identifier=='gavahi'){
-                $data['tracking_code'] = 23;
-                SendSmsService::sendSms($identifier,$data,$result,$user_id);
+            if ($identifier == 'gavahi') {
+
+                $data['tracking_code'] = $data['tracking_code'] ? $data['tracking_code'] : 23;
+                SendSmsService::sendSms($identifier, $data, $result['link'], $user_id);
             }
-            return $this->respondItemResult($result);
+            return $this->respondMyItemResult($result);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
         }
@@ -67,7 +70,7 @@ class PdfMakerController extends ApiController
             __FUNCTION__,
             4000,
         );
-        if (str_contains($identifier,'gavahi') &&(!isset($data['geo']))) {
+        if (str_contains($identifier, 'gavahi') && (!isset($data['geo']))) {
             $data['geo'] = 0;
         }
 
@@ -117,11 +120,20 @@ class PdfMakerController extends ApiController
         );
         $link = PdfMakerService::pdfLink($job_id, $user_id);
 
-        if (!isset($link)) {
-            return $this->respondError(trans('messages.custom.notSuccess'), 422, 2003);
+        if ($link == 'failed') {
+            Log::info('failed in c');
+            return $this->respondError(trans('messages.custom.failed'), 424, 2008);
+        } elseif ($link == 'pending') {
+            Log::info('pending in c');
+
+            return $this->respondError(trans('messages.custom.pending'), 422, 2009);
         } elseif ($link == 'expired') {
-            return $this->respondError(trans('messages.custom.link_expired'), 410, 2004);
+            Log::info('expired in c');
+
+            return $this->respondError(trans('messages.custom.link_expired'), 410, 2010);
         } else {
+            Log::info('bingo');
+
             return $this->respondItemResult($link);
         }
     }
@@ -142,15 +154,14 @@ class PdfMakerController extends ApiController
             __FUNCTION__,
             5002,
         );
-
         if (!isset($data['geo'])) {
             $data['geo'] = 0;
         }
 
         $result = PdfMakerService::gavahiPdfWithInfo($user_id, $data);
         if ($result) {
-            $identifier = 'gavahi_with_info';
-            SendSmsService::sendSms($identifier, $data, $result, $user_id);
+//            $identifier = 'gavahi_with_info';
+//            SendSmsService::sendSms($identifier, $data, $result, $user_id);
 
             return $this->respondArrayResult($result);
         } else {

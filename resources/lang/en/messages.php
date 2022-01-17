@@ -27,18 +27,18 @@ return [
         'both_filled' => "both tour_id and block_id can't be filled together",
         'both_empty' => "both block_id or tour_id can't be empty",
         'null_field' => "tour_id or block_id can't be null",
-        'notSuccess' => "file status is failed or pending",
+        'failed' => "file status is failed ",
+        'pending' => "file status is pending ",
         'link_expired' => "the link has reached to expiration time",
 
         'recordExists' => 'this record exists in the dataset',
         'delete' => 'record deleted successfully',
         'sms_part1' => 'گواهی کد پستی شما با موفقیت صادر شد.',
-        'sms_part2' =>'کدپستی :',
+        'sms_part2' => 'کدپستی :',
         'sms_part3' => 'کد پیگیری : ',
         'sms_part4' => 'تاریخ اعتبار گواهی : ',
         'sms_part5' => 'لینک دریافت گواهی : ',
         'sms_part6' => '** شرکت ملی پست ج ا ا **',
-
 
 
         'sms_notSent' => 'sms not sent for user',
