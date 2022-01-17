@@ -41,7 +41,7 @@ class PdfMakerController extends ApiController
         if ($result) {
             if ($identifier == 'gavahi') {
                 $data['tracking_code'] = 23;
-//                SendSmsService::sendSms($identifier, $data, $result['link'], $user_id);
+                SendSmsService::sendSms($identifier, $data, $result['link'], $user_id);
             }
             return $this->respondMyItemResult($result);
         } else {
