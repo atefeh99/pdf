@@ -153,20 +153,34 @@ class PdfMakerService
         $data = PdfStatus::show($job_id, $user_id);
         $api_prefix = '';
         if (!empty($data)) {
+            Log::info('data not empty');
+
             if ($data['status'] == 'success') {
+                Log::info('data status success');
+
                 $indexes = Interpreter::getBy('identifier', $data['identifier'] . "%");
                 $api_prefix = $indexes[0]['api_prefix'];
+                Log::info($api_prefix);
                 $filename = str_replace(array($api_prefix . '/', '.pdf'), '', $data['link']);
+                Log::info($filename);
+
                 $expired = File::checkExpiration($filename, $user_id);
+                Log::info($expired);
+
                 if ($expired) {
+                    Log::info('exp');
                     return 'expired';
                 } else {
                     unset($data['identifier']);
+                    Log::info('not exp');
                     return $data;
                 }
             } elseif ($data['status'] == 'failed') {
+                Log::info('failed');
+
                 return 'failed';
             } elseif ($data['status'] == 'pending') {
+                Log::info('pending');
                 return 'pending';
             }
 
