@@ -171,7 +171,7 @@ class PdfMakerService
             }
 
         } else {
-            return null;
+            throw new ModelNotFoundException();
         }
 
     }
