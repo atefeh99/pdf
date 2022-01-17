@@ -120,12 +120,19 @@ class PdfMakerController extends ApiController
         $link = PdfMakerService::pdfLink($job_id, $user_id);
 
         if ($link == 'failed') {
+            Log::info('failed in c');
             return $this->respondError(trans('messages.custom.failed'), 422, 2008);
         } elseif ($link == 'pending') {
+            Log::info('pending in c');
+
             return $this->respondError(trans('messages.custom.pending'), 422, 2009);
         } elseif ($link == 'expired') {
+            Log::info('expired in c');
+
             return $this->respondError(trans('messages.custom.link_expired'), 410, 2010);
         } else {
+            Log::info('bingo');
+
             return $this->respondItemResult($link);
         }
     }

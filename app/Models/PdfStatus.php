@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class PdfStatus extends Model
 {
@@ -51,10 +52,15 @@ class PdfStatus extends Model
         ])->get(
             ['job_id', 'status', 'link', 'identifier']
         );
+        Log::info('item get');
 
         if (count($item) > 0) {
+            Log::info('count > 0');
+
             return $item->toArray()[0];
         } else {
+            Log::info('null');
+
             return null;
         }
     }
