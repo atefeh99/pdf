@@ -122,7 +122,7 @@ class PdfMakerController extends ApiController
 
         if ($link == 'failed') {
             Log::info('failed in c');
-            return $this->respondError(trans('messages.custom.failed'), 422, 2008);
+            return $this->respondError(trans('messages.custom.failed'), 424, 2008);
         } elseif ($link == 'pending') {
             Log::info('pending in c');
 
