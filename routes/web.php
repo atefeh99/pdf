@@ -30,5 +30,7 @@ $router->post('/{identifier}', 'PdfMakerController@getPdf');
 $router->post('/{identifier}/async', 'PdfMakerController@getAsyncPdf');
 $router->get('/status/{job_id}', 'PdfMakerController@pdfStatus');
 $router->get('/link/{job_id}', 'PdfMakerController@pdfLink');
+$router->get('/', 'PdfMakerController@getItem');
+
 
 
