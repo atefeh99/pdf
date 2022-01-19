@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\UnauthorizedUserException;
-use App\Helpers\OdataQueryParser;
+use App\Helpers\Odata\OdataQueryParser;
 use App\Http\Services\PdfMakerService;
 use App\Http\Services\SendSmsService;
 use App\Modules\SendSms\SendSmsModules;
 use Illuminate\Http\Request;
 use App\Http\Controllers\RulesTrait;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
@@ -167,6 +168,31 @@ class PdfMakerController extends ApiController
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
         }
+    }
+    public function getItem(Request $request)
+    {
+        $user_id = $request->header('x-user-id');
+
+        if ($user_id == null || $user_id == '') {
+            throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), 3006);
+        }
+
+        $odata = OdataQueryParser::parse($request->fullUrl());
+        if (OdataQueryParser::isFailed()){
+            return $this->respondInvalidParams(
+                1001,
+                new MessageBag(OdataQueryParser::getErrors()),
+                trans('messages.custom.400')
+            );
+        }
+
+        $data = PdfMakerService::getItem($odata);
+        if($data['link'] == 'expired'){
+            return $this->respondError(trans('messages.custom.error.link_expired'),'410','10000');
+        }
+        return $this->respondItemResult($data);
+
+
     }
 
 

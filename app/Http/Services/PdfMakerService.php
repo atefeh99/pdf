@@ -728,5 +728,25 @@ class PdfMakerService
             throw new PaymentException(trans('messages.custom.error.payment'));
         }
     }
+
+    public static function getItem($odata)
+    {
+//1->modelnotfound->barcode namotabar
+        //2->link=expire->gavahi monghazi
+        //3->link=lkkk->link=k,ml
+        $item = File::getItems($odata)->toArray();
+        if (count($item) == 0) {
+            throw new ModelNotFoundException();
+        }
+        $date1 = Date::convertCarbonToJalali(Carbon::now());
+        $date2 = $item[0]['expired_at'];
+        if ($date1 > $date2) {
+            return ['link' => 'expired'];
+        }
+        $filename = $item[0]['filename'];
+        return ['link' => env('GAVAHI_HOST') . "/pdf/files/gavahi/$filename.pdf"];
+    }
+
+
 }
 
