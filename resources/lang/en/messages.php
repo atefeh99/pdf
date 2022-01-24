@@ -58,7 +58,9 @@ return [
             'query' => 'query exception',
             'route_not_found' => 'this route does not exists',
             'ResMsg' => 'ناموفق',
-            'payment' => 'قیمت گواهی یافت نشد'
+            'payment' => 'قیمت گواهی یافت نشد',
+            "column_name" => "invalid select column name to filter , order by or select",
+            "link_expired" => "certification expired"
         ],
         'success' => [
             'update' => 'updated successfully',

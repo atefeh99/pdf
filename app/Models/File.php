@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+use App\Models\OdataTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Carbon\Carbon;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 class File extends Model
 {
     use Common;
+    use OdataTrait;
 
     protected $connection = 'pgsql';
     protected $table = 'files';
@@ -75,4 +77,5 @@ class File extends Model
         if(count($query) > 0) return $query[0]['expired_at'];
         else throw new ModelNotFoundException();
     }
+
 }
