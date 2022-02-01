@@ -1,12 +1,9 @@
 <?php
 
-
 namespace App\Modules\Payment;
-
 
 class PaymentModule
 {
-
     public static function getServices()
     {
         $curl = curl_init();
@@ -36,6 +33,4 @@ class PaymentModule
         return json_decode($response);
 
     }
-
-
 }
