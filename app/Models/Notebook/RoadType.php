@@ -8,5 +8,4 @@ class RoadType extends Model
 {
     protected $connection = 'gnaf';
     protected $table = 'road_type';
-
 }

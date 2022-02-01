@@ -16,11 +16,6 @@ class Building extends Model
     protected $fillable = [
         'building_no'
     ];
-//    protected $with = [
-//        'addresses',
-//        'neighbourhood'
-//    ];
-
 
     /*
      * accessors
@@ -37,10 +32,11 @@ class Building extends Model
 
     public function addresses()
     {
-    return $this->hasMany(Address::class,'building_id','id');
+        return $this->hasMany(Address::class, 'building_id', 'id');
     }
+
     public function neighbourhood()
     {
-        return $this->hasOne(Neighbourhood::class,'id','neighbourhood_id');
+        return $this->hasOne(Neighbourhood::class, 'id', 'neighbourhood_id');
     }
 }

@@ -14,7 +14,6 @@ use Throwable;
 
 class Slack
 {
-
     const COLOR_GREEN = 'green';
     const COLOR_YELLOW = 'warning';
     const COLOR_RED = 'danger';

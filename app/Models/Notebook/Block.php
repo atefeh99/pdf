@@ -9,14 +9,6 @@ class Block extends Model
     protected $connection = 'gnaf';
     protected $table = 'block';
 
-//    protected $with = [
-//        'buildings',
-////        'tour',
-////        'part',
-//        'province',
-//        'county',
-//        'zone'
-//    ];
     public static function getData($id)
     {
         return self::with([

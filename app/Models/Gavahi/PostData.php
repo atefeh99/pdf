@@ -16,15 +16,6 @@ class PostData extends Model
     protected $connection = 'gnaf';
     protected $table = 'sina_units';
     protected static $_table = 'sina_units';
-//    protected $postgisFields = [
-//        'geom'
-//    ];
-//    protected $postgisTypes = [
-//        'geom' => [
-//            'geomtype' => 'geometry',
-//            'srid' => 4326
-//        ]
-//    ];
 
     protected $appends = [
         'address',
@@ -79,8 +70,6 @@ class PostData extends Model
             'unit',
             'postalcode',
             'activity_type'
-
-
         ];
 
         $items = self::whereIn('postalcode', $postalcodes)->get($out_fields)
@@ -95,15 +84,11 @@ class PostData extends Model
             ->toArray();
         if (count($items) > 0) {
             foreach ($items as $item) {
-
-                if ($item['locationtype'] != 'روستا') {
-                    $item['zonename'] = $item['villagename'] = '(فقط برای روستاها)';
-                }
+                if ($item['locationtype'] != 'روستا') $item['zonename'] = $item['villagename'] = '(فقط برای روستاها)';
             }
             return $items;
-        } else {
-            return null;
-        }
+        } else return null;
+
     }
 
     public static function getGeom($postalcode)

@@ -14,7 +14,7 @@ class SendSmsModules
     {
         try {
             $sender = env('KAVENEGAR_SENDER');        //This is the Sender number
-            $message = self::makeMessage($postalcodes, $link,$tracking_code,$expiration_time);
+            $message = self::makeMessage($postalcodes, $link, $tracking_code, $expiration_time);
             $receptor = array($mobile);            //Receptors number
             $sms_api = new Kavenegar\KavenegarApi(env('KAVENEGAR_API_KEY'));
             $sms_api->Send($sender, $receptor, $message);
@@ -27,9 +27,7 @@ class SendSmsModules
             // در زمانی که مشکلی در برقرای ارتباط با وب سرویس وجود داشته باشد این خطا رخ می دهد
             throw new HttpException($e->getMessage());
         }
-
     }
-
     public static function sendPost($mobile, $postalcodes, $link,$tracking_code,$expiration_time)
     {
         $message = self::makeMessage($postalcodes, $link,$tracking_code,$expiration_time);
@@ -55,7 +53,6 @@ class SendSmsModules
 
         }catch(\Exception $e){
             Log::error($e->getMessage());
-//            dd($e->getMessage());
         }
 
         $params = [
@@ -100,4 +97,3 @@ class SendSmsModules
         return $message;
     }
 }
-

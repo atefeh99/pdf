@@ -39,10 +39,7 @@ return [
         'sms_part4' => 'تاریخ اعتبار گواهی : ',
         'sms_part5' => 'لینک دریافت گواهی : ',
         'sms_part6' => '** شرکت ملی پست ج ا ا **',
-
-
         'sms_notSent' => 'sms not sent for user',
-
 
         'error' => [
             'no_data' => 'your request has no content or content is not valid',

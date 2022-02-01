@@ -71,11 +71,9 @@ class MakePdfJob implements ShouldQueue
             $app = env('MQTT_APPLICATION');
             $mqtt = new Publisher($metadata, $this->job->getJobId(), $success_time, $this->user_id, $app, $this->identifier,null, null, null,null);
             $mqtt->send();
-//        SendSmsService::sendSms($this->identifier,$data,$link,$this->user_id);
 
         }
     }
-
 
 }
 

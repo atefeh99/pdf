@@ -8,6 +8,4 @@ class Province extends Model
 {
     protected $connection = 'gnaf';
     protected $table = 'province';
-
-   
 }
