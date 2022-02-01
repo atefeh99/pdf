@@ -63,17 +63,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
         ],
-//        'postalcode' => [
-//            'driver' => 'pgsql',
-//            'host' => env('DB3_HOST'),
-//            'port' => env('DB3_PORT'),
-//            'database' => env('DB3_DATABASE'),
-//            'username' => env('DB3_USERNAME'),
-//            'password' => env('DB3_PASSWORD'),
-//            'charset' => 'utf8',
-//            'collation' => 'utf8_unicode_ci',
-//            'prefix' => '',
-//        ],
+
     ],
 
 

@@ -6,18 +6,15 @@ use App\Exceptions\UnauthorizedUserException;
 use App\Helpers\Odata\OdataQueryParser;
 use App\Http\Services\PdfMakerService;
 use App\Http\Services\SendSmsService;
-use App\Modules\SendSms\SendSmsModules;
 use Illuminate\Http\Request;
 use App\Http\Controllers\RulesTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-
 class PdfMakerController extends ApiController
 {
     use RulesTrait;
-
 
     public function getPdf(Request $request, $identifier)
     {
@@ -38,10 +35,8 @@ class PdfMakerController extends ApiController
         }
         $result = PdfMakerService::getPdf($identifier, $user_id, $data);
 
-//        return view('direct_mail_1', $result);
         if ($result) {
             if ($identifier == 'gavahi') {
-
                 $data['tracking_code'] = $data['tracking_code'] ? $data['tracking_code'] : 23;
                 SendSmsService::sendSms($identifier, $data, $result['link'], $user_id);
             }
@@ -65,7 +60,6 @@ class PdfMakerController extends ApiController
         $input = $request->all();
         $input['identifier'] = $identifier;
 
-
         $data = self::checkRules(
             $input,
             __FUNCTION__,
@@ -74,7 +68,6 @@ class PdfMakerController extends ApiController
         if (str_contains($identifier, 'gavahi') && (!isset($data['geo']))) {
             $data['geo'] = 0;
         }
-
         $result = PdfMakerService::asyncPdf($identifier, $user_id, $data);
         if ($result)
             return $this->respondItemResult($result);
@@ -126,23 +119,18 @@ class PdfMakerController extends ApiController
             return $this->respondError(trans('messages.custom.failed'), 424, 2008);
         } elseif ($link == 'pending') {
             Log::info('pending in c');
-
             return $this->respondError(trans('messages.custom.pending'), 422, 2009);
         } elseif ($link == 'expired') {
             Log::info('expired in c');
-
             return $this->respondError(trans('messages.custom.link_expired'), 410, 2010);
         } else {
             Log::info('bingo');
-
             return $this->respondItemResult($link);
         }
     }
 
     public function gavahiPdfWithInfo(Request $request)
     {
-
-
         $user_id = $request->header('x-user-id');
 
         if (!isset($user_id)) {
@@ -161,14 +149,12 @@ class PdfMakerController extends ApiController
 
         $result = PdfMakerService::gavahiPdfWithInfo($user_id, $data);
         if ($result) {
-//            $identifier = 'gavahi_with_info';
-//            SendSmsService::sendSms($identifier, $data, $result, $user_id);
-
             return $this->respondArrayResult($result);
         } else {
             return $this->respondNoFound(trans('messages.custom.404'), 1002);
         }
     }
+
     public function getItem(Request $request)
     {
         $user_id = $request->header('x-user-id');
@@ -191,11 +177,7 @@ class PdfMakerController extends ApiController
             return $this->respondError(trans('messages.custom.error.link_expired'),'410','10000');
         }
         return $this->respondItemResult($data);
-
-
     }
-
-
 }
 
 

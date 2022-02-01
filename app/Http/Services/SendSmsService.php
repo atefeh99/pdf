@@ -19,7 +19,6 @@ class SendSmsService
             $postalcodes = collect($data['Postcodes'])->pluck('PostCode')->all();
         } elseif ($identifier == 'gavahi') {
             $postalcodes = $data['postalcode'];
-//            dd($postalcodes);
         }
         Log::info('get mobile');
 
@@ -31,7 +30,6 @@ class SendSmsService
 
         if (!empty($mobile)) {
             $sms_module = env('SmsModule');
-//            dd($sms_module);
             if ($sms_module == "KAVENEGAR") {
                 SendSmsModules::sendKavenegar($mobile, $postalcodes, $link,$data['tracking_code'],$expiration_time);
             } elseif ($sms_module == "Post") {

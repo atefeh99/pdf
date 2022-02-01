@@ -9,9 +9,6 @@ class Part extends Model
     protected $connection = 'gnaf';
     protected $table = 'part';
 
-//    protected $with = [
-////        'blocks'
-//    ];
     public static function get($id)
     {
         return self::find($id)->toArray();
@@ -19,6 +16,6 @@ class Part extends Model
 
     public function blocks()
     {
-        return $this->hasMany(Block::class,'part_id','id');
+        return $this->hasMany(Block::class, 'part_id', 'id');
     }
 }

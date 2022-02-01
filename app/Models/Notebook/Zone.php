@@ -8,7 +8,4 @@ class Zone extends Model
 {
     protected $connection = 'gnaf';
     protected $table = 'zone';
-
-    
-    
 }

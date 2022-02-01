@@ -13,13 +13,6 @@ class Address extends Model
         'secondary_way_id'
 
     ];
-//    protected $with=[
-//        'entrances',
-//        'street',
-////        'secondary_street'
-//    ];
-
-
 
     public function getWayIdAttribute()
     {
@@ -36,11 +29,9 @@ class Address extends Model
     public function street()
     {
         return $this->hasOne(Way::class, 'id', 'street_id');
-
     }
     public function secondary_street()
     {
         return $this->hasOne(Way::class, 'id', 'secondary_street_id');
-
     }
 }

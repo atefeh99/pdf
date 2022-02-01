@@ -9,8 +9,6 @@ use Illuminate\Validation\Rule;
 
 trait RulesTrait
 {
-
-
     public static function rules()
     {
         return [

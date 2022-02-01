@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Models\DirectMail;
-
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -56,35 +54,33 @@ class SinaUnits extends Model
 
         $items = self::where('act_type_id', $data['class_id'])
             ->where(function ($q) use ($data) {
-                if (isset($data['divisions']['province'])) {
-                    $q->whereIn('province_id', $data['divisions']['province']);
+                if (isset($data['divisions']['province'])) $q->whereIn('province_id', $data['divisions']['province']);
 
-                }
-                if (isset($data['divisions']['province']) && isset($data['divisions']['county'])) {
-                    $q = $q->orWhereIn('county_id', $data['divisions']['county']);
-                }
-                if (!(isset($data['divisions']['province'])) && isset($data['divisions']['county'])) {
-                    $q = $q->whereIn('county_id', $data['divisions']['county']);
 
-                }
+                if (isset($data['divisions']['province'])
+                    && isset($data['divisions']['county'])
+                ) $q = $q->orWhereIn('county_id', $data['divisions']['county']);
+
+                if (!(isset($data['divisions']['province']))
+                    && isset($data['divisions']['county'])
+                ) $q = $q->whereIn('county_id', $data['divisions']['county']);
+
                 if ((isset($data['divisions']['province']) || isset($data['divisions']['county']))
-                    && isset($data['divisions']['parish'])) {
-                    $q = $q->orWhereIn('parish_id', $data['divisions']['parish']);
+                    && isset($data['divisions']['parish'])
+                ) $q = $q->orWhereIn('parish_id', $data['divisions']['parish']);
 
-                }
                 if (!(isset($data['divisions']['province']) || isset($data['divisions']['county']))
-                    && isset($data['divisions']['parish'])) {
-                    $q = $q->whereIn('parish_id', $data['divisions']['parish']);
-                }
-                if ((isset($data['divisions']['province']) || isset($data['divisions']['county']) || isset($data['divisions']['parish']))
-                    && isset($data['divisions']['population_point'])) {
-                    $q = $q->orWhereIn('population_point_id', $data['divisions']['population_point']);
+                    && isset($data['divisions']['parish'])
+                ) $q = $q->whereIn('parish_id', $data['divisions']['parish']);
 
-                }
+                if ((isset($data['divisions']['province']) || isset($data['divisions']['county']) || isset($data['divisions']['parish']))
+                    && isset($data['divisions']['population_point'])
+                ) $q = $q->orWhereIn('population_point_id', $data['divisions']['population_point']);
+
                 if (!(isset($data['divisions']['province']) || isset($data['divisions']['county']) || isset($data['divisions']['parish']))
-                    && isset($data['divisions']['population_point'])) {
-                    $q = $q->whereIn('population_point_id', $data['divisions']['population_point']);
-                }
+                    && isset($data['divisions']['population_point'])
+                ) $q = $q->whereIn('population_point_id', $data['divisions']['population_point']);
+
                 return $q;
             })
             ->get($out_fields)->toArray();
@@ -93,6 +89,5 @@ class SinaUnits extends Model
 
         if (count($items) == 0) return null;
         return $items;
-
     }
 }

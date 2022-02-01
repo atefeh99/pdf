@@ -17,13 +17,11 @@ class Unit extends Model
         'name'
     ];
 
-
     public static function index($entrance_id)
     {
         $query = self::id($entrance_id)
             ->whereNotNull('unit_identifier')
             ->get();
-//        ['id', 'floor_no', 'recog_code', 'unit_no', 'row_no', 'name', 'isic_id', 'location_type_id']
 
         return $query->toArray();
     }
@@ -32,21 +30,24 @@ class Unit extends Model
     {
         return $this->attributes['unit_identifier'];
     }
+
     public function getRowNoAttribute()
     {
         return $this->attributes['part_row_no'];
     }
+
     public function getIsicIdAttribute()
     {
         return $this->attributes['act_type_id1'];
     }
+
     public function getLocationTypeIdAttribute()
     {
         return $this->attributes['poi_type_id'];
     }
+
     public function getNameAttribute()
     {
         return $this->attributes['first_name'];
     }
-
 }
