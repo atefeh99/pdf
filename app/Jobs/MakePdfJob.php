@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class MakePdfJob implements ShouldQueue
 {
+
     use  InteractsWithQueue;
 
     public $identifier;
@@ -36,6 +37,7 @@ class MakePdfJob implements ShouldQueue
      */
     public function handle()
     {
+        ini_set('max_execution_time',1440);
         Log::info('start getting pdf');
 
         $result = PdfMakerService::getPdf($this->identifier,
