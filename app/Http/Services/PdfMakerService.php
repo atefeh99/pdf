@@ -463,15 +463,15 @@ class PdfMakerService
                     }
                     $gavahi_data[$postalcode]['barcode'] = $barcode;
                     array_push($barcodes, $barcode);
-                    if ($data['geo'] == 1) {
-                        $image = GetMap::vectorMap($postalcode);
-                        if (!$image) $gavahi_data[$postalcode]['image_exists'] = false;
-                        else {
-                            $gavahi_data[$postalcode]['image_exists'] = true;
-                            $name = $postalcode . '.png';
-                            Storage::disk('images')->put($name, $image);
-                        }
-                    } else $gavahi_data[$postalcode]['image_exists'] = false;
+//                    if ($data['geo'] == 1) {
+//                        $image = GetMap::vectorMap($postalcode);
+//                        if (!$image) $gavahi_data[$postalcode]['image_exists'] = false;
+//                        else {
+//                            $gavahi_data[$postalcode]['image_exists'] = true;
+//                            $name = $postalcode . '.png';
+//                            Storage::disk('images')->put($name, $image);
+//                        }
+//                    } else $gavahi_data[$postalcode]['image_exists'] = false;
 
                 } else $gavahi_data[$postalcode] = null;
             }
@@ -639,6 +639,7 @@ class PdfMakerService
     public static function getCost()
     {
         $services = PaymentModule::getServices();
+        dd($services);
         $price = null;
         $tax = null;
 

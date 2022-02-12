@@ -10,11 +10,11 @@ use Kavenegar\Exceptions\HttpException;
 class SendSmsModules
 {
 
-    public static function sendKavenegar($mobile, $postalcodes, $link,$tracking_code,$expiration_time)
+    public static function sendKavenegar($mobile, $postalcodes, $link, $tracking_code, $expiration_time, $geo)
     {
         try {
             $sender = env('KAVENEGAR_SENDER');        //This is the Sender number
-            $message = self::makeMessage($postalcodes, $link, $tracking_code, $expiration_time);
+            $message = self::makeMessage($postalcodes, $link, $tracking_code, $expiration_time, $geo);
             $receptor = array($mobile);            //Receptors number
             $sms_api = new Kavenegar\KavenegarApi(env('KAVENEGAR_API_KEY'));
             $sms_api->Send($sender, $receptor, $message);
@@ -28,15 +28,16 @@ class SendSmsModules
             throw new HttpException($e->getMessage());
         }
     }
-    public static function sendPost($mobile, $postalcodes, $link,$tracking_code,$expiration_time)
+
+    public static function sendPost($mobile, $postalcodes, $link, $tracking_code, $expiration_time, $geo)
     {
-        $message = self::makeMessage($postalcodes, $link,$tracking_code,$expiration_time);
+        $message = self::makeMessage($postalcodes, $link, $tracking_code, $expiration_time, $geo);
 
         $mobile = str_replace('+98', '98', $mobile);
-        $mobile = str_starts_with($mobile, '0098')?
-            str_replace('0098', '98', $mobile):$mobile;
-        $mobile = str_starts_with($mobile, '980')?
-            str_replace('980', '98', $mobile):$mobile;
+        $mobile = str_starts_with($mobile, '0098') ?
+            str_replace('0098', '98', $mobile) : $mobile;
+        $mobile = str_starts_with($mobile, '980') ?
+            str_replace('980', '98', $mobile) : $mobile;
 
         $opts = [
             'http' => [
@@ -48,10 +49,10 @@ class SendSmsModules
             'stream_context' => $context,
             'cache_wsdl' => WSDL_CACHE_NONE
         ];
-        try{
+        try {
             $client = new \SoapClient(env('POST_SMS_URI'), $soapClientOptions);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             Log::error($e->getMessage());
         }
 
@@ -76,9 +77,10 @@ class SendSmsModules
 
     }
 
-    public static function makeMessage($postalcodes, $link, $tracking_code,$expiration_time)
+    public static function makeMessage($postalcodes, $link, $tracking_code, $expiration_time, $geo = false)
     {
-        $message = trans('messages.custom.sms_part1') . "\n" . trans('messages.custom.sms_part2');
+        $message = ($geo) ? trans('messages.custom.sms_part1_geo') : trans('messages.custom.sms_part1');
+        $message .= "\n" . trans('messages.custom.sms_part2') . ' ';
 
         foreach ($postalcodes as $k => $p) {
             $message .= $p;
@@ -87,10 +89,10 @@ class SendSmsModules
             }
         }
         $message .= "\n" . trans('messages.custom.sms_part3');
-        $message .= $tracking_code;
-        $message .= "\n" . trans('messages.custom.sms_part4');
-        $message .= $expiration_time;
-        $message .= "\n" . trans('messages.custom.sms_part5');
+        $message .= $tracking_code . "\n";
+        $message .= ($geo) ? trans('messages.custom.sms_part4_geo') : trans('messages.custom.sms_part4');
+        $message .= $expiration_time . "\n";
+        $message .= ($geo) ? trans('messages.custom.sms_part5_geo') : trans('messages.custom.sms_part5');
         $message .= "\n" . $link;
         $message .= "\n" . trans('messages.custom.sms_part6');
 
