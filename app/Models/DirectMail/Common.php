@@ -8,14 +8,15 @@ use Illuminate\Support\Facades\Log;
 
 trait Common
 {
-     public $state_name = [
-         'سیستان و بلوچستان'=>'سیستان',
-         'سیستان وبلوچستان'=>'سیستان',
-         'چهارمحال و بختیاری'=>'چهارمحال',
-         'چهارمحال وبختیاری'=>'چهارمحال',
-         'کهگیلویه و بویراحمد'=>'کهگیلویه',
-         'کهگیلویه وبویراحمد'=>'کهگیلویه'
-     ];
+    public $state_name = [
+        'سیستان و بلوچستان' => 'سیستان',
+        'سیستان وبلوچستان' => 'سیستان',
+        'چهارمحال و بختیاری' => 'چهارمحال',
+        'چهارمحال وبختیاری' => 'چهارمحال',
+        'کهگیلویه و بویراحمد' => 'کهگیلویه',
+        'کهگیلویه وبویراحمد' => 'کهگیلویه'
+    ];
+
     public function getCountryDivisionAttribute($value)
     {
         $result = '';
@@ -30,13 +31,12 @@ trait Common
                 || ($this->attributes['locationtype']
                     && $this->attributes['locationname'])
             ) $result .= '،';
-//
         }
 
         if ($this->attributes['locationtype'] == 'شهر' && mb_strlen($result) >= 15) {
             $result = str_replace("استان ", "", $result);
 
-            if (mb_strlen($result) >= 15 && array_key_exists($this->attributes['statename'],$this->state_name)) {
+            if (mb_strlen($result) >= 15 && array_key_exists($this->attributes['statename'], $this->state_name)) {
                 $result = str_replace($this->attributes['statename'], $this->state_name[$this->attributes['statename']], $result);
             }
 
@@ -77,7 +77,7 @@ trait Common
 
         if (mb_strlen($result) >= 40 && $this->attributes['locationtype'] != 'شهر') {
             $result = str_replace('شهرستان ', "", $result);
-            if (mb_strlen($result) >= 40 && array_key_exists($this->attributes['statename'],$this->state_name)) {
+            if (mb_strlen($result) >= 40 && array_key_exists($this->attributes['statename'], $this->state_name)) {
                 $result = str_replace($this->attributes['statename'], $this->state_name[$this->attributes['statename']], $result);
             }
         }
@@ -98,35 +98,29 @@ trait Common
         $result = '';
         if ($this->attributes["parish"]) {
             Log::info($this->attributes["parish"]);
-
             $result .= $this->attributes["parish"];
 
             if (($this->attributes["mainavenue"])
                 || ($this->attributes["preaventypename"] && $this->attributes["preaven"])
                 || ($this->attributes["avenuetypename"] && $this->attributes["avenue"])
             ) $result .= '،';
-
         }
         if ($this->attributes["mainavenue"]) {
-
             $result .= $this->attributes["mainavenue"];
             if (($this->attributes["preaventypename"] && $this->attributes["preaven"])
                 || ($this->attributes["avenuetypename"] && $this->attributes["avenue"])
             ) $result .= '،';
         }
         if ($this->attributes["preaventypename"] && $this->attributes["preaven"]) {
-
             $result .= $this->attributes['preaventypename'] . ' ' . $this->attributes["preaven"];
             if (($this->attributes["avenuetypename"] && $this->attributes["avenue"])
             ) $result .= '،';
         }
         if ($this->attributes["avenuetypename"] && $this->attributes["avenue"]) {
-
             $result .= $this->attributes["avenuetypename"] . ' ' . $this->attributes["avenue"];
         }
         if ($this->attributes['postalcode'] == '8957135616' || $this->attributes['postalcode'] == 8957135616)
-            var_dump(mb_strlen($result));
-        return $result;
+            return $result;
 
     }
 
@@ -174,8 +168,6 @@ trait Common
             $result .= 'واحد ' . $this->attributes["unit"];
 
         }
-
         return $result;
-
     }
 }

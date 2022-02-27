@@ -8,7 +8,4 @@ class County extends Model
 {
     protected $connection = 'gnaf';
     protected $table = 'county';
-
-    
-    
 }

@@ -13,10 +13,6 @@
 |
 */
 
-//$router->get('/', function () use ($router) {
-//    return $router->app->version();
-//});
-
 
 $router->group(['prefix' => 'interpreters'], function () use ($router) {
     $router->post('', 'InterpreterController@store');
@@ -31,6 +27,3 @@ $router->post('/{identifier}/async', 'PdfMakerController@getAsyncPdf');
 $router->get('/status/{job_id}', 'PdfMakerController@pdfStatus');
 $router->get('/link/{job_id}', 'PdfMakerController@pdfLink');
 $router->get('/', 'PdfMakerController@getItem');
-
-
-

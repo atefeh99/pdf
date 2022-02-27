@@ -9,12 +9,6 @@ class Tour extends Model
     protected $connection = 'gnaf';
     protected $table = 'tour';
 
-//    protected $with = [
-//        'parts',
-//        'province'
-//    ];
-
-
     public static function getData($id){
         return self::with([
             'parts', 'province',
@@ -35,5 +29,4 @@ class Tour extends Model
     {
         return $this->hasOne(Province::class,'id','province_id');
     }
-
 }

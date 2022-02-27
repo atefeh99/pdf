@@ -28,7 +28,7 @@
         "php-mqtt/client": "^1.1",
         "sebastian/resource-operations": "^3.0",
         "setasign/fpdi": "^2.3",
-        "map-ir/mqtt-notification": "^0.0.1",
+        "map-ir/mqtt-notification": "^0.0.2",
         "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {

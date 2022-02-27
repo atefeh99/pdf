@@ -77,6 +77,21 @@ class ApiController extends Controller
      * @param $count
      * @return mixed
      */
+    public function respondMyArrayResult($data)
+    {
+        $total_count = array_key_exists('count', $data) ? $data['count'] : 0;
+        $input = array_key_exists('data', $data) ? $data['data'] : $data;
+        array_walk_recursive($input, function (&$value) {
+            $value = is_string($value) ? rtrim($value) : $value;
+        });
+        return $this
+            ->setStatusCode(Response::HTTP_OK)
+            ->respond([
+                'odata.count' => $total_count,
+                'value' => $input
+            ]);
+
+    }
     public function respondArrayResult($data)
     {
         return $this
