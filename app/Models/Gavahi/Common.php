@@ -206,7 +206,7 @@ trait Common
         }
 
         if (!empty($this->attributes["entrance"])) {
-            $result .= 'ورودی/ بلوک: ' . $this->attributes['entrance'];
+            $result .= ' ' . $this->attributes['entrance'];
             if (!empty($this->attributes["building"])
                 ||!empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
