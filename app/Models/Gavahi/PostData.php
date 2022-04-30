@@ -69,7 +69,8 @@ class PostData extends Model
             'avenuetypename',
             'unit',
             'postalcode',
-            'activity_type'
+            'activity_type',
+            'entrance'
         ];
 
         $items = self::whereIn('postalcode', $postalcodes)->get($out_fields)
