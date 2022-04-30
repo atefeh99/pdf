@@ -480,7 +480,7 @@ class PdfMakerService
                 return $a !== null;
             });
             if (empty($gavahi_data) && $identifier == 'gavahi') throw new ModelNotFoundException();
-           try {
+            try {
                 $costs = self::getCost();
             } catch (PaymentException $e) {
                 throw new PaymentException($e->getMessage());
