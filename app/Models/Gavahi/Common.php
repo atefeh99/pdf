@@ -10,22 +10,6 @@ trait Common
     {
 //        TODO if key exist; blockno
         $result = '';
-//        if (array_key_exists('statename', $this->attributes)) {
-//            $result = 'استان ';
-//            $result .= $this->attributes['statename'];
-//            $result .= '، ';
-//        }
-////        city
-//        if (array_key_exists('locationtype', $this->attributes)
-//            && array_key_exists('locationname', $this->attributes)) {
-//            if ($this->attributes['locationtype'] == 'شهر' &&
-//                $this->attributes['locationname']) {
-//
-//                $result .= 'شهر ';
-//                $result .= $this->attributes['locationname'];
-//                $result .= '، ';
-//            }
-//        }
 
 //        parish
         if (array_key_exists('parish', $this->attributes)
@@ -221,8 +205,8 @@ trait Common
 
         }
 
-        if (!empty($this->attributes["blockno"])) {
-            $result .= 'ورودی/ بلوک: ' . $this->attributes['blockno'];
+        if (!empty($this->attributes["entrance"])) {
+            $result .= ' ' . $this->attributes['entrance'];
             if (!empty($this->attributes["building"])
                 ||!empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
@@ -252,5 +236,9 @@ trait Common
 
         return $result;
 
+    }
+
+    public function getPoiTypeNameAttribute($value){
+        return preg_replace ('/\((-)?[0-9]\)/', '', $value);
     }
 }

@@ -14,8 +14,8 @@ class PostData extends Model
     use Common;
 
     protected $connection = 'gnaf';
-    protected $table = 'sina_units';
-    protected static $_table = 'sina_units';
+    protected $table = 'sina_units_table';
+    protected static $_table = 'sina_units_table';
 
     protected $appends = [
         'address',
@@ -69,7 +69,9 @@ class PostData extends Model
             'avenuetypename',
             'unit',
             'postalcode',
-            'activity_type'
+            'activity_type',
+            'entrance',
+            'poi_type_name'
         ];
 
         $items = self::whereIn('postalcode', $postalcodes)->get($out_fields)
