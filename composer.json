@@ -13,7 +13,6 @@
         "ext-curl": "*",
         "ext-json": "*",
         "armancodes/laravel-download-link": "^1.1",
-        "map-ir/laravel-log-usage": "^0.2.2",
         "curl/curl": "^2.3",
         "doctrine/dbal": "^3.1",
         "guzzlehttp/guzzle": "6.0",
@@ -29,7 +28,8 @@
         "sebastian/resource-operations": "^3.0",
         "setasign/fpdi": "^2.3",
         "map-ir/mqtt-notification": "^0.0.2",
-        "simplesoftwareio/simple-qrcode": "^4.2"
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
