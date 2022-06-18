@@ -639,7 +639,6 @@ class PdfMakerService
     public static function getCost()
     {
         $services = PaymentModule::getServices();
-
         $price = null;
         $tax = null;
 
