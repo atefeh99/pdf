@@ -28,36 +28,18 @@ trait Common
             }
         }
 
-        if (
-            array_key_exists('preaventypename', $this->attributes)
-            && array_key_exists('preaven', $this->attributes)
-            && array_key_exists('avenue', $this->attributes)
+        if (array_key_exists('avenue', $this->attributes)
             && array_key_exists('avenuetypename', $this->attributes)
         ) {
-            if ($this->attributes['preaventypename'] ||
-                $this->attributes['preaven']) {
-                $result .= $this->attributes['preaventypename'];
-                $result .= ' ';
-                $result .= $this->attributes['preaven'];
-            }
-            if (($this->attributes['preaventypename'] ||
-                    $this->attributes['preaven']) && (
-                    $this->attributes['avenuetypename'] ||
-                    $this->attributes['avenue']
-                )) {
-                $result .= '/';
-            }
             if ($this->attributes['avenuetypename'] ||
                 $this->attributes['avenue']) {
                 $result .= $this->attributes['avenuetypename'];
                 $result .= ' ';
                 $result .= $this->attributes['avenue'];
             }
-            if (($this->attributes['preaventypename'] ||
-                    $this->attributes['preaven']) || (
-                    $this->attributes['avenuetypename'] ||
-                    $this->attributes['avenue']
-                )) {
+            if ($this->attributes['avenuetypename'] ||
+                $this->attributes['avenue']
+            ) {
                 $result .= '، ';
             }
         }
@@ -109,7 +91,7 @@ trait Common
                 || !empty($this->attributes['zonename'])
                 || !empty($this->attributes['villagename'])
                 || !empty($this->attributes['locationtype'])
-                    && !empty($this->attributes['locationname'])
+                && !empty($this->attributes['locationname'])
             ) $result .= '،';
 
         }
@@ -119,10 +101,10 @@ trait Common
             if (!empty($this->attributes['zonename'])
                 || !empty($this->attributes['villagename'])
                 || !empty($this->attributes['locationtype'])
-                    && !empty($this->attributes['locationname'])
+                && !empty($this->attributes['locationname'])
             ) $result .= '،';
         }
-        if (!empty($this->attributes['zonename']) ){
+        if (!empty($this->attributes['zonename'])) {
             if ($this->attributes['locationtype'] == 'شهر') {
                 $result .= 'بخش ';
             }
@@ -156,22 +138,22 @@ trait Common
         if (!empty($this->attributes["parish"])) {
             Log::info($this->attributes["parish"]);
 
-            $result .= 'محله: '.$this->attributes["parish"];
+            $result .= 'محله: ' . $this->attributes["parish"];
 
             if (!empty($this->attributes["preaventypename"]) && !empty($this->attributes["preaven"])
                 || !empty($this->attributes["avenuetypename"]) && !empty($this->attributes["avenue"])
-                    || !empty($this->attributes["plate_no"])
-                    || !empty($this->attributes["building"])
-                    || !empty($this->attributes["blockno"])
-                    || !empty($this->attributes["floorno"])
-                    || $this->attributes["floorno"] == 0
+                || !empty($this->attributes["plate_no"])
+                || !empty($this->attributes["building"])
+                || !empty($this->attributes["blockno"])
+                || !empty($this->attributes["floorno"])
+                || $this->attributes["floorno"] == 0
             ) $result .= '،';
 
         }
 
         if (!empty($this->attributes["preaventypename"]) && !empty($this->attributes["preaven"])) {
 
-            $result .= 'معبر ماقبل آخر:'.$this->attributes['preaventypename'] . ' ' . $this->attributes["preaven"];
+            $result .= 'معبر ماقبل آخر:' . $this->attributes['preaventypename'] . ' ' . $this->attributes["preaven"];
             if (!empty($this->attributes["avenuetypename"]) && !empty($this->attributes["avenue"])
                 || !empty($this->attributes["plate_no"])
                 || !empty($this->attributes["building"])
@@ -182,7 +164,7 @@ trait Common
         }
         if (!empty($this->attributes["avenuetypename"]) && !empty($this->attributes["avenue"])) {
 
-            $result .= 'معبر آخر:'.$this->attributes["avenuetypename"] . ' ' . $this->attributes["avenue"];
+            $result .= 'معبر آخر:' . $this->attributes["avenuetypename"] . ' ' . $this->attributes["avenue"];
             if (!empty($this->attributes["plate_no"])
                 || !empty($this->attributes["building"])
                 || !empty($this->attributes["blockno"])
@@ -200,7 +182,7 @@ trait Common
                 || !empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
                 || !empty($this->attributes["unit"])
-                    || !empty($this->attributes["blockno"])
+                || !empty($this->attributes["blockno"])
             ) $result .= '،';
 
         }
@@ -208,7 +190,7 @@ trait Common
         if (!empty($this->attributes["entrance"])) {
             $result .= ' ' . $this->attributes['entrance'];
             if (!empty($this->attributes["building"])
-                ||!empty($this->attributes["floorno"])
+                || !empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
                 || !empty($this->attributes["unit"])
             ) $result .= '،';
@@ -238,7 +220,8 @@ trait Common
 
     }
 
-    public function getPoiTypeNameAttribute($value){
-        return preg_replace ('/\((-)?[0-9]\)/', '', $value);
+    public function getPoiTypeNameAttribute($value)
+    {
+        return preg_replace('/\((-)?[0-9]\)/', '', $value);
     }
 }
