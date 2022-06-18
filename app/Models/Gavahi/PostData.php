@@ -13,7 +13,7 @@ class PostData extends Model
 {
     use Common;
 
-    protected $connection = 'sina';
+    protected $connection = 'gnaf';
     protected $table = 'sina_units_table';
     protected static $_table = 'sina_units_table';
 
