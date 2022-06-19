@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateGavahiHtml9 extends Migration
+class UpdateGavahiHtml11 extends Migration
 {
     /**
      * Run the migrations.
