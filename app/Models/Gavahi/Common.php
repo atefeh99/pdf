@@ -87,7 +87,6 @@ trait Common
         return $address;
     }
 
-
     public function getCountryDivisionAttribute($value)
     {
         $result = '';
@@ -157,7 +156,7 @@ trait Common
         $post_address['part8'] = null;
         $post_address['part9'] = null;
         $post_address["floor_is_neg"] = false;
-
+        $post_address['part10'] = null;
 
 
         if (!empty($this->attributes["parish"])) {
@@ -245,7 +244,7 @@ trait Common
             if (!empty($this->attributes["unit"])) $post_address['part9'] .= '،';
         }
         if (!empty($this->attributes["unit"])) {
-            $post_address['part9'] .= 'واحد ' . $this->attributes["unit"];
+            $post_address['part10'] .= 'واحد ' . $this->attributes["unit"];
 
         }
 

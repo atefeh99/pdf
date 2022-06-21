@@ -17,7 +17,6 @@ class UpdateGavahiHtml12 extends Migration
         $item = Interpreter::where('identifier', 'gavahi_1');
         $item->update([
             'html' => '
-
 <html>
 <head>
     <style>
@@ -155,6 +154,7 @@ class UpdateGavahiHtml12 extends Migration
                         {{$item["post_address"]["floor_sign"]}}
                     @endif
                     {{$item["post_address"]["part9"]}}
+                    {{$item["post_address"]["part10"]}}
                         </span>
                     </b>
                 </td>
@@ -287,7 +287,6 @@ class UpdateGavahiHtml12 extends Migration
 @endforeach
 </body>
 </html>
-            
 ']);
     }
 
