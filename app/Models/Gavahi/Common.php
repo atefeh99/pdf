@@ -57,7 +57,7 @@ trait Common
             && $this->attributes['plate_no']) {
             $result .= 'پلاک ';
             $address['part1'] .= $result;
-           
+
             if($this->attributes['plate_no'] < 0){
                 $address['plate_sign'] = '-';
             }
@@ -68,7 +68,7 @@ trait Common
         if (array_key_exists('floorno', $this->attributes)) {
             $address['part3'] .= '، ';
             $address['part3'] .= 'طبقه ';
-            if($this->attributes['plate_no'] < 0){
+            if($this->attributes['floorno'] < 0){
                 $address['floor_sign'] = '-';
                 $address["floor_is_neg"] = true;
                 $address['part4'] = (int)abs($this->attributes['floorno']);
@@ -201,7 +201,7 @@ trait Common
             Log::info($this->attributes["plate_no"]);
             $result .= 'پلاک ' . abs($this->attributes["plate_no"]);
             $post_address['part1'] .= $result;
-            
+
             if($this->attributes["plate_no"] < 0 ){
                 $post_address['plate_sign'] = '-';
             }
