@@ -168,7 +168,7 @@ class UpdateGavahiHtml12 extends Migration
                 </td>
                 <td style="width:120px;font-size: 15">
                     <b>
-
+                         {{$item["poi_type_name"]}}
                     </b>
                 </td>
             </tr>
@@ -187,14 +187,14 @@ class UpdateGavahiHtml12 extends Migration
                         </b>
                         &#171;
                         <b>
-                        {{$item["address"]["part1"]}}     
-                        {{$item["address"]["part2"]}} 
-                        {{$item["address"]["plate_sign"]}}  
-                        {{$item["address"]["part3"]}}                
+                        {{$item["address"]["part1"]}}
+                        {{$item["address"]["part2"]}}
+                        {{$item["address"]["plate_sign"]}}
+                        {{$item["address"]["part3"]}}
                         {{$item["address"]["part4"]}}
                         @if($item["address"]["floor_is_neg"])
-                            {{$item["address"]["floor_sign"]}} 
-                        @endif 
+                            {{$item["address"]["floor_sign"]}}
+                        @endif
                         {{$item["address"]["part5"]}}
                             </b>
 
@@ -214,21 +214,21 @@ class UpdateGavahiHtml12 extends Migration
                             نشانی استاندارد ملی:
                         </b>
                         &#171;
-                       
-                
+
+
                         <b>
-                        {{$item["address"]["part1"]}}     
-                        {{$item["address"]["part2"]}} 
-                        {{$item["address"]["plate_sign"]}}  
-                        {{$item["address"]["part3"]}}                
+                        {{$item["address"]["part1"]}}
+                        {{$item["address"]["part2"]}}
+                        {{$item["address"]["plate_sign"]}}
+                        {{$item["address"]["part3"]}}
                         {{$item["address"]["part4"]}}
                         @if($item["address"]["floor_is_neg"])
-                            {{$item["address"]["floor_sign"]}}  
+                            {{$item["address"]["floor_sign"]}}
                         @endif
                         {{$item["address"]["part5"]}}
                             </b>
-                            
-                           
+
+
                         &#187;
                     </td>
                 </tr>
@@ -272,8 +272,8 @@ class UpdateGavahiHtml12 extends Migration
                     <br>
                     ۹.در صورت مشاهده هر گونه مغایرت در اطلاعات این گواهی با نشانی خود، به نزدیکترین دفتر پستی مراجعه
                     نمایید.
-                
-                    
+
+
                 </td>
                 <td style="width:24%;border-right:1px solid black;text-align: center">
                     <barcode code={{$QRCode}} type="QR" class="barcode" size="1.2" error="M" height="2"
