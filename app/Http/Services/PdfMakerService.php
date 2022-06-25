@@ -66,7 +66,7 @@ class PdfMakerService
         $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
         Log::info('setting params');
         $result = self::setParams($identifier, $link, $ttl, $data);
-       
+
         if ($identifier == 'notebook') $extra_info = $result['params'];
 
         foreach ($indexes as $key => $value) {
