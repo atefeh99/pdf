@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateGavahiHtml12 extends Migration
+class UpdateGavahiHtml13 extends Migration
 {
     /**
      * Run the migrations.
@@ -168,7 +168,7 @@ class UpdateGavahiHtml12 extends Migration
                 </td>
                 <td style="width:120px;font-size: 15">
                     <b>
-
+                        {{$item["poi_type_name"]}}
                     </b>
                 </td>
             </tr>
