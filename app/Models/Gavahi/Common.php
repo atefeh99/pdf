@@ -10,6 +10,15 @@ trait Common
     {
 //        TODO if key exist; blockno
         $result = '';
+        $address['part1'] = null;
+        $address['plate_sign'] = null;
+        $address['part2'] = null;
+        $address['part3'] = null;
+        $address['part4'] = null;
+        $address['floor_sign'] = null;
+        $address['part5'] = null;
+        $address["floor_is_neg"] = false;
+
 
 //        parish
         if (array_key_exists('parish', $this->attributes)
@@ -47,35 +56,35 @@ trait Common
         if (array_key_exists('plate_no', $this->attributes)
             && $this->attributes['plate_no']) {
             $result .= 'پلاک ';
-            $result .= $this->attributes['plate_no'];
+            $address['part1'] .= $result;
+           
+            if($this->attributes['plate_no'] < 0){
+                $address['plate_sign'] = '-';
+            }
+
+            $address['part2'] .= abs($this->attributes['plate_no']);
         }
 //        floor
         if (array_key_exists('floorno', $this->attributes)) {
-            $result .= '، ';
-            $result .= 'طبقه ';
-            $result .= ((int)$this->attributes['floorno'] == 0) ?
+            $address['part3'] .= '، ';
+            $address['part3'] .= 'طبقه ';
+            if($this->attributes['plate_no'] < 0){
+                $address['floor_sign'] = '-';
+                $address["floor_is_neg"] = true;
+                $address['part4'] = (int)abs($this->attributes['floorno']);
+            } else{
+            $address['part4'] .= ((int)$this->attributes['floorno'] == 0) ?
                 'همکف' : $this->attributes['floorno'];
+            }
         }
-
-
 //        unit
         if (array_key_exists('unit', $this->attributes)
             && $this->attributes['unit']) {
-            $result .= '، ';
-            $result .= 'واحد ';
-            $result .= $this->attributes['unit'];
+            $address['part5'] .= '، ';
+            $address['part5'] .= 'واحد ';
+            $address['part5'] .= $this->attributes['unit'];
         }
-
-
-//        postalcode
-//        if (array_key_exists('postalcode', $this->attributes)
-//            && $this->attributes['postalcode']) {
-//            $result .= 'کد پستی:';
-//            $result .= $this->attributes['postalcode'];
-//        }
-
-
-        return $result;
+        return $address;
     }
 
     public function getCountryDivisionAttribute($value)
@@ -135,6 +144,21 @@ trait Common
     public function getPostAddressAttribute($value)
     {
         $result = '';
+        $post_address['part1'] = null;
+        $post_address['plate_sign'] = null;
+        $post_address['part2'] = null;
+        $post_address['part3'] = null;
+        $post_address['part4'] = null;
+        $post_address['part5'] = null;
+        $post_address['part6'] = null;
+        $post_address['part7'] = null;
+        $post_address['floor_sign'] = null;
+        $post_address['part8'] = null;
+        $post_address['part9'] = null;
+        $post_address["floor_is_neg"] = false;
+        $post_address['part10'] = null;
+
+
         if (!empty($this->attributes["parish"])) {
             Log::info($this->attributes["parish"]);
 
@@ -175,48 +199,56 @@ trait Common
 
         if (!empty($this->attributes["plate_no"])) {
             Log::info($this->attributes["plate_no"]);
-            $result .= 'پلاک ' . $this->attributes["plate_no"];
-
+            $result .= 'پلاک ' . abs($this->attributes["plate_no"]);
+            $post_address['part1'] .= $result;
+            
+            if($this->attributes["plate_no"] < 0 ){
+                $post_address['plate_sign'] = '-';
+            }
             if (!empty($this->attributes["building"])
                 || !empty($this->attributes["blockno"])
                 || !empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
                 || !empty($this->attributes["unit"])
                 || !empty($this->attributes["blockno"])
-            ) $result .= '،';
+            ) $post_address['part2'] .= '،';
 
         }
 
         if (!empty($this->attributes["entrance"])) {
-            $result .= ' ' . $this->attributes['entrance'];
+            $post_address['part3'] .= ' ' . $this->attributes['entrance'];
             if (!empty($this->attributes["building"])
                 || !empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
                 || !empty($this->attributes["unit"])
-            ) $result .= '،';
+            ) $post_address['part4'] .= '،';
         }
         if (!empty($this->attributes["building"])) {
-            $result .= $this->attributes["building"];
+            $post_address['part5'] .= $this->attributes["building"];
             if (!empty($this->attributes["floorno"])
                 || ($this->attributes["floorno"] == 0)
                 || !empty($this->attributes["unit"])
-            ) $result .= '،';
+            ) $post_address['part6'] .= '،';
         }
         if (isset($this->attributes["floorno"])) {
-            $result .= 'طبقه ';
+            $post_address['part7'] .= 'طبقه ';
             if ($this->attributes["floorno"] == 0) {
-                $result .= 'همکف';
+                $post_address['part8'] .= 'همکف';
             } else {
-                $result .= $this->attributes["floorno"];
+                if($this->attributes["floorno"] < 0 ){
+                    $post_address['floor_sign'] .= '-';
+                    $post_address["floor_is_neg"] = true;
+                }
+                $post_address['part8'] .= abs($this->attributes["floorno"]);
             }
-            if (!empty($this->attributes["unit"])) $result .= '،';
+            if (!empty($this->attributes["unit"])) $post_address['part9'] .= '،';
         }
         if (!empty($this->attributes["unit"])) {
-            $result .= 'واحد ' . $this->attributes["unit"];
+            $post_address['part10'] .= 'واحد ' . $this->attributes["unit"];
 
         }
 
-        return $result;
+        return $post_address;
 
     }
 

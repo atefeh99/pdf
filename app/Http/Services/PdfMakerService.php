@@ -66,6 +66,7 @@ class PdfMakerService
         $link = $indexes[0]['api_prefix'] . '/' . $uuid . '.pdf';
         Log::info('setting params');
         $result = self::setParams($identifier, $link, $ttl, $data);
+
         if ($identifier == 'notebook') $extra_info = $result['params'];
 
         foreach ($indexes as $key => $value) {
@@ -568,6 +569,11 @@ class PdfMakerService
                 foreach ($result['data'] as $index => $value) {
                     foreach ($value as $field => $v) {
                         if ($field != 'barcode') {
+                            if($field == 'post_address'){
+                               foreach($result['data'][$index][$field] as $key=>$part){
+                                    $result['data'][$index][$field][$key] = str_replace($num, $persian, $part);
+                               }
+                            }
                             $result['data'][$index][$field] = str_replace($num, $persian, $v);
                             if ($field == 'postalcode') {
                                 $result['data'][$index]['postcode'] = $result['data'][$index][$field];
