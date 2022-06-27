@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 trait Common
 {
+
     public function getAddressAttribute($value)
     {
 //        TODO if key exist; blockno
@@ -21,8 +22,13 @@ trait Common
         $address['plate_sign'] = null;
         $address['floor_sign'] = null;
 
-
-
+        $parish_not_null = !empty($this->attributes['parish']);
+        $tour_not_null = isset($this->attributes['tour']);
+        $avenue_not_null = !empty($this->attributes['avenue']);
+        $avenue_type_not_null = !empty($this->attributes['avenuetypename']);
+        $plate_not_null = isset($this->attributes['plate_no']);
+        $floorno_not_null = isset($this->attributes['floorno']);
+        $unit_not_null = !empty($this->attributes['unit']);
         // $this->attributes['parish'] = "";
         // $this->attributes['tour'] = null;
         // $this->attributes['avenue'] = '';
@@ -30,8 +36,8 @@ trait Common
         // $this->attributes['floorno'] = -89;
         // $this->attributes['unit'] = '';
 //        parish
-        if (!empty($this->attributes['parish'])
-            && isset($this->attributes['tour'])) {
+        if ($parish_not_null
+            && $tour_not_null) {
             if ($this->attributes['parish']) {
                 $result .= $this->attributes['parish'];
             }
@@ -44,11 +50,10 @@ trait Common
             if (
                 !empty($result)
                 && (
-                    ((!empty($this->attributes['avenue']) && $this->attributes['avenue'])
-                        || (!empty($this->attributes['avenuetypename']) && $this->attributes['avenuetypename']))
-                    || isset($this->attributes['plate_no'])
-                    || isset($this->attributes['floorno'])
-                    || (!empty($this->attributes['unit']) && $this->attributes['unit'])
+                    (($avenue_not_null && $this->attributes['avenue']) || ($avenue_type_not_null && $this->attributes['avenuetypename']))
+                    || $plate_not_null
+                    || $floorno_not_null
+                    || ($unit_not_null && $this->attributes['unit'])
                 )
             ) {
                 $result .= '، ';
@@ -56,8 +61,9 @@ trait Common
         }
 
 
-        if (!empty($this->attributes['avenue'])
-            && !empty($this->attributes['avenuetypename'])
+        if ($avenue_not_null
+            &&
+            $avenue_type_not_null
         ) {
             if ($this->attributes['avenuetypename'] ||
                 $this->attributes['avenue']) {
@@ -66,15 +72,14 @@ trait Common
                 $result .= $this->attributes['avenue'];
             }
             if (
-                ((!empty($this->attributes['parish']) && $this->attributes['parish'])
-                    || (isset($this->attributes['tour']))
-                    || ((!empty($this->attributes['avenue']) && $this->attributes['avenue'])
-                        || (!empty($this->attributes['avenuetypename']) && $this->attributes['avenuetypename']))
+                (($parish_not_null && $this->attributes['parish'])
+                    || ($tour_not_null)
+                    || ($this->attributes['avenue'] || $this->attributes['avenuetypename'])
                 )
                 && (
-                    isset($this->attributes['plate_no'])
-                    || isset($this->attributes['floorno'])
-                    || (!empty($this->attributes['unit']) && $this->attributes['unit'])
+                    $plate_not_null
+                    || $floorno_not_null
+                    || ($unit_not_null && $this->attributes['unit'])
                 )
             ) {
                 $result .= '، ';
@@ -82,7 +87,7 @@ trait Common
         }
 
 //        plateno
-        if (isset($this->attributes['plate_no'])) {
+        if ($plate_not_null) {
             $result .= 'پلاک ';
             if ($this->attributes['plate_no'] < 0) {
                 $address['plate_sign'] = '-';
@@ -91,24 +96,24 @@ trait Common
 
             if (
                 (
-                    (!empty($this->attributes['parish']) && $this->attributes['parish'])
-                    || (isset($this->attributes['tour']))
-                    || ((!empty($this->attributes['avenue']) && $this->attributes['avenue'])
-                        || (!empty($this->attributes['avenuetypename']) && $this->attributes['avenuetypename']))
-                    || (isset($this->attributes['plate_no']))
+                    ($parish_not_null && $this->attributes['parish'])
+                    || $tour_not_null
+                    || (($avenue_not_null && $this->attributes['avenue'])
+                        || ($avenue_type_not_null && $this->attributes['avenuetypename']))
                 )
                 && (
-                    (isset($this->attributes['floorno']))
-                    || (!empty($this->attributes['unit']) && $this->attributes['unit'])
+
+                    $floorno_not_null
+                    || ($unit_not_null && $this->attributes['unit'])
                 )
             ) {
-               $address['part3'] = '،';
+                $address['part3'] = '،';
             }
         }
         $address['part1'] .= $result;
 
 //        floor
-        if (isset($this->attributes['floorno'])) {
+        if ($floorno_not_null) {
             $address['part4'] .= 'طبقه ';
             if ($this->attributes['floorno'] < 0) {
                 $address['floor_sign'] = '-';
@@ -120,24 +125,23 @@ trait Common
             }
             if (
                 (
-                    (!empty($this->attributes['parish']) && $this->attributes['parish'])
-                    || (isset($this->attributes['tour']))
-                    || ((!empty($this->attributes['avenue']) && $this->attributes['avenue'])
-                        || (!empty($this->attributes['avenuetypename']) && $this->attributes['avenuetypename']))
-                    || (isset($this->attributes['plate_no'])
-                        || isset($this->attributes['floorno']))
+                    ($parish_not_null && $this->attributes['parish'])
+                    || $tour_not_null
+                    || (($avenue_not_null && $this->attributes['avenue'])
+                        || ($avenue_type_not_null && $this->attributes['avenuetypename']))
+                    || $plate_not_null
                 )
                 &&
                 (
-                    !empty($this->attributes['unit']) && $this->attributes['unit']
+                    $unit_not_null && $this->attributes['unit']
                 )
             ) {
-               $address['part6'] = '،';
+                $address['part6'] = '،';
             }
         }
 
 //        unit
-        if (!empty($this->attributes['unit'])) {
+        if ($unit_not_null) {
             if ($this->attributes['unit']) {
                 $address['part7'] .= 'واحد ';
                 $address['part7'] .= $this->attributes['unit'];
@@ -150,91 +154,98 @@ trait Common
     {
         $result = '';
 
-        if (!empty($this->attributes["statename"])) {
+        $statename_not_null = !empty($this->attributes["statename"]);
+        $townname_not_null = !empty($this->attributes["townname"]);
+        $zonename_not_null = !empty($this->attributes['zonename']);
+        $villagename_not_null = !empty($this->attributes['villagename']);
+        $locationtype_not_null = !empty($this->attributes['locationtype']);
+        $locationname_not_null = !empty($this->attributes['locationname']);
+
+        if ($statename_not_null) {
 //            $result .= 'استان ';
-            if($this->attributes["statename"]){
-            $result .= $this->attributes["statename"];
+            if ($this->attributes["statename"]) {
+                $result .= $this->attributes["statename"];
             }
             if (
-                (!empty($this->attributes["statename"])  && $this->attributes["statename"])
-                &&(
-                (!empty($this->attributes["townname"]) && $this->attributes["townname"])
-                ||( !empty($this->attributes['zonename']) && $this->attributes['zonename'])
-                ||( !empty($this->attributes['villagename']) && $this->attributes['villagename'])
-                ||( (!empty($this->attributes['locationtype']) && $this->attributes['locationtype'])||(
-                
-                 !empty($this->attributes['locationname']) && $this->attributes['locationname']))
-            )
-             ) $result .= '،';
+                $this->attributes["statename"]
+                && (
+                    ($townname_not_null && $this->attributes["townname"])
+                    || ($zonename_not_null && $this->attributes['zonename'])
+                    || ($villagename_not_null && $this->attributes['villagename'])
+                    || (
+                        ($locationtype_not_null && $this->attributes['locationtype'])
+                        || ($locationname_not_null && $this->attributes['locationname'])
+                    )
+                )
+            ) $result .= '،';
 
         }
-        if (!empty($this->attributes['townname'])) {
-            if($this->attributes['townname']){
+        if ($townname_not_null) {
+            if ($this->attributes['townname']) {
                 $result .= 'شهرستان ';
                 $result .= $this->attributes['townname'];
             }
             if (
-                (!empty($this->attributes["statename"])  && $this->attributes["statename"])
-                ||(!empty($this->attributes['townname']) && $this->attributes['townname'])
-                &&(
-                ( !empty($this->attributes['zonename']) && $this->attributes['zonename'])
-                ||( !empty($this->attributes['villagename']) && $this->attributes['villagename'])
-                ||( (!empty($this->attributes['locationtype']) && $this->attributes['locationtype'])||(
-                
-                 !empty($this->attributes['locationname']) && $this->attributes['locationname']))
-            )
-             ) $result .= '،';
+                ($statename_not_null && $this->attributes["statename"])
+                || ($this->attributes['townname'])
+                && (
+                    ($zonename_not_null && $this->attributes['zonename'])
+                    || ($villagename_not_null && $this->attributes['villagename'])
+                    || (
+                        ($locationtype_not_null && $this->attributes['locationtype'])
+                        || ($locationname_not_null && $this->attributes['locationname'])
+                    )
+                )
+            ) $result .= '،';
         }
-        if (!empty($this->attributes['zonename'])) {
-            if($this->attributes['zonename']){
-            if ($this->attributes['locationtype'] == 'شهر') {
-                $result .= 'بخش ';
+        if ($zonename_not_null) {
+            if ($this->attributes['zonename']) {
+                if ($this->attributes['locationtype'] == 'شهر') {
+                    $result .= 'بخش ';
+                }
+
+                $result .= $this->attributes['zonename'];
             }
-        
-            $result .= $this->attributes['zonename'];
+            if (
+                ($statename_not_null && $this->attributes["statename"])
+                || ($townname_not_null && $this->attributes['townname'])
+                || $this->attributes['zonename']
+                && (
+
+                    ($villagename_not_null && $this->attributes['villagename'])
+                    || (
+                        ($locationtype_not_null && $this->attributes['locationtype'])
+                        || ($locationname_not_null && $this->attributes['locationname'])
+                    )
+                )
+            ) $result .= '،';
         }
-        if (
-            (!empty($this->attributes["statename"])  && $this->attributes["statename"])
-            ||(!empty($this->attributes['townname']) && $this->attributes['townname'])
-            ||( !empty($this->attributes['zonename']) && $this->attributes['zonename'])
-            &&(
-            
-            ( !empty($this->attributes['villagename']) && $this->attributes['villagename'])
-            ||( (!empty($this->attributes['locationtype']) && $this->attributes['locationtype'])||(
-            
-             !empty($this->attributes['locationname']) && $this->attributes['locationname']))
-        )
-         ) $result .= '،';
-        }
-        if (!empty($this->attributes['villagename'])) {
-            if($this->attributes['villagename']){
+        if ($villagename_not_null) {
+            if ($this->attributes['villagename']) {
                 $result .= 'دهستان ';
                 $result .= $this->attributes['villagename'];
             }
-           
+
             if (
-                (!empty($this->attributes["statename"])  && $this->attributes["statename"])
-                ||(!empty($this->attributes['townname']) && $this->attributes['townname'])
-                ||( !empty($this->attributes['zonename']) && $this->attributes['zonename'])
-                ||( !empty($this->attributes['villagename']) && $this->attributes['villagename'])
-                &&(
-                
-                
-                 (!empty($this->attributes['locationtype']) && $this->attributes['locationtype'])||(
-                
-                 !empty($this->attributes['locationname']) && $this->attributes['locationname'])
-            )
-             ) $result .= '،';
+                ($statename_not_null && $this->attributes["statename"])
+                || ($townname_not_null && $this->attributes['townname'])
+                || ($zonename_not_null && $this->attributes['zonename'])
+                || $this->attributes['villagename']
+                && (
+                    ($locationtype_not_null && $this->attributes['locationtype'])
+                    || ($locationname_not_null && $this->attributes['locationname'])
+                )
+            ) $result .= '،';
         }
-        if (!empty($this->attributes['locationtype'])
-            && !empty($this->attributes['locationname'])
+        if ($locationtype_not_null
+            && $locationname_not_null
         ) {
-            if($this->attributes['locationtype'] && $this->attributes['locationname']){
+            if ($this->attributes['locationtype'] && $this->attributes['locationname']) {
                 $result .= $this->attributes['locationtype'];
                 $result .= ':';
                 $result .= $this->attributes['locationname'];
             }
-           
+
         }
         return $result;
 
@@ -257,6 +268,17 @@ trait Common
         $post_address["floor_is_neg"] = false;
         $post_address['part10'] = null;
 
+        $parish_not_null = !empty($this->attributes['parish']);
+        $preaven_not_null = isset($this->attributes['preaven']);
+        $preaven_type_not_null = isset($this->attributes['preaventypename']);
+        $avenue_not_null = !empty($this->attributes['avenue']);
+        $avenue_type_not_null = !empty($this->attributes['avenuetypename']);
+        $plate_not_null = isset($this->attributes['plate_no']);
+        $floorno_not_null = isset($this->attributes['floorno']);
+        $unit_not_null = !empty($this->attributes['unit']);
+        $entrance_not_null = !empty($this->attributes['entrance']);
+        $building_not_null = !empty($this->attributes['building']);
+
         // $this->attributes['parish'] = "";
         // $this->attributes["preaventypename"] = null;
         // $this->attributes["preaven"] = null;
@@ -267,213 +289,204 @@ trait Common
         // $this->attributes['floorno'] = -89;
         // $this->attributes['unit'] = '142';
 
-        if (!empty($this->attributes["parish"])) {
-            if($this->attributes["parish"]){
+        if ($parish_not_null) {
+            if ($this->attributes["parish"]) {
                 $result .= 'محله: ' . $this->attributes["parish"];
 
             }
 
 
-            if ((!empty($this->attributes["parish"]) && $this->attributes["parish"])
-            &&(
-                (
-                    (!empty($this->attributes["preaventypename"]) && $this->attributes["preaventypename"])
-                ||
-                    (!empty($this->attributes["preaven"]) && $this->attributes["preaven"])
+            if ($this->attributes["parish"]
+                && (
+                    (
+                        ($preaven_type_not_null && $this->attributes["preaventypename"])
+                        ||
+                        ($preaven_not_null && $this->attributes["preaven"])
                     )
 
-                ||(
-                    (!empty($this->attributes["avenuetypename"]) && $this->attributes["avenuetypename"])
-                ||
-                    (!empty($this->attributes["avenue"]) && $this->attributes["avenue"])
+                    || (
+                        ($avenue_type_not_null && $this->attributes["avenuetypename"])
+                        ||
+                        ($avenue_not_null && $this->attributes["avenue"])
                     )
 
-                || isset($this->attributes["plate_no"])
-                || (!empty($this->attributes["building"]) && $this->attributes["building"])
-                ||(!empty($this->attributes["entrance"]) && $this->attributes["entrance"])
-                || (!empty($this->attributes["unit"]) && $this->attributes["unit"])
-                || isset($this->attributes["floorno"])
-            )
+                    || $plate_not_null
+                    || ($building_not_null && $this->attributes["building"])
+                    || ($entrance_not_null && $this->attributes["entrance"])
+                    || ($unit_not_null && $this->attributes["unit"])
+                    || $floorno_not_null
+                )
             ) $result .= '،';
 
         }
 
-        if (!empty($this->attributes["preaventypename"]) && !empty($this->attributes["preaven"])) {
-            if($this->attributes["preaventypename"] && $this->attributes["preaven"]){
-            $result .= 'معبر ماقبل آخر:' . $this->attributes['preaventypename'] . ' ' . $this->attributes["preaven"];
+        if ($preaven_type_not_null && $preaven_not_null) {
+            if ($this->attributes["preaventypename"] && $this->attributes["preaven"]) {
+                $result .= 'معبر ماقبل آخر:' . $this->attributes['preaventypename'] . ' ' . $this->attributes["preaven"];
             }
             if ((
-                (!empty($this->attributes["parish"]) && $this->attributes["parish"])
-            ||(
-                (!empty($this->attributes["preaventypename"]) && $this->attributes["preaventypename"])
-            ||
-                (!empty($this->attributes["preaven"]) && $this->attributes["preaven"])
+                    ($parish_not_null && $this->attributes["parish"])
+                    || ($this->attributes["preaventypename"] || $this->attributes["preaven"])
                 )
-            )
-            &&(
-                
-                (
-                    (!empty($this->attributes["avenuetypename"]) && $this->attributes["avenuetypename"])
-                ||
-                    (!empty($this->attributes["avenue"]) && $this->attributes["avenue"])
+                && (
+
+                    (
+                        ($avenue_type_not_null && $this->attributes["avenuetypename"])
+                        ||
+                        ($avenue_not_null && $this->attributes["avenue"])
                     )
 
-                || isset($this->attributes["plate_no"])
-                || (!empty($this->attributes["building"]) && $this->attributes["building"])
-                ||(!empty($this->attributes["entrance"]) && $this->attributes["entrance"])
-                || (!empty($this->attributes["unit"]) && $this->attributes["unit"])
-                || isset($this->attributes["floorno"])
-            )
+                    || $plate_not_null
+                    || ($building_not_null && $this->attributes["building"])
+                    || ($entrance_not_null && $this->attributes["entrance"])
+                    || ($unit_not_null && $this->attributes["unit"])
+                    || $floorno_not_null
+                )
             ) $result .= '،';
 
         }
-        if (!empty($this->attributes["avenuetypename"]) && !empty($this->attributes["avenue"])) {
-            if($this->attributes["avenuetypename"] && $this->attributes["avenue"]){
+        if ($avenue_type_not_null && $avenue_not_null) {
+            if ($this->attributes["avenuetypename"] && $this->attributes["avenue"]) {
                 $result .= 'معبر آخر:' . $this->attributes["avenuetypename"] . ' ' . $this->attributes["avenue"];
             }
             if ((
-                (!empty($this->attributes["parish"]) && $this->attributes["parish"])
-            ||(
-                (!empty($this->attributes["preaventypename"]) && $this->attributes["preaventypename"])
-            ||
-                (!empty($this->attributes["preaven"]) && $this->attributes["preaven"])
+                    ($parish_not_null && $this->attributes["parish"])
+                    || (
+                        ($preaven_type_not_null && $this->attributes["preaventypename"])
+                        ||
+                        ($preaven_not_null && $this->attributes["preaven"])
+                    )
+                    || ($this->attributes["avenuetypename"] || $this->attributes["avenue"])
                 )
-            || (
-                    (!empty($this->attributes["avenuetypename"]) && $this->attributes["avenuetypename"])
-                ||
-                    (!empty($this->attributes["avenue"]) && $this->attributes["avenue"])
+                && (
+                    $plate_not_null
+                    || ($building_not_null && $this->attributes["building"])
+                    || ($entrance_not_null && $this->attributes["entrance"])
+                    || ($unit_not_null && $this->attributes["unit"])
+                    || $floorno_not_null
                 )
-            )
-            &&(
-                isset($this->attributes["plate_no"])
-                || (!empty($this->attributes["building"]) && $this->attributes["building"])
-                ||(!empty($this->attributes["entrance"]) && $this->attributes["entrance"])
-                || (!empty($this->attributes["unit"]) && $this->attributes["unit"])
-                || isset($this->attributes["floorno"])
-            )
             ) $result .= '،';
         }
 
-        if (isset($this->attributes["plate_no"])) {
+        if ($plate_not_null) {
             $result .= 'پلاک ' . abs($this->attributes["plate_no"]);
-            
-            if($this->attributes["plate_no"] < 0 ){
+
+            if ($this->attributes["plate_no"] < 0) {
                 $post_address['plate_sign'] = '-';
             }
             if ((
-                (!empty($this->attributes["parish"]) && $this->attributes["parish"])
-            ||(
-                (!empty($this->attributes["preaventypename"]) && $this->attributes["preaventypename"])
-            ||
-                (!empty($this->attributes["preaven"]) && $this->attributes["preaven"])
+                    ($parish_not_null && $this->attributes["parish"])
+                    || (
+                        ($preaven_type_not_null && $this->attributes["preaventypename"])
+                        ||
+                        ($preaven_not_null && $this->attributes["preaven"])
+                    )
+                    || (
+                        ($avenue_type_not_null && $this->attributes["avenuetypename"])
+                        ||
+                        ($avenue_not_null && $this->attributes["avenue"])
+                    )
                 )
-            || (
-                    (!empty($this->attributes["avenuetypename"]) && $this->attributes["avenuetypename"])
-                ||
-                    (!empty($this->attributes["avenue"]) && $this->attributes["avenue"])
+                && (
+                    ($building_not_null && $this->attributes["building"])
+                    || ($entrance_not_null && $this->attributes["entrance"])
+                    || ($unit_not_null && $this->attributes["unit"])
+                    || $floorno_not_null
                 )
-            || isset($this->attributes["plate_no"])
-            )
-            &&(
-               (!empty($this->attributes["building"]) && $this->attributes["building"])
-               ||(!empty($this->attributes["entrance"]) && $this->attributes["entrance"])
-               || (!empty($this->attributes["unit"]) && $this->attributes["unit"])
-               || isset($this->attributes["floorno"])
-            )
-            )$post_address['part2'] .= '،';
-               
+            ) $post_address['part2'] .= '،';
+
 
         }
         $post_address['part1'] .= $result;
 
 
-        if (!empty($this->attributes["entrance"])) {
-            if($this->attributes["entrance"]){
+        if ($entrance_not_null) {
+            if ($this->attributes["entrance"]) {
                 $post_address['part3'] .= ' ' . $this->attributes['entrance'];
 
             }
             if ((
-                (!empty($this->attributes["parish"]) && $this->attributes["parish"])
-            ||(
-                (!empty($this->attributes["preaventypename"]) && $this->attributes["preaventypename"])
-            ||
-                (!empty($this->attributes["preaven"]) && $this->attributes["preaven"])
+                    ($parish_not_null && $this->attributes["parish"])
+                    || (
+                        ($preaven_type_not_null && $this->attributes["preaventypename"])
+                        ||
+                        ($preaven_not_null && $this->attributes["preaven"])
+                    )
+                    || (
+                        ($avenue_type_not_null && $this->attributes["avenuetypename"])
+                        ||
+                        ($avenue_not_null && $this->attributes["avenue"])
+                    )
+                    || $plate_not_null
+                    || $this->attributes["entrance"]
                 )
-            || (
-                    (!empty($this->attributes["avenuetypename"]) && $this->attributes["avenuetypename"])
-                ||
-                    (!empty($this->attributes["avenue"]) && $this->attributes["avenue"])
+                && (
+                    ($building_not_null&& $this->attributes["building"])
+                    || ($unit_not_null && $this->attributes["unit"])
+                    || $floorno_not_null
                 )
-            || isset($this->attributes["plate_no"])
-            ||(!empty($this->attributes["entrance"]) && $this->attributes["entrance"])
-            )
-            &&(
-               (!empty($this->attributes["building"]) && $this->attributes["building"])
-               || (!empty($this->attributes["unit"]) && $this->attributes["unit"])
-               || isset($this->attributes["floorno"])
-            )
-            )$post_address['part4'] .= '،';
+            ) $post_address['part4'] .= '،';
         }
-        if (!empty($this->attributes["building"])) {
-            if($this->attributes["building"]){
+        if ($building_not_null) {
+            if ($this->attributes["building"]) {
                 $post_address['part5'] .= $this->attributes["building"];
             }
-            if (((!empty($this->attributes["parish"]) && $this->attributes["parish"])
-            ||(
-                (!empty($this->attributes["preaventypename"]) && $this->attributes["preaventypename"])
-            ||
-                (!empty($this->attributes["preaven"]) && $this->attributes["preaven"])
+            if (
+                (
+                ($parish_not_null && $this->attributes["parish"])
+                    || (
+                        ($preaven_type_not_null && $this->attributes["preaventypename"])
+                        || ($preaven_not_null && $this->attributes["preaven"])
+                    )
+                    || (
+                        ($avenue_type_not_null && $this->attributes["avenuetypename"])
+                        ||
+                        ($avenue_not_null && $this->attributes["avenue"])
+                    )
+                    || $plate_not_null
+                    || ($entrance_not_null && $this->attributes["entrance"])
+                    || $this->attributes["building"]
                 )
-            || (
-                    (!empty($this->attributes["avenuetypename"]) && $this->attributes["avenuetypename"])
-                ||
-                    (!empty($this->attributes["avenue"]) && $this->attributes["avenue"])
+                && (
+                    ($unit_not_null && $this->attributes["unit"])
+                    ||$floorno_not_null
                 )
-            || isset($this->attributes["plate_no"])
-            ||(!empty($this->attributes["entrance"]) && $this->attributes["entrance"])
-            ||(!empty($this->attributes["building"]) && $this->attributes["building"])
-            )
-            &&(
-                (!empty($this->attributes["unit"]) && $this->attributes["unit"])
-                || isset($this->attributes["floorno"])
-            )
-            )$post_address['part6'] .= '،';
+            ) $post_address['part6'] .= '،';
         }
-        if (isset($this->attributes["floorno"])) {
+        if ($floorno_not_null) {
             $post_address['part7'] .= 'طبقه ';
             if ($this->attributes["floorno"] == 0) {
                 $post_address['part8'] .= 'همکف';
             } else {
-                if($this->attributes["floorno"] < 0 ){
+                if ($this->attributes["floorno"] < 0) {
                     $post_address['floor_sign'] .= '-';
                     $post_address["floor_is_neg"] = true;
                 }
                 $post_address['part8'] .= abs($this->attributes["floorno"]);
             }
             if ((
-                (!empty($this->attributes["parish"]) && $this->attributes["parish"])
-            ||(
-                (!empty($this->attributes["preaventypename"]) && $this->attributes["preaventypename"])
-            ||
-                (!empty($this->attributes["preaven"]) && $this->attributes["preaven"])
+                    ($parish_not_null && $this->attributes["parish"])
+                    || (
+                        ($preaven_type_not_null && $this->attributes["preaventypename"])
+                        ||
+                        ($preaven_not_null && $this->attributes["preaven"])
+                    )
+                    || (
+                        ($avenue_type_not_null && $this->attributes["avenuetypename"])
+                        ||
+                        ($avenue_not_null && $this->attributes["avenue"])
+                    )
+                    || $plate_not_null
+                    || ($entrance_not_null && $this->attributes["entrance"])
+                    || ($building_not_null && $this->attributes["building"])
                 )
-            || (
-                    (!empty($this->attributes["avenuetypename"]) && $this->attributes["avenuetypename"])
-                ||
-                    (!empty($this->attributes["avenue"]) && $this->attributes["avenue"])
+                && (
+                    $unit_not_null && $this->attributes["unit"]
                 )
-            || isset($this->attributes["plate_no"])
-            ||(!empty($this->attributes["entrance"]) && $this->attributes["entrance"])
-            ||(!empty($this->attributes["building"]) && $this->attributes["building"])
-            ||isset($this->attributes["floorno"])
-            )
-            &&(
-                 !empty($this->attributes["unit"]) && $this->attributes["unit"]
-                )
-            )$post_address['part9'] .= '،';
-                }
-        if (!empty($this->attributes["unit"])) {
-            if($this->attributes["unit"]){
+            ) $post_address['part9'] .= '،';
+        }
+        if ($unit_not_null) {
+            if ($this->attributes["unit"]) {
                 $post_address['part10'] .= 'واحد ' . $this->attributes["unit"];
             }
 

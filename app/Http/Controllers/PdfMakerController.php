@@ -18,6 +18,22 @@ class PdfMakerController extends ApiController
 
     public function getPdf(Request $request, $identifier)
     {
+        $b = null;
+        $r = !empty($b);
+        dd($r);
+        $r = "-500";
+        $b = "-90";
+        $r = strrev($r);
+        $b = strrev($b);
+        $text = "این عدد $r است و معادل $b";
+        preg_match_all('/\d+/', $text, $matches);
+        $num = $matches[0][count($matches[0]) - 1];
+        $text = str_replace($num, strrev($num), $text);
+if($text[-1]=='-'){
+    $text = str_replace($text[-1],'',$text);
+    $text = '-'. $text;
+}
+        dd($text);
         $user_id = $request->header('x-user-id');
         if (!isset($user_id)) {
             throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), 1001);
@@ -164,7 +180,7 @@ class PdfMakerController extends ApiController
         }
 
         $odata = OdataQueryParser::parse($request->fullUrl());
-        if (OdataQueryParser::isFailed()){
+        if (OdataQueryParser::isFailed()) {
             return $this->respondInvalidParams(
                 1001,
                 new MessageBag(OdataQueryParser::getErrors()),
@@ -173,8 +189,8 @@ class PdfMakerController extends ApiController
         }
 
         $data = PdfMakerService::getItem($odata);
-        if($data['link'] == 'expired'){
-            return $this->respondError(trans('messages.custom.error.link_expired'),'410','10000');
+        if ($data['link'] == 'expired') {
+            return $this->respondError(trans('messages.custom.error.link_expired'), '410', '10000');
         }
         return $this->respondItemResult($data);
     }
