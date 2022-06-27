@@ -164,7 +164,7 @@ class PdfMakerController extends ApiController
         }
 
         $odata = OdataQueryParser::parse($request->fullUrl());
-        if (OdataQueryParser::isFailed()){
+        if (OdataQueryParser::isFailed()) {
             return $this->respondInvalidParams(
                 1001,
                 new MessageBag(OdataQueryParser::getErrors()),
@@ -173,8 +173,8 @@ class PdfMakerController extends ApiController
         }
 
         $data = PdfMakerService::getItem($odata);
-        if($data['link'] == 'expired'){
-            return $this->respondError(trans('messages.custom.error.link_expired'),'410','10000');
+        if ($data['link'] == 'expired') {
+            return $this->respondError(trans('messages.custom.error.link_expired'), '410', '10000');
         }
         return $this->respondItemResult($data);
     }
