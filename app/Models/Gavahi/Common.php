@@ -9,7 +9,7 @@ trait Common
 
     public function getAddressAttribute($value)
     {
-//        TODO if key exist; blockno
+        //        TODO if key exist; blockno
         $result = null;
         $address['part1'] = null;
         $address['part2'] = null;
@@ -30,9 +30,11 @@ trait Common
         $floorno_not_null = isset($this->attributes['floorno']);
         $unit_not_null = !empty($this->attributes['unit']);
 
-//        parish
-        if ($parish_not_null
-            && $tour_not_null) {
+        //        parish
+        if (
+            $parish_not_null
+            && $tour_not_null
+        ) {
             if ($this->attributes['parish']) {
                 $result .= $this->attributes['parish'];
             }
@@ -53,12 +55,15 @@ trait Common
         }
 
 
-        if ($avenue_not_null
+        if (
+            $avenue_not_null
             &&
             $avenue_type_not_null
         ) {
-            if ($this->attributes['avenuetypename'] ||
-                $this->attributes['avenue']) {
+            if (
+                $this->attributes['avenuetypename'] ||
+                $this->attributes['avenue']
+            ) {
                 $result .= $this->attributes['avenuetypename'];
                 $result .= ' ';
                 $result .= $this->attributes['avenue'];
@@ -68,8 +73,7 @@ trait Common
                     || ($tour_not_null)
                     || ($this->attributes['avenue'] || $this->attributes['avenuetypename'])
                 )
-                && (
-                    $plate_not_null
+                && ($plate_not_null
                     || $floorno_not_null
                     || ($unit_not_null && $this->attributes['unit'])
                 )
@@ -78,7 +82,7 @@ trait Common
             }
         }
 
-//        plateno
+        //        plateno
         if ($plate_not_null) {
             $result .= 'پلاک ';
             if ($this->attributes['plate_no'] < 0) {
@@ -93,9 +97,7 @@ trait Common
                     || (($avenue_not_null && $this->attributes['avenue'])
                         || ($avenue_type_not_null && $this->attributes['avenuetypename']))
                 )
-                && (
-
-                    $floorno_not_null
+                && ($floorno_not_null
                     || ($unit_not_null && $this->attributes['unit'])
                 )
             ) {
@@ -104,7 +106,7 @@ trait Common
         }
         $address['part1'] .= $result;
 
-//        floor
+        //        floor
         if ($floorno_not_null) {
             $address['part4'] .= 'طبقه ';
             if ($this->attributes['floorno'] < 0) {
@@ -124,15 +126,14 @@ trait Common
                     || $plate_not_null
                 )
                 &&
-                (
-                    $unit_not_null && $this->attributes['unit']
+                ($unit_not_null && $this->attributes['unit']
                 )
             ) {
                 $address['part6'] = '،';
             }
         }
 
-//        unit
+        //        unit
         if ($unit_not_null) {
             if ($this->attributes['unit']) {
                 $address['part7'] .= 'واحد ';
@@ -154,9 +155,13 @@ trait Common
         $locationname_not_null = !empty($this->attributes['locationname']);
 
         if ($statename_not_null) {
-//            $result .= 'استان ';
+            //            $result .= 'استان ';
             if ($this->attributes["statename"]) {
-                $result .= $this->attributes["statename"];
+                if (str_contains($this->attributes["statename"], trans('words.Tehran', [], 'fa'))) {
+                    $result .= trans('words.Tehran', [], 'fa');
+                } else {
+                    $result .= $this->attributes["statename"];
+                }
             }
             if (
                 $this->attributes["statename"]
@@ -170,7 +175,6 @@ trait Common
                     )
                 )
             ) $result .= '،';
-
         }
         if ($townname_not_null) {
             if ($this->attributes['townname']) {
@@ -229,7 +233,8 @@ trait Common
                 )
             ) $result .= '،';
         }
-        if ($locationtype_not_null
+        if (
+            $locationtype_not_null
             && $locationname_not_null
         ) {
             if ($this->attributes['locationtype'] && $this->attributes['locationname']) {
@@ -237,10 +242,8 @@ trait Common
                 $result .= ':';
                 $result .= $this->attributes['locationname'];
             }
-
         }
         return $result;
-
     }
 
     public function getPostAddressAttribute($value)
@@ -274,10 +277,10 @@ trait Common
         if ($parish_not_null) {
             if ($this->attributes["parish"]) {
                 $result .= 'محله: ' . $this->attributes["parish"];
-
             }
 
-            if ($this->attributes["parish"]
+            if (
+                $this->attributes["parish"]
                 && (
                     (
                         ($preaven_type_not_null && $this->attributes["preaventypename"])
@@ -298,7 +301,6 @@ trait Common
                     || $floorno_not_null
                 )
             ) $result .= '،';
-
         }
 
         if ($preaven_type_not_null && $preaven_not_null) {
@@ -324,7 +326,6 @@ trait Common
                     || $floorno_not_null
                 )
             ) $result .= '،';
-
         }
         if ($avenue_type_not_null && $avenue_not_null) {
             if ($this->attributes["avenuetypename"] && $this->attributes["avenue"]) {
@@ -339,8 +340,7 @@ trait Common
                     )
                     || ($this->attributes["avenuetypename"] || $this->attributes["avenue"])
                 )
-                && (
-                    $plate_not_null
+                && ($plate_not_null
                     || ($building_not_null && $this->attributes["building"])
                     || ($entrance_not_null && $this->attributes["entrance"])
                     || ($unit_not_null && $this->attributes["unit"])
@@ -375,8 +375,6 @@ trait Common
                     || $floorno_not_null
                 )
             ) $post_address['part2'] .= '،';
-
-
         }
         $post_address['part1'] .= $result;
 
@@ -384,7 +382,6 @@ trait Common
         if ($entrance_not_null) {
             if ($this->attributes["entrance"]) {
                 $post_address['part3'] .= ' ' . $this->attributes['entrance'];
-
             }
             if ((
                     ($parish_not_null && $this->attributes["parish"])
@@ -402,7 +399,7 @@ trait Common
                     || $this->attributes["entrance"]
                 )
                 && (
-                    ($building_not_null&& $this->attributes["building"])
+                    ($building_not_null && $this->attributes["building"])
                     || ($unit_not_null && $this->attributes["unit"])
                     || $floorno_not_null
                 )
@@ -414,7 +411,7 @@ trait Common
             }
             if (
                 (
-                ($parish_not_null && $this->attributes["parish"])
+                    ($parish_not_null && $this->attributes["parish"])
                     || (
                         ($preaven_type_not_null && $this->attributes["preaventypename"])
                         || ($preaven_not_null && $this->attributes["preaven"])
@@ -430,7 +427,7 @@ trait Common
                 )
                 && (
                     ($unit_not_null && $this->attributes["unit"])
-                    ||$floorno_not_null
+                    || $floorno_not_null
                 )
             ) $post_address['part6'] .= '،';
         }
@@ -461,8 +458,7 @@ trait Common
                     || ($entrance_not_null && $this->attributes["entrance"])
                     || ($building_not_null && $this->attributes["building"])
                 )
-                && (
-                    $unit_not_null && $this->attributes["unit"]
+                && ($unit_not_null && $this->attributes["unit"]
                 )
             ) $post_address['part9'] .= '،';
         }
@@ -470,10 +466,8 @@ trait Common
             if ($this->attributes["unit"]) {
                 $post_address['part10'] .= 'واحد ' . $this->attributes["unit"];
             }
-
         }
         return $post_address;
-
     }
 
     public function getPoiTypeNameAttribute($value)
