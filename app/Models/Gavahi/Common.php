@@ -29,24 +29,16 @@ trait Common
         $plate_not_null = isset($this->attributes['plate_no']);
         $floorno_not_null = isset($this->attributes['floorno']);
         $unit_not_null = !empty($this->attributes['unit']);
-        // $this->attributes['parish'] = "";
-        // $this->attributes['tour'] = null;
-        // $this->attributes['avenue'] = '';
-        // $this->attributes['plate_no'] = -14;
-        // $this->attributes['floorno'] = -89;
-        // $this->attributes['unit'] = '';
+
 //        parish
         if ($parish_not_null
             && $tour_not_null) {
             if ($this->attributes['parish']) {
                 $result .= $this->attributes['parish'];
             }
-//            if ($this->attributes['parish'] && $this->attributes['tour']) {
             $result .= '/';
-//            }
-//            if ($this->attributes['tour']) {
             $result .= $this->attributes['tour'];
-//            }
+
             if (
                 !empty($result)
                 && (
@@ -279,22 +271,11 @@ trait Common
         $entrance_not_null = !empty($this->attributes['entrance']);
         $building_not_null = !empty($this->attributes['building']);
 
-        // $this->attributes['parish'] = "";
-        // $this->attributes["preaventypename"] = null;
-        // $this->attributes["preaven"] = null;
-        // $this->attributes["avenuetypename"] = null;
-        // $this->attributes["building"] = null;
-        // $this->attributes['avenue'] = '';
-        // $this->attributes['plate_no'] = -14;
-        // $this->attributes['floorno'] = -89;
-        // $this->attributes['unit'] = '142';
-
         if ($parish_not_null) {
             if ($this->attributes["parish"]) {
                 $result .= 'محله: ' . $this->attributes["parish"];
 
             }
-
 
             if ($this->attributes["parish"]
                 && (
