@@ -85,8 +85,11 @@ class PostData extends Model
             ->keyby('postalcode')
             ->toArray();
         if (count($items) > 0) {
-            foreach ($items as $item) {
+            foreach ($items as $key=>$item) {
                 if ($item['locationtype'] != 'روستا') $item['zonename'] = $item['villagename'] = '(فقط برای روستاها)';
+                if (str_contains($item['statename'], trans('words.Tehran', [], 'fa'))) {
+                    $items[$key]['statename'] = trans('words.Tehran', [], 'fa');
+                }
             }
             return $items;
         } else return null;
