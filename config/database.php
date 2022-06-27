@@ -46,7 +46,6 @@ return [
         'gnaf' => [
             'driver' => 'pgsql',
             'host' => env('DB2_HOST'),
-            'port' => env('DB2_PORT'),
             'database' => env('DB2_DATABASE'),
             'username' => env('DB2_USERNAME'),
             'password' => env('DB2_PASSWORD'),
@@ -57,7 +56,6 @@ return [
         'sina' => [
             'driver' => 'pgsql',
             'host' => env('DB3_HOST'),
-//            'port' => env('DB3_PORT'),
             'database' => env('DB3_DATABASE'),
             'username' => env('DB3_USERNAME'),
             'password' => env('DB3_PASSWORD'),

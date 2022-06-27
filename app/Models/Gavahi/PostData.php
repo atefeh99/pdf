@@ -73,6 +73,7 @@ class PostData extends Model
             'entrance',
             'poi_type_name'
         ];
+
         $items = self::whereIn('postalcode', $postalcodes)->get($out_fields)
             ->unique(function ($item) use ($out_fields) {
                 $temp = "";
