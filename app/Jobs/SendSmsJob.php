@@ -2,21 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\PdfMakerService;
+use App\Database\Entity\SuccessJobs;
 use App\Http\Services\SendSmsService;
-use App\Helpers\Date;
-use App\Models\PdfStatus;
-use MqttNotification\Publisher;
-use Carbon\Carbon;
+use App\Modules\otp\UsersModule;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
-
 class SendSmsJob implements ShouldQueue
 {
 
-    use  InteractsWithQueue;
+    use InteractsWithQueue;
 
     public $identifier;
     public $data;
@@ -32,11 +28,18 @@ class SendSmsJob implements ShouldQueue
 
     }
 
-
     public function handle()
     {
         SendSmsService::sendSms($this->identifier, $this->data, $this->link, $this->user_id);
         Log::info("gavahi:sms:$this->user_id:send successfully");
-    }
+        $data = [
+            'queue_name' => 'gavahi',
+            'data' => [
+                'mobile' => UsersModule::getMobile($this->user_id),
+            ],
+            'job_id' => $this->job->getJobId(),
+        ];
+        
+        SuccessJobs::createItem($data);
+        }
 }
-

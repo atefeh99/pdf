@@ -481,13 +481,15 @@ class PdfMakerService
                 return $a !== null;
             });
             if (empty($gavahi_data) && $identifier == 'gavahi') throw new ModelNotFoundException();
-            try {
-                $costs = self::getCost();
-            } catch (PaymentException $e) {
-                throw new PaymentException($e->getMessage());
-            }
-            $price = $costs['price'];
-            $tax = $costs['tax'];
+            // try {
+            //     $costs = self::getCost();
+            // } catch (PaymentException $e) {
+            //     throw new PaymentException($e->getMessage());
+            // }
+            // $price = $costs['price'];
+            // $tax = $costs['tax'];
+            $price = 0;
+            $tax = 0;
             $params = [
                 "gavahi_1" => [
                     "date" => $date,
