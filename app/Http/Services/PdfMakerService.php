@@ -488,6 +488,7 @@ class PdfMakerService
             }
             $price = $costs['price'];
             $tax = $costs['tax'];
+            
             $params = [
                 "gavahi_1" => [
                     "date" => $date,
