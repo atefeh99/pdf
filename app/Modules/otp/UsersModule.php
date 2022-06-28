@@ -31,7 +31,7 @@ class UsersModule
 
         curl_close($curl);
         if ($httpcode != 200) {
-            Log::info('mobile not found for user');
+            Log::info('mobile not found');
             return null;
         }
         if (isset($response->data)) return $response->data->mobile;
