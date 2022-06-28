@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\UnauthorizedUserException;
-use App\Helpers\Odata\OdataQueryParser;
-use App\Http\Services\PdfMakerService;
-use App\Http\Services\SendSmsService;
+use App\Jobs\SendSmsJob;
 use Illuminate\Http\Request;
-use App\Http\Controllers\RulesTrait;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\RulesTrait;
+use App\Http\Services\SendSmsService;
+use Illuminate\Support\Facades\Queue;
+use App\Http\Services\PdfMakerService;
+use App\Helpers\Odata\OdataQueryParser;
+use App\Exceptions\UnauthorizedUserException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PdfMakerController extends ApiController
@@ -38,7 +40,7 @@ class PdfMakerController extends ApiController
         if ($result) {
             if ($identifier == 'gavahi') {
                 $data['tracking_code'] = $data['tracking_code'] ? $data['tracking_code'] : 23;
-                SendSmsService::sendSms($identifier, $data, $result['link'], $user_id);
+                Queue::push(new SendSmsJob($identifier, $data, $result['link'], $user_id),null,$identifier);
             }
             return $this->respondMyItemResult($result);
         } else {

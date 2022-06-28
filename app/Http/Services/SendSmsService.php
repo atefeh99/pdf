@@ -19,12 +19,13 @@ class SendSmsService
         } elseif ($identifier == 'gavahi') {
             $postalcodes = $data['postalcode'];
         }
-        Log::info('try to get mobile');
 
+        Log::info('try to get mobile');
         $mobile = UsersModule::getMobile($user_id);
-        Log::info($mobile);
+        Log::info("mobile: $mobile");
+
         $expiration_time = self::getExpiration($link, $user_id);
-        Log::info($expiration_time);
+        Log::info("ex_time:$expiration_time");
 
         if ($data['geo'] == 0) {
             $data['geo'] = false;
@@ -61,8 +62,8 @@ class SendSmsService
     public static function getExpiration($link, $user_id)
     {
         $a = explode('/', $link);
-        Log::info($a);
-        $b = explode('.', $a[6]);
+        Log::info("link_parts:$a");
+$b = explode('.', $a[6]);
         return File::getEx($b[0], $user_id);
 
     }
