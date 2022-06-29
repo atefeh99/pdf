@@ -26,7 +26,7 @@ class SendSmsService
 
         $expiration_time = self::getExpiration($link, $user_id);
         Log::info("ex_time:$expiration_time");
-        
+
         if ($data['geo'] == 0) {
             $data['geo'] = false;
         } else {
