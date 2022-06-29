@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zrhm7232
- * Date: 2/27/19
- * Time: 11:15 AM
- */
 
-namespace App\Database\Entity;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,9 +10,13 @@ class SuccessJobs extends Model
 
     protected $table = 'success_jobs';
 
+    protected $fillable = [
+        'queue_name',
+        'job_id',
+        'data',
+    ];
     public static function createItem($data)
     {
-       
         $item = self::create($data);
         return $item;
     }

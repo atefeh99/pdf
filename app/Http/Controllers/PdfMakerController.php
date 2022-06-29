@@ -40,7 +40,7 @@ class PdfMakerController extends ApiController
         if ($result) {
             if ($identifier == 'gavahi') {
                 $data['tracking_code'] = $data['tracking_code'] ? $data['tracking_code'] : 23;
-                Queue::push(new SendSmsJob($identifier, $data, $result['link'], $user_id),null,$identifier);
+                Queue::push(new SendSmsJob($identifier, $data, $result['link'], $user_id),null,$identifier.'_sms');
             }
             return $this->respondMyItemResult($result);
         } else {
