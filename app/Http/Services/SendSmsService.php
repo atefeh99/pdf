@@ -6,8 +6,6 @@ use App\Models\File;
 use App\Modules\otp\UsersModule;
 use App\Modules\SendSms\SendSmsModules;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-
 
 class SendSmsService
 {
@@ -25,7 +23,6 @@ class SendSmsService
         Log::info("mobile: $mobile");
 
         $expiration_time = self::getExpiration($link, $user_id);
-        Log::info("ex_time:$expiration_time");
 
         if ($data['geo'] == 0) {
             $data['geo'] = false;
@@ -61,9 +58,9 @@ class SendSmsService
 
     public static function getExpiration($link, $user_id)
     {
+ 
         $a = explode('/', $link);
-        Log::info("link_parts:$a");
-$b = explode('.', $a[6]);
+        $b = explode('.', $a[6]);
         return File::getEx($b[0], $user_id);
 
     }

@@ -19,6 +19,8 @@ class SendSmsJob implements ShouldQueue
     public $link;
     public $user_id;
 
+    public const QUEUE_NAME = 'gavahi_sms';
+
     public function __construct($category, $data, $link, $user_id)
     {
         $this->category = $category;
@@ -30,19 +32,20 @@ class SendSmsJob implements ShouldQueue
 
     public function handle()
     {
-
         SendSmsService::sendSms($this->category, $this->data, $this->link, $this->user_id);
-        Log::info("gavahi:sms:$this->user_id:send successfully");
+        Log::info("gavahi:sms:user_id:$this->user_id:send successfully");
+
         $data = [
-            'queue_name' => 'gavahi',
+            'queue_name' => 'gavahi_sms',
             'data' => [
                 'mobile' => UsersModule::getMobile($this->user_id),
             ],
             'job_id' => $this->job->getJobId(),
         ];
-        Log::info("data" . json_encode($data));
         try {
             SuccessJobs::createItem($data);
+            Log::info("job " . $data['job_id']." success_record created");
+
         } catch (\Exception$e) {
             Log::info('err msg: ' . $e->getMessage());
         }
