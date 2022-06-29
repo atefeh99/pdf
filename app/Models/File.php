@@ -3,10 +3,11 @@
 namespace App\Models;
 
 
+use Carbon\Carbon;
 use App\Models\OdataTrait;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Carbon\Carbon;
 
 class File extends Model
 {
@@ -56,6 +57,7 @@ class File extends Model
 
     public static function getEx($filename, $user_id)
     {
+        Log::info('filename: '.$filename.' userid: '.$user_id);
         $query = self::where([
             ['filename', '=', $filename],
             ['user_id', '=', $user_id]
