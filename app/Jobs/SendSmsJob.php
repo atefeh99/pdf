@@ -14,14 +14,14 @@ class SendSmsJob implements ShouldQueue
 
     use InteractsWithQueue;
 
-    public $identifier;
+    public $category;
     public $data;
     public $link;
     public $user_id;
 
     public function __construct($category, $data, $link, $user_id)
     {
-        $this->category = $category;
+$this->category = $category;
         $this->data = $data;
         $this->link = $link;
         $this->user_id = $user_id;
@@ -30,7 +30,8 @@ class SendSmsJob implements ShouldQueue
 
     public function handle()
     {
-        SendSmsService::sendSms($this->identifier, $this->data, $this->link, $this->user_id);
+        
+        SendSmsService::sendSms($this->category, $this->data, $this->link, $this->user_id);
         Log::info("gavahi:sms:$this->user_id:send successfully");
         $data = [
             'queue_name' => 'gavahi',
@@ -39,7 +40,11 @@ class SendSmsJob implements ShouldQueue
             ],
             'job_id' => $this->job->getJobId(),
         ];
-        
-        SuccessJobs::createItem($data);
+        Log::info("data".json_encode($data));
+        try {
+            SuccessJobs::createItem($data);
+        } catch (\Exception $e) {
+            Log::info('err msg: '.$e->getMessage());
         }
+    }
 }
