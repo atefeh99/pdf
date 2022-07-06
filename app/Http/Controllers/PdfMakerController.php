@@ -67,6 +67,9 @@ class PdfMakerController extends ApiController
             __FUNCTION__,
             4000,
         );
+        if(array_key_exists('tour_id',$data) && !env('NOTEBOOK_ENABLE')){
+            throw new NotFoundHttpException();
+        }
         if (str_contains($identifier, 'gavahi') && (!isset($data['geo']))) {
             $data['geo'] = 0;
         }
