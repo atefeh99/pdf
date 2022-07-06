@@ -21,6 +21,8 @@ use App\Models\PdfStatus;
 use Ramsey\Uuid\Uuid;
 use App\Modules\MakePdf;
 use App\Modules\Payment\PaymentModule;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 
 class PdfMakerService
@@ -70,18 +72,19 @@ class PdfMakerService
         if ($identifier == 'notebook') $extra_info = $result['params'];
 
         foreach ($indexes as $key => $value) {
-
-            Storage::put($value['identifier'] . '.blade.php', $value['html']);//**
+            $page = $value['identifier'].'_'.date('Ymd').'_'.$uuid;
+            Storage::put($page . '.blade.php', $value['html']);//**
             if ($result['params'][$value['identifier']]) {
                 $result['params'][$value['identifier']]
                     = self::setNumPersian($result['params'][$value['identifier']], $value['identifier']);
-                $view = view($value['identifier'], $result['params'][$value['identifier']]);
+                $view = view($page, $result['params'][$value['identifier']]);
                 try {
                     $view->render();
                 } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
                 }
                 $html = $view->toHtml();
+        
                 $pages[$key] = $html;
             } else return false;
 
@@ -347,7 +350,9 @@ class PdfMakerService
                 });
 
             } else {
-
+                if(!env('NOTEBOOK_ENABLE')){
+                    throw new NotFoundHttpException();
+                }
                 $tour = Tour::getData($data['tour_id']);
                 Log::info("#tour get " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
