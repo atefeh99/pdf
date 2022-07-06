@@ -21,7 +21,6 @@ use App\Models\PdfStatus;
 use Ramsey\Uuid\Uuid;
 use App\Modules\MakePdf;
 use App\Modules\Payment\PaymentModule;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
 
@@ -350,9 +349,7 @@ class PdfMakerService
                 });
 
             } else {
-                if(!env('NOTEBOOK_ENABLE')){
-                    throw new NotFoundHttpException();
-                }
+               
                 $tour = Tour::getData($data['tour_id']);
                 Log::info("#tour get " . (round(microtime(true) * 1000) - $time) . " milisec long");
 
