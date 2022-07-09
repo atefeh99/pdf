@@ -70,7 +70,12 @@ trait RulesTrait
                     'geo' => 'boolean',
                 ]
 
-            ]
+                ],
+            PostalcodesController::class=> [
+                'getItems'=>[
+                    'plate_id' => 'string'
+                ]
+                    ]
         ];
     }
 
@@ -96,12 +101,12 @@ trait RulesTrait
                     self::rules()[$controller][$function][$data['identifier']]
                 );
 
-            } else {
-                $validation = Validator::make(
+            } else $validation = Validator::make(
                     $data,
                     self::rules()[$controller][$function]
                 );
-            }
+                
+            
 
 
         }
@@ -112,7 +117,6 @@ trait RulesTrait
         }
 
         if (isset($data['identifier']) && $data['identifier'] == 'notebook') {
-
             if (isset($data['tour_id']) and isset($data['block_id'])) {
                 throw new RequestRulesException(trans('messages.custom.both_filled'), $code);
             } elseif (isset($data['tour_id']) and !$data['tour_id']) {
@@ -123,7 +127,6 @@ trait RulesTrait
                 throw new RequestRulesException(trans('messages.custom.both_empty'), $code);
             }
         }
-
         return $validation->validated();
     }
 }
