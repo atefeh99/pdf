@@ -44,6 +44,8 @@ class PdfMakerController extends ApiController
                 $mobile = UsersModule::getMobile($user_id);
                 if(!empty($mobile)){
                     Queue::push(new SendSmsJob($identifier, $data, $result['link'], $user_id),null,$identifier.'_sms');
+                }else{
+                    Log::info('sms not sent : mobile is empty');
                 }
             }
             return $this->respondMyItemResult($result);
