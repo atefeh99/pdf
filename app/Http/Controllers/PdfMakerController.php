@@ -28,6 +28,7 @@ class PdfMakerController extends ApiController
         }
         $input = $request->all();
         $input['identifier'] = $identifier;
+        
         if($identifier =='postalcodes'){
             $input = array_merge($input,['plate_id' => $plate_id]);
             $create_pdf = !empty($input['create_pdf']) ? $input['create_pdf']: false;

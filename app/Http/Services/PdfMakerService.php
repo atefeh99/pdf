@@ -81,7 +81,7 @@ class PdfMakerService
                 $view = view($page, $result['params'][$value['identifier']]);
                 try {
                     $view->render();
-                } catch (\Exception$exception) {
+                } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
                 }
                 $html = $view->toHtml();
@@ -213,7 +213,7 @@ class PdfMakerService
                 $view = view($value['identifier'], $result['params'][$value['identifier']]);
                 try {
                     $view->render();
-                } catch (\Exception$exception) {
+                } catch (\Exception $exception) {
                     Log::error($exception->getMessage());
                 }
 
