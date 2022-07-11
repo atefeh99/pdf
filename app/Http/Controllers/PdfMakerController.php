@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendSmsJob;
 use Illuminate\Http\Request;
+use App\Modules\otp\UsersModule;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\RulesTrait;
@@ -40,7 +41,12 @@ class PdfMakerController extends ApiController
         if ($result) {
             if ($identifier == 'gavahi') {
                 $data['tracking_code'] = $data['tracking_code'] ? $data['tracking_code'] : 23;
-                Queue::push(new SendSmsJob($identifier, $data, $result['link'], $user_id),null,$identifier.'_sms');
+                $mobile = UsersModule::getMobile($user_id);
+                if(!empty($mobile)){
+                    Queue::push(new SendSmsJob($identifier, $data, $result['link'], $user_id),null,$identifier.'_sms');
+                }else{
+                    Log::info('sms not sent : mobile is empty');
+                }
             }
             return $this->respondMyItemResult($result);
         } else {
