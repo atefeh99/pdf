@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\UnauthorizedUserException;
-use Illuminate\Support\Facades\Validator;
 use App\Exceptions\RequestRulesException;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 trait RulesTrait
 {
@@ -14,7 +12,7 @@ trait RulesTrait
         return [
             InterpreterController::class => [
                 'show' => [
-                    'id' => 'integer'
+                    'id' => 'integer',
                 ],
                 'store' => [
                     'identifier' => 'string',
@@ -26,7 +24,7 @@ trait RulesTrait
                 ],
                 'remove' => [
                     'id' => 'integer',
-                ]
+                ],
             ],
             PdfMakerController::class => [
                 'getPdf' => [
@@ -37,7 +35,11 @@ trait RulesTrait
                     'gavahi' => [
                         'postalcode' => 'required|array',
                         'geo' => 'boolean',
-                        "tracking_code" => ''
+                        "tracking_code" => '',
+                    ],
+                    'postalcodes' => [
+                        'plate_id' => 'string|required',
+                        'create_pdf' => 'boolean'
                     ],
                 ],
                 'getAsyncPdf' => [
@@ -52,13 +54,13 @@ trait RulesTrait
                     'direct_mail' => [
                         "class_id" => 'int|required',
                         "divisions" => 'array|required',
-                    ]
+                    ],
                 ],
                 'pdfStatus' => [
-                    'job_id' => 'numeric|min:0|required'
+                    'job_id' => 'numeric|min:0|required',
                 ],
                 'pdfLink' => [
-                    'job_id' => 'numeric|min:0|required'
+                    'job_id' => 'numeric|min:0|required',
                 ],
                 'gavahiPdfWithInfo' => [
                     'ClientBatchID' => 'numeric|required',
@@ -68,14 +70,10 @@ trait RulesTrait
                     'Postcodes.*.PostCode' => 'required',
                     'Signature' => 'string',
                     'geo' => 'boolean',
-                ]
-
                 ],
-            PostalcodesController::class=> [
-                'getItems'=>[
-                    'plate_id' => 'string'
-                ]
-                    ]
+
+            ],
+
         ];
     }
 
@@ -88,11 +86,12 @@ trait RulesTrait
                     $data->all(),
                     self::rules()[$controller][$function][$data['identifier']]
                 );
-            } else $validation = Validator::make(
-                $data->all(),
-                self::rules()[$controller][$function]
-            );
-
+            } else {
+                $validation = Validator::make(
+                    $data->all(),
+                    self::rules()[$controller][$function]
+                );
+            }
 
         } else {
             if (isset($data['identifier'])) {
@@ -101,13 +100,12 @@ trait RulesTrait
                     self::rules()[$controller][$function][$data['identifier']]
                 );
 
-            } else $validation = Validator::make(
+            } else {
+                $validation = Validator::make(
                     $data,
                     self::rules()[$controller][$function]
                 );
-                
-            
-
+            }
 
         }
 

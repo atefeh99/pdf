@@ -19,25 +19,31 @@ class PdfMakerController extends ApiController
 {
     use RulesTrait;
 
-    public function getPdf(Request $request, $identifier)
+    public function getPdf(Request $request, $identifier, $plate_id=null)
     {
+        $create_pdf = null;
         $user_id = $request->header('x-user-id');
         if (!isset($user_id)) {
             throw new UnauthorizedUserException(trans('messages.custom.unauthorized_user'), 1001);
         }
         $input = $request->all();
         $input['identifier'] = $identifier;
-
+        if($identifier =='postalcodes'){
+            $input = array_merge($input,['plate_id' => $plate_id]);
+            $create_pdf = !empty($input['create_pdf']) ? $input['create_pdf']: false;
+        }
+        
         $data = self::checkRules(
             $input,
             __FUNCTION__,
             1000,
         );
+
         if (!isset($data['geo'])) {
             $data['geo'] = 0;
         }
-        $result = PdfMakerService::getPdf($identifier, $user_id, $data);
-
+        $result = PdfMakerService::getPdf($identifier, $user_id, $data, $create_pdf);
+        
         if ($result) {
             if ($identifier == 'gavahi') {
                 $data['tracking_code'] = $data['tracking_code'] ? $data['tracking_code'] : 23;
@@ -47,6 +53,8 @@ class PdfMakerController extends ApiController
                 }else{
                     Log::info('sms not sent : mobile is empty');
                 }
+            } elseif(!$create_pdf){
+                return $result[0];
             }
             return $this->respondMyItemResult($result);
         } else {
@@ -73,7 +81,7 @@ class PdfMakerController extends ApiController
             __FUNCTION__,
             4000,
         );
-        if(array_key_exists('tour_id',$data) && !env('NOTEBOOK_ENABLE')){
+        if(array_key_exists('tour_id',$data) && !env('GASHT_NOTEBOOK_ENABLE')){
             throw new NotFoundHttpException();
         }
         if (str_contains($identifier, 'gavahi') && (!isset($data['geo']))) {

@@ -27,4 +27,4 @@ $router->post('/{identifier}/async', 'PdfMakerController@getAsyncPdf');
 $router->get('/status/{job_id}', 'PdfMakerController@pdfStatus');
 $router->get('/link/{job_id}', 'PdfMakerController@pdfLink');
 $router->get('/', 'PdfMakerController@getItem');
-$router->get('/postalcodes/plate/{plate_id}','PostalcodesController@getItems');
+$router->get('/{identifier}/plate/{plate_id}','PdfMakerController@getPdf');
